@@ -24,14 +24,9 @@ public final class Field implements Serializable {
 
     private static final long serialVersionUID = 1726351751L;
 
-    private Field(FieldDimension fieldDimension) {
+    public Field(FieldDimension fieldDimension) {
         this.fieldDimension = fieldDimension;
-    }
-
-    public static Field fromDimension(FieldDimension fieldDimension) {
-        Field field = new Field(fieldDimension);
-        field.reset();
-        return field;
+        reset();
     }
 
     public void reset() {

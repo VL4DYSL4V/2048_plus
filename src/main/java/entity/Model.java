@@ -33,7 +33,7 @@ public final class Model implements Externalizable {
 
     public Model(FieldDimension dimension){
         this.scores = BigInteger.ZERO;
-        this.field = Field.fromDimension(dimension);
+        this.field = new Field(dimension);
         CellGenerator.setRandomFieldElements(field, 2);
         this.history = new LinkedList<>();
     }
