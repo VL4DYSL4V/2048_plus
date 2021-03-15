@@ -1,8 +1,10 @@
 package entity;
 
+import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Immutable
 public final class FieldElement implements Serializable {
 
     private final Coordinates2D coordinates2D;
@@ -17,10 +19,6 @@ public final class FieldElement implements Serializable {
 
     public static FieldElement zero(Coordinates2D coordinates2D){
         return new FieldElement(coordinates2D, 0);
-    }
-
-    public static FieldElement copyWithNewCoordinates(Coordinates2D coordinates2D, FieldElement element){
-        return new FieldElement(coordinates2D, element.value);
     }
 
     public Coordinates2D getCoordinates2D() {
