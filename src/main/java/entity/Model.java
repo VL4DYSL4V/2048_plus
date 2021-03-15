@@ -151,6 +151,15 @@ public final class Model implements Externalizable {
         }
     }
 
+    public FieldDimension getFieldDimension(){
+        readLock.lock();
+        try{
+            return field.getFieldDimension();
+        }finally {
+            readLock.unlock();
+        }
+    }
+
     @Override
     public String toString() {
         readLock.lock();
