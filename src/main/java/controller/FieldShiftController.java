@@ -7,4 +7,6 @@ public interface FieldShiftController {
 
     void shift(Direction direction) throws EndOfGameException;
 
+    void cancelShifts();
+
 }

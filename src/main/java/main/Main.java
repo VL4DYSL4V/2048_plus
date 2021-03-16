@@ -28,7 +28,8 @@ public class Main {
 //        Thread.sleep(2000);
         printResult(model);
         model.replaceState(new Model(FieldDimension.FIVE_AND_FIVE));
-//        printResult(model);
+        printResult(model);
+        controller.cancelShifts();
 
         controller.shift(Direction.DOWN);
 //        Thread.sleep(2000);

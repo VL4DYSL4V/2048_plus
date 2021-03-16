@@ -23,8 +23,8 @@ import java.util.concurrent.Future;
 public class FieldShiftControllerImpl implements FieldShiftController {
 
     private final Model model;
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private Future<Boolean> isEnd = null;
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private Future<Boolean> isEndFuture = null;
 
     @Autowired
     public FieldShiftControllerImpl(Model model) {
@@ -34,27 +34,32 @@ public class FieldShiftControllerImpl implements FieldShiftController {
     @Override
     public void shift(Direction direction) throws EndOfGameException {
         try {
-            if (isEnd != null && isEnd.get()) {
-                isEnd = null;
+            if (isEndFuture != null && isEndFuture.get()) {
+                cancelShifts();
                 throw new EndOfGameException("Game over");
             }
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
-        isEnd = executorService.submit(() -> {
+        isEndFuture = executorService.submit(() -> {
             Field field = model.getField();
             Field copy = field.copy();
             BigInteger scores = shiftField(direction, field);
             if (Objects.equals(field, copy)) {
                 return checkIfEnd(field);
-            }
-            else {
+            } else {
                 CellGenerator.setRandomFieldElement(field);
                 model.updateAndSaveHistory(field, scores);
             }
             return false;
         });
+    }
 
+    @Override
+    public void cancelShifts() {
+        executorService.shutdownNow();
+        executorService = Executors.newSingleThreadExecutor();
+        isEndFuture = null;
     }
 
     private boolean checkIfEnd(Field field) {
