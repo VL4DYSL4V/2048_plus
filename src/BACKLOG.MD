@@ -5,6 +5,9 @@
 ++++ 5) Create FieldShiftingController interface and implementation
 ++++ 6) You must add ability to cancel every model-modifying operation 
 which can be executed after call Model.replaceState(Model another)
-7) FieldShiftControllerImpl is not thread-safe
+++++ 7) FieldShiftControllerImpl is not thread-safe
 8) Create view classes
+9) Create different Themes (at least the dark one)
+10) Create ViewConfiguration, which loads paths from resources and then loads images.
+
 
