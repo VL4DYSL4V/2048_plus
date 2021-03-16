@@ -1,4 +1,4 @@
-package exception;
+package exception.data_access;
 
 public final class StoreException extends Exception {
 

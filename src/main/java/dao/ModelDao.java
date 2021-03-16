@@ -2,8 +2,8 @@ package dao;
 
 import entity.Model;
 import enums.FieldDimension;
-import exception.FetchException;
-import exception.StoreException;
+import exception.data_access.FetchException;
+import exception.data_access.StoreException;
 
 public interface ModelDao {
 

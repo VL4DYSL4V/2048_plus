@@ -22,6 +22,7 @@ public final class Model implements Externalizable {
     private Field field;
     private BigInteger scores;
     private List<Memento> history;
+    private static final int MAX_HISTORY_SIZE = 3;
 
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock(true);
     private final Lock readLock = readWriteLock.readLock();
@@ -95,8 +96,11 @@ public final class Model implements Externalizable {
         public int hashCode() {
             return Objects.hash(scores, field, history);
         }
+
     }
 
+    /** Method is designed to replace the entire state of this object with state of {@param another}
+     **/
     public void replaceState(Model another) {
         writeLock.lock();
         try {
@@ -109,12 +113,40 @@ public final class Model implements Externalizable {
         }
     }
 
-    public Memento save() {
+    private Memento save() {
         readLock.lock();
         try {
             return new Memento(scores, field, history);
         }finally {
             readLock.unlock();
+        }
+    }
+
+    /**This method is designed to update state of this object and change
+     * */
+    public void updateAndSaveHistory(Field field, BigInteger scoresToAdd){
+        writeLock.lock();
+        try{
+            if(this.field.getFieldDimension() == field.getFieldDimension()) {
+                Memento memento = new Memento(this.scores, this.field, history);
+                saveHistory(memento);
+                this.field = field;
+                this.scores = this.scores.add(scoresToAdd);
+            }
+        }finally {
+            writeLock.unlock();
+        }
+    }
+
+    private void saveHistory(Memento memento){
+        writeLock.lock();
+        try {
+            if(history.size() == MAX_HISTORY_SIZE){
+                history.remove(0);
+            }
+            history.add(memento);
+        }finally {
+            writeLock.unlock();
         }
     }
 
