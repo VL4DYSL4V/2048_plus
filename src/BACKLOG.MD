@@ -11,4 +11,7 @@ which can be executed after call Model.replaceState(Model another)
 ++++ 10) Create ViewConfiguration, which loads paths from resources and then loads images.
 ++++ 11) Create actual images and specify them in <theme>.properties
 12) ViewConfig.theme() must return the last theme, selected by user
+13) Create canvas for field 
+14) Create a class, which stores scaled images of field elements images
+
 

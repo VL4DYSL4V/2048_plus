@@ -4,7 +4,7 @@ import java.awt.*;
 
 public enum FrameSize {
 
-    GAME_FRAME(new Dimension(350, 500));
+    GAME_FRAME(new Dimension(350, 430));
 
     private final Dimension dimension;
 
