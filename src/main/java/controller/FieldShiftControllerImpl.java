@@ -19,12 +19,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-@Controller
-public class FieldShiftControllerImpl implements FieldShiftController {
+@Controller("fieldShiftController")
+public final class FieldShiftControllerImpl implements FieldShiftController {
 
     private final Model model;
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private Future<Boolean> isEnd = null;
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private Future<Boolean> isEndFuture = null;
+    private final Object lock = new Object();
 
     @Autowired
     public FieldShiftControllerImpl(Model model) {
@@ -33,28 +34,37 @@ public class FieldShiftControllerImpl implements FieldShiftController {
 
     @Override
     public void shift(Direction direction) throws EndOfGameException {
-        try {
-            if (isEnd != null && isEnd.get()) {
-                isEnd = null;
-                throw new EndOfGameException("Game over");
+        synchronized (lock) {
+            try {
+                if (isEndFuture != null && isEndFuture.get()) {
+                    cancelShifts();
+                    throw new EndOfGameException("Game over");
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
             }
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
+            isEndFuture = executorService.submit(() -> {
+                Field field = model.getField();
+                Field copy = field.copy();
+                BigInteger scores = shiftField(direction, field);
+                if (Objects.equals(field, copy)) {
+                    return checkIfEnd(field);
+                } else {
+                    CellGenerator.setRandomFieldElement(field);
+                    model.updateAndSaveHistory(field, scores);
+                }
+                return false;
+            });
         }
-        isEnd = executorService.submit(() -> {
-            Field field = model.getField();
-            Field copy = field.copy();
-            BigInteger scores = shiftField(direction, field);
-            if (Objects.equals(field, copy)) {
-                return checkIfEnd(field);
-            }
-            else {
-                CellGenerator.setRandomFieldElement(field);
-                model.updateAndSaveHistory(field, scores);
-            }
-            return false;
-        });
+    }
 
+    @Override
+    public void cancelShifts() {
+        synchronized (lock) {
+            executorService.shutdownNow();
+            executorService = Executors.newSingleThreadExecutor();
+            isEndFuture = null;
+        }
     }
 
     private boolean checkIfEnd(Field field) {

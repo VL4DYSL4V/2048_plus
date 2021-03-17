@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@ComponentScan({"config", "dao"})
-@Import(RepositoryConfig.class)
+@ComponentScan({"controller", "dao", "view"})
+@Import({RepositoryConfig.class, ViewConfig.class})
 public class AppConfig {
 
     @Bean

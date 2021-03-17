@@ -1,8 +1,10 @@
 package entity;
 
+import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Immutable
 public final class Coordinates2D implements Serializable {
 
     private final int x;
