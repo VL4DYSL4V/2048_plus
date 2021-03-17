@@ -26,11 +26,11 @@ public class RepositoryConfig {
                 ResourceUtils.getFile("classpath:repositories.properties").toPath(),
                 StandardCharsets.UTF_8)) {
             properties.load(bufferedReader);
-            for (String key : properties.stringPropertyNames()) {
-                out.put(FieldDimension.valueOf(key.toUpperCase()), Paths.get(properties.getProperty(key)));
-            }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+        for (String key : properties.stringPropertyNames()) {
+            out.put(FieldDimension.valueOf(key.toUpperCase()), Paths.get(properties.getProperty(key)));
         }
         return out;
     }

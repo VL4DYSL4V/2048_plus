@@ -7,7 +7,8 @@
 which can be executed after call Model.replaceState(Model another)
 ++++ 7) FieldShiftControllerImpl is not thread-safe
 8) Create view classes
-9) Create different Themes (at least the dark one)
-10) Create ViewConfiguration, which loads paths from resources and then loads images.
-
+++++ 9) Create different Themes (at least the dark one)
+++++ 10) Create ViewConfiguration, which loads paths from resources and then loads images.
+++++ 11) Create actual images and specify them in <theme>.properties
+12) ViewConfig.theme() must return the last theme, selected by user
 

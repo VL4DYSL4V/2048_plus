@@ -12,7 +12,9 @@ import enums.Direction;
 import enums.FieldDimension;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import view.GameFrame;
 
+import javax.swing.*;
 import java.util.List;
 
 public class Main {
@@ -20,25 +22,28 @@ public class Main {
     public static void main(String[] args) throws Throwable {
 
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-        ModelDao modelDao = context.getBean("fileSystemModelDao", FileSystemModelDao.class);
-        Model model = modelDao.getByDimension(FieldDimension.FOUR_AND_FOUR);
-        FieldShiftController controller = new FieldShiftControllerImpl(model);
-        printResult(model);
-        controller.shift(Direction.DOWN);
-//        Thread.sleep(2000);
-        printResult(model);
-        model.replaceState(new Model(FieldDimension.FIVE_AND_FIVE));
-        printResult(model);
-        controller.cancelShifts();
+//        ModelDao modelDao = context.getBean("fileSystemModelDao", FileSystemModelDao.class);
+//        Model model = modelDao.getByDimension(FieldDimension.FOUR_AND_FOUR);
+//        FieldShiftController controller = new FieldShiftControllerImpl(model);
+//        printResult(model);
+//        controller.shift(Direction.DOWN);
+////        Thread.sleep(2000);
+//        printResult(model);
+//        model.replaceState(new Model(FieldDimension.FIVE_AND_FIVE));
+//        printResult(model);
+//        controller.cancelShifts();
+//
+//        controller.shift(Direction.DOWN);
+////        Thread.sleep(2000);
+//        printResult(model);
+//        controller.shift(Direction.DOWN);
+////        Thread.sleep(2000);
+//        printResult(model);
+//
+//        System.exit(0);
+        JFrame jFrame = context.getBean("gameFrame", GameFrame.class);
+        SwingUtilities.invokeLater(() -> jFrame.setVisible(true));
 
-        controller.shift(Direction.DOWN);
-//        Thread.sleep(2000);
-        printResult(model);
-        controller.shift(Direction.DOWN);
-//        Thread.sleep(2000);
-        printResult(model);
-
-        System.exit(0);
     }
 
     private static void printResult(Model model) {
