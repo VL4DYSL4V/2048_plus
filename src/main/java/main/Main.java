@@ -1,15 +1,9 @@
 package main;
 
 import config.AppConfig;
-import controller.FieldShiftController;
-import controller.FieldShiftControllerImpl;
-import dao.FileSystemModelDao;
-import dao.ModelDao;
 import entity.Field;
 import entity.FieldElement;
 import entity.Model;
-import enums.Direction;
-import enums.FieldDimension;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import view.GameFrame;

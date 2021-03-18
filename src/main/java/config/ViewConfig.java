@@ -28,10 +28,14 @@ public class ViewConfig {
     }
 
     @Bean
-    public Theme darkTheme() {
+    public Theme darkTheme(){
+        return loadTheme("classpath:theme/dark.properties");
+    }
+
+    private Theme loadTheme(String path) {
         Properties properties = new Properties();
         try (BufferedReader bufferedReader = Files.newBufferedReader(
-                ResourceUtils.getFile("classpath:theme/dark.properties").toPath())) {
+                ResourceUtils.getFile(path).toPath())) {
             properties.load(bufferedReader);
         } catch (IOException e) {
             throw new RuntimeException(e);

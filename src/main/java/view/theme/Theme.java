@@ -13,6 +13,6 @@ public interface Theme {
 
     Image welcomeImage();
 
-    Map<Integer, Image> powToImageMap();
+    Map<Integer, Image> powerToImageMap();
 
 }

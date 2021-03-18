@@ -16,13 +16,13 @@ public final class ScoreLabel extends JLabel {
 
     public ScoreLabel(Model model, Theme theme) {
         this.model = model;
-        update();
+        updateValue();
         setForeground(theme.getForeground());
         setOpaque(false);
         setFont(Fonts.STANDARD_FONT.getFont());
     }
 
-    public final void update(){
+    public final void updateValue(){
         setText(SCORES.concat(representation()));
     }
 

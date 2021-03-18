@@ -5,9 +5,11 @@ import entity.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import view.component.FieldCanvas;
 import view.component.ScoreLabel;
 import view.component.StandardButton;
 import view.enums.FrameSize;
+import view.listener.FieldMovementListener;
 import view.theme.Theme;
 import view.util.ScreenUtils;
 
@@ -23,24 +25,25 @@ public final class GameFrame extends JFrame {
     private final JButton toMenuButton;
     private final JButton restartButton;
     private final ScoreLabel scoreLabel;
+    private final FieldCanvas fieldCanvas;
 
     private final Model model;
-    private final FieldShiftController fieldShiftController;
     private Theme theme;
 
     @Autowired
     public GameFrame(Model model, FieldShiftController fieldShiftController,
                      @Qualifier("theme") Theme theme) {
         this.model = model;
-        this.fieldShiftController = fieldShiftController;
         this.theme = theme;
         this.moveBackButton = new StandardButton("Move back", theme);
         this.toMenuButton = new StandardButton("Menu", theme);
         this.restartButton = new StandardButton("Restart", theme);
         this.scoreLabel = new ScoreLabel(model, theme);
+        this.fieldCanvas = new FieldCanvas(model, theme);
         configComponents();
         styleComponents();
         constructWindow();
+        addKeyListener(new FieldMovementListener(fieldShiftController));
     }
 
     private void constructWindow() {
@@ -50,12 +53,16 @@ public final class GameFrame extends JFrame {
         layout.putConstraint(SpringLayout.WEST, controlPanel, 0, SpringLayout.WEST, rootPanel);
         layout.putConstraint(SpringLayout.NORTH, controlPanel, 0, SpringLayout.NORTH, rootPanel);
         rootPanel.add(controlPanel);
+        layout.putConstraint(SpringLayout.WEST, fieldCanvas, 0, SpringLayout.WEST, rootPanel);
+        layout.putConstraint(SpringLayout.NORTH, fieldCanvas, 0, SpringLayout.SOUTH, controlPanel);
+        rootPanel.add(fieldCanvas, layout);
+
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.fill = GridBagConstraints.BOTH;
         constraints.weightx = 0.1;
-        constraints.insets = new Insets(3,3,3,3);
+        constraints.insets = new Insets(3, 3, 3, 3);
         controlPanel.add(toMenuButton, constraints);
         constraints.gridx = 1;
         controlPanel.add(moveBackButton, constraints);
@@ -81,6 +88,14 @@ public final class GameFrame extends JFrame {
         styleFrame();
         styleRootPanel();
         styleControlPanel();
+        styleFieldCanvas();
+    }
+
+    private void styleFieldCanvas() {
+        fieldCanvas.setBackground(theme.getBackground());
+        fieldCanvas.setForeground(theme.getForeground());
+        Dimension frameDimension = FrameSize.GAME_FRAME.getDimension();
+        fieldCanvas.setPreferredSize(new Dimension(frameDimension.width, Math.min(frameDimension.width, frameDimension.height)));
     }
 
     private void configRestartButton() {
@@ -134,4 +149,10 @@ public final class GameFrame extends JFrame {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setResizable(false);
     }
+
+    public void updateScoresAndField(){
+        scoreLabel.updateValue();
+        fieldCanvas.updateField();
+    }
+
 }

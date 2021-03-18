@@ -42,7 +42,7 @@ public final class ViewTheme implements Theme {
     }
 
     @Override
-    public Map<Integer, Image> powToImageMap() {
+    public Map<Integer, Image> powerToImageMap() {
         return powToImageMap;
     }
 
