@@ -30,6 +30,7 @@ public final class FileSystemModelDao implements ModelDao {
     }
 
     @Override
+    //TODO: WHAT IF after model.getFieldDimension() dimension (and state of model) will change!!!
     public void save(Model model) throws StoreException {
         Path path = repositories.get(model.getFieldDimension());
         if (path == null) {
@@ -38,7 +39,8 @@ public final class FileSystemModelDao implements ModelDao {
         try (FileOutputStream fileOutputStream = new FileOutputStream(path.toFile());
              BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(bufferedOutputStream)) {
-            objectOutputStream.writeObject(model);
+//            objectOutputStream.writeObject(model);
+            model.writeExternal(objectOutputStream);
         } catch (IOException e) {
             throw new StoreException(e);
         }
@@ -53,7 +55,9 @@ public final class FileSystemModelDao implements ModelDao {
         try (FileInputStream fileInputStream = new FileInputStream(path.toFile());
              BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
              ObjectInputStream objectInputStream = new ObjectInputStream(bufferedInputStream)) {
-            return (Model) objectInputStream.readObject();
+            Model out = new Model();
+            out.readExternal(objectInputStream);
+            return out;
         } catch (EOFException e){
             return new Model(fieldDimension);
         }catch (IOException | ClassNotFoundException e) {

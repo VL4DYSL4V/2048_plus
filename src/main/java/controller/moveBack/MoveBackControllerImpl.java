@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Controller("moveBackController")
-public final class MoveBackControllerImpl implements MoveBackController{
+public final class MoveBackControllerImpl implements MoveBackController {
 
     private final Model model;
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -21,8 +21,12 @@ public final class MoveBackControllerImpl implements MoveBackController{
 
     @Override
     public void moveBack() {
-        synchronized (lock){
-            executorService.execute(model::restore);
+        synchronized (lock) {
+            executorService.execute(() -> {
+                if (model.restore()) {
+                    model.setGameIsOver(false);
+                }
+            });
         }
     }
 

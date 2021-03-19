@@ -17,13 +17,15 @@ which can be executed after call Model.replaceState(Model another)
 ++++ 16) Subscribe components to model
 17) Create controller to handle switching field dimension,
 18) Create controller to handle restarting game 
-19) Create controller to handle moving back 
+++++ 19) Create controller to handle moving back 
 20) Create controller to handle navigation between windows
 ++++ 21) Create controller to handle exit
 22) ScoreLabel.representation() uses deprecated method Toolkit.getDefaultToolkit().getFontMetrics
 ++++ 23) Create enum Event 
 ++++ 24) Eliminate EndOfGameException by modifying Observer pattern to pass Event instances
 25) Change logic of obtaining Theme object: it must be stored in some kind of RenderingContext
-26) Move theme loading into some theme dao
-27) Create class GameModel to store only game information: field, scores and history
-
+26) Move theme loading into some ThemeDao
+27) Create class GameModel (immutable) to store only game information: field, scores and history
+28) Exit from EndOfGameForm should be exit to Menu
+29) Think about ModelDao threadSafety.
+ There is a vulnerability!! 27-th task contains an idea how to avoid it 

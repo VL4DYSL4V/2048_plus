@@ -1,5 +1,6 @@
 package view;
 
+import model.Model;
 import observer.Subscriber;
 import observer.event.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +25,14 @@ public final class EndOfGameFrame extends JFrame implements Subscriber {
     private final JButton exitButton;
 
     private Theme theme;
+    private final Model model;
 
     @Autowired
-    public EndOfGameFrame(Theme theme, StandardButton exitAndSaveButton) {
+    public EndOfGameFrame(Model model, Theme theme, StandardButton exitAndSaveButton, StandardButton restartButton) {
         this.theme = theme;
-        this.restartButton = new StandardButton("Restart", theme, null);
+        this.restartButton = restartButton;
         this.exitButton = exitAndSaveButton;
+        this.model = model;
         styleComponents();
         configComponents();
         constructWindow();
@@ -61,18 +64,6 @@ public final class EndOfGameFrame extends JFrame implements Subscriber {
         styleFrame();
         styleRootPanel();
         styleMessageLabel();
-    }
-
-    private void configExitButton() {
-        exitButton.addActionListener((e) -> {
-
-        });
-    }
-
-    private void configRestartButton() {
-        restartButton.addActionListener((e) -> {
-
-        });
     }
 
     private void styleMessageLabel() {
@@ -107,8 +98,12 @@ public final class EndOfGameFrame extends JFrame implements Subscriber {
 
     @Override
     public void reactOnNotification(EventType eventType) {
-        if (eventType == EventType.GAME_OVER) {
-            this.setVisible(true);
+        if(eventType == EventType.MODEL_CHANGED){
+            if(! this.isVisible() && model.gameIsOver()){
+                setVisible(true);
+            }else if(!model.gameIsOver()){
+                setVisible(false);
+            }
         }
     }
 

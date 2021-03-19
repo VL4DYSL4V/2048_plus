@@ -35,7 +35,6 @@ public final class ExitControllerImpl implements ExitController {
                     }
                 } catch (StoreException e) {
                     e.printStackTrace();
-                    throw new RuntimeException(e);
                 }
                 System.exit(0);
             });

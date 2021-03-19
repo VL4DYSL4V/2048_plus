@@ -33,11 +33,12 @@ public final class GameFrame extends JFrame implements Subscriber {
     @Autowired
     public GameFrame(Model model, KeyListener fieldMovementListener,
                      StandardButton moveBackButton,
+                     StandardButton restartButton,
                      @Qualifier("theme") Theme theme) {
         this.theme = theme;
         this.moveBackButton = moveBackButton;
         this.toMenuButton = new StandardButton("Menu", theme, null);
-        this.restartButton = new StandardButton("Restart", theme, null);
+        this.restartButton = restartButton;
         this.scoreLabel = new ScoreLabel(model, theme);
         this.fieldCanvas = new FieldCanvas(model, theme);
         configComponents();
@@ -79,9 +80,6 @@ public final class GameFrame extends JFrame implements Subscriber {
         configFrame();
         configRootPanel();
         configControlPanel();
-        configBackButton();
-        configToMenuButton();
-        configRestartButton();
         configFieldCanvas();
     }
 
@@ -101,23 +99,6 @@ public final class GameFrame extends JFrame implements Subscriber {
         fieldCanvas.setForeground(theme.getForeground());
         Dimension frameDimension = FrameSize.GAME_FRAME.getDimension();
         fieldCanvas.setPreferredSize(new Dimension(frameDimension.width, Math.min(frameDimension.width, frameDimension.height)));
-    }
-
-    private void configRestartButton() {
-        restartButton.addActionListener(e -> {
-
-        });
-    }
-
-    private void configToMenuButton() {
-        toMenuButton.addActionListener(e -> {
-
-        });
-    }
-
-    private void configBackButton() {
-        moveBackButton.addActionListener(e -> {
-        });
     }
 
     private void styleControlPanel() {

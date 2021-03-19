@@ -3,13 +3,18 @@ package config;
 import command.ExitAndSaveCommand;
 import command.ExitCommand;
 import command.MoveBackCommand;
+import command.RestartCommand;
 import controller.exit.ExitController;
 import controller.moveBack.MoveBackController;
+import controller.restart.RestartController;
+import controller.restart.RestartControllerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.util.ResourceUtils;
+import view.EndOfGameFrame;
 import view.component.StandardButton;
 import view.theme.Theme;
 import view.theme.ViewTheme;
@@ -65,6 +70,14 @@ public class ViewConfig {
         ExitController exitController = applicationContext.getBean("exitController", ExitController.class);
         Theme theme = applicationContext.getBean("theme", Theme.class);
         return new StandardButton("Exit", theme, new ExitCommand(exitController));
+    }
+
+    @Bean
+    @Scope("prototype")
+    public StandardButton restartButton(){
+        RestartController restartController = applicationContext.getBean("restartController", RestartControllerImpl.class);
+        Theme theme = applicationContext.getBean("theme", Theme.class);
+        return new StandardButton("Restart", theme, new RestartCommand(restartController));
     }
 
     private Theme loadTheme(String path) {
