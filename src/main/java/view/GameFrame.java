@@ -156,9 +156,9 @@ public final class GameFrame extends JFrame implements Subscriber {
 
     @Override
     public void reactOnNotification() {
-//        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() -> {
             scoreLabel.updateValue();
             fieldCanvas.updateField();
-//        });
+        });
     }
 }

@@ -3,9 +3,8 @@ package controller;
 import entity.Coordinates2D;
 import entity.Field;
 import entity.FieldElement;
-import model.Model;
 import enums.Direction;
-import exception.game.EndOfGameException;
+import model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import util.CellGenerator;
@@ -14,17 +13,14 @@ import util.PowerOfTwoHolder;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 @Controller("fieldShiftController")
 public final class FieldShiftControllerImpl implements FieldShiftController {
 
     private final Model model;
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private Future<Boolean> isEndFuture = null;
     private final Object lock = new Object();
 
     @Autowired
@@ -33,27 +29,24 @@ public final class FieldShiftControllerImpl implements FieldShiftController {
     }
 
     @Override
-    public void shift(Direction direction) throws EndOfGameException {
+    public void shift(Direction direction) {
         synchronized (lock) {
-            try {
-                if (isEndFuture != null && isEndFuture.get()) {
-                    cancelShifts();
-                    throw new EndOfGameException("Game over");
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+            if (model.gameIsOver()) {
+                return;
             }
-            isEndFuture = executorService.submit(() -> {
+            executorService.execute(() -> {
                 Field field = model.getField();
                 Field copy = field.copy();
                 BigInteger scores = shiftField(direction, field);
                 if (Objects.equals(field, copy)) {
-                    return checkIfEnd(field);
+                    if (checkIfEnd(field)) {
+                        model.setGameIsOver(true);
+                        cancelShifts();
+                    }
                 } else {
                     CellGenerator.setRandomFieldElement(field);
                     model.updateAndSaveHistory(field, scores);
                 }
-                return false;
             });
         }
     }
@@ -63,7 +56,6 @@ public final class FieldShiftControllerImpl implements FieldShiftController {
         synchronized (lock) {
             executorService.shutdownNow();
             executorService = Executors.newSingleThreadExecutor();
-            isEndFuture = null;
         }
     }
 
