@@ -1,6 +1,5 @@
 package view;
 
-import controller.FieldShiftController;
 import model.Model;
 import observer.Subscriber;
 import observer.event.EventType;
@@ -11,12 +10,12 @@ import view.component.FieldCanvas;
 import view.component.ScoreLabel;
 import view.component.StandardButton;
 import view.enums.FrameSize;
-import view.listener.FieldMovementListener;
 import view.theme.Theme;
 import view.util.ScreenUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyListener;
 
 @Component
 public final class GameFrame extends JFrame implements Subscriber {
@@ -32,18 +31,19 @@ public final class GameFrame extends JFrame implements Subscriber {
     private Theme theme;
 
     @Autowired
-    public GameFrame(Model model, FieldShiftController fieldShiftController,
+    public GameFrame(Model model, KeyListener fieldMovementListener,
+                     StandardButton moveBackButton,
                      @Qualifier("theme") Theme theme) {
         this.theme = theme;
-        this.moveBackButton = new StandardButton("Move back", theme);
-        this.toMenuButton = new StandardButton("Menu", theme);
-        this.restartButton = new StandardButton("Restart", theme);
+        this.moveBackButton = moveBackButton;
+        this.toMenuButton = new StandardButton("Menu", theme, null);
+        this.restartButton = new StandardButton("Restart", theme, null);
         this.scoreLabel = new ScoreLabel(model, theme);
         this.fieldCanvas = new FieldCanvas(model, theme);
         configComponents();
         styleComponents();
         constructWindow();
-        addKeyListener(new FieldMovementListener(fieldShiftController));
+        addKeyListener(fieldMovementListener);
     }
 
     private void constructWindow() {
@@ -92,7 +92,7 @@ public final class GameFrame extends JFrame implements Subscriber {
         styleFieldCanvas();
     }
 
-    private void configFieldCanvas(){
+    private void configFieldCanvas() {
         fieldCanvas.setFocusable(false);
     }
 
@@ -157,7 +157,7 @@ public final class GameFrame extends JFrame implements Subscriber {
 
     @Override
     public void reactOnNotification(EventType eventType) {
-        if(eventType == EventType.MODEL_CHANGED) {
+        if (eventType == EventType.MODEL_CHANGED) {
             SwingUtilities.invokeLater(() -> {
                 scoreLabel.updateValue();
                 fieldCanvas.updateField();

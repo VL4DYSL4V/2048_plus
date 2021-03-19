@@ -1,8 +1,13 @@
 package config;
 
+import command.MoveBackCommand;
+import controller.MoveBackController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
+import view.component.StandardButton;
 import view.theme.Theme;
 import view.theme.ViewTheme;
 
@@ -21,17 +26,29 @@ import java.util.regex.Pattern;
 public class ViewConfig {
 
     private static final Pattern POWER_PATTERN = Pattern.compile("[0-9]+");
+    private final ApplicationContext applicationContext;
+
+    @Autowired
+    public ViewConfig(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Bean
-    public Theme theme(){
+    public Theme theme() {
         return darkTheme();
     }
 
     @Bean
-    public Theme darkTheme(){
+    public Theme darkTheme() {
         return loadTheme("classpath:theme/dark.properties");
     }
 
+    @Bean
+    public StandardButton moveBackButton() {
+        MoveBackController moveBackController = applicationContext.getBean("moveBackController", MoveBackController.class);
+        return new StandardButton("Move back", theme(), new MoveBackCommand(moveBackController));
+    }
+        
     private Theme loadTheme(String path) {
         Properties properties = new Properties();
         try (BufferedReader bufferedReader = Files.newBufferedReader(
@@ -52,8 +69,8 @@ public class ViewConfig {
         Image welcomeImage = load(properties.getProperty("welcome_image"));
         Path powerFolder = Paths.get(properties.getProperty("power_folder"));
         Map<Integer, Image> powToImageMap = new HashMap<>();
-        for (String key : properties.stringPropertyNames()){
-            if(POWER_PATTERN.matcher(key).matches()){
+        for (String key : properties.stringPropertyNames()) {
+            if (POWER_PATTERN.matcher(key).matches()) {
                 powToImageMap.put(Integer.valueOf(key), load(powerFolder.resolve((String) properties.get(key)).toString()));
             }
         }

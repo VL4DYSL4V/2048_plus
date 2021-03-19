@@ -1,10 +1,8 @@
 package config;
 
 import model.Model;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.*;
 
 @Configuration
 @ComponentScan({"controller", "dao", "view"})
@@ -14,6 +12,11 @@ public class AppConfig {
     @Bean
     public Model model(){
         return new Model();
+    }
+
+    @Bean
+    public ApplicationContext applicationContext(){
+        return new AnnotationConfigApplicationContext(getClass());
     }
 
 }

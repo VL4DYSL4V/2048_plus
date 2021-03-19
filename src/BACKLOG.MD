@@ -24,4 +24,5 @@ which can be executed after call Model.replaceState(Model another)
 ++++ 23) Create enum Event 
 ++++ 24) Eliminate EndOfGameException by modifying Observer pattern to pass Event instances
 25) Change logic of obtaining Theme object: it must be stored in some kind of RenderingContext
+26) Move theme loading into some theme dao
 
