@@ -3,7 +3,7 @@ package main;
 import config.AppConfig;
 import entity.Field;
 import entity.FieldElement;
-import entity.Model;
+import model.Model;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import view.GameFrame;
@@ -35,8 +35,10 @@ public class Main {
 //        printResult(model);
 //
 //        System.exit(0);
-        JFrame jFrame = context.getBean("gameFrame", GameFrame.class);
-        SwingUtilities.invokeLater(() -> jFrame.setVisible(true));
+        GameFrame gameFrame = context.getBean("gameFrame", GameFrame.class);
+        Model model = context.getBean("model", Model.class);
+        model.subscribe(gameFrame);
+        SwingUtilities.invokeLater(() -> gameFrame.setVisible(true));
 
     }
 

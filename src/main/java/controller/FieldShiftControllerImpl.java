@@ -3,7 +3,7 @@ package controller;
 import entity.Coordinates2D;
 import entity.Field;
 import entity.FieldElement;
-import entity.Model;
+import model.Model;
 import enums.Direction;
 import exception.game.EndOfGameException;
 import org.springframework.beans.factory.annotation.Autowired;
