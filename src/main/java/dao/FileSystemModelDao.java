@@ -2,8 +2,8 @@ package dao;
 
 import model.Model;
 import enums.FieldDimension;
-import exception.data_access.FetchException;
-import exception.data_access.StoreException;
+import exception.FetchException;
+import exception.StoreException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;

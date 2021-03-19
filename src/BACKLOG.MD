@@ -13,8 +13,15 @@ which can be executed after call Model.replaceState(Model another)
 12) ViewConfig.theme() must return the last theme, selected by user
 ++++ 13) Create canvas for field 
 ++++ 14) Create a class, which stores scaled images of field elements images
-15) Create controllers to handle exit, switching field dimension, 
-restarting game, moving back, shifting field and navigation between windows
-16) ScoreLabel.representation() uses deprecated method Toolkit.getDefaultToolkit().getFontMetrics
-17) Handle EndOfGameException in FieldMovementListener.keyPressed
-18) Subscribe components to model
+++++ 15) Create controller to handle shifting field
+++++ 16) Subscribe components to model
+17) Create controller to handle switching field dimension,
+18) Create controller to handle restarting game 
+19) Create controller to handle moving back 
+20) Create controller to handle navigation between windows
+21) Create controller to handle exit
+22) ScoreLabel.representation() uses deprecated method Toolkit.getDefaultToolkit().getFontMetrics
+23) Create enum Event 
+24) Eliminate EndOfGameException by modifying Observer pattern to pass Event instances
+
+

@@ -1,4 +1,4 @@
-package exception.data_access;
+package exception;
 
 public final class FetchException extends Exception{
 

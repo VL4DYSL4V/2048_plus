@@ -23,18 +23,21 @@ public final class Model implements Externalizable, Publisher {
     private Field field;
     private BigInteger scores;
     private List<Memento> history;
+    private boolean gameIsOver = false;
     private static final int MAX_HISTORY_SIZE = 3;
     private Collection<Subscriber> subscribers = new HashSet<>();
 
-    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock(true);
-    private final Lock readLock = readWriteLock.readLock();
-    private final Lock writeLock = readWriteLock.writeLock();
+    private final Lock readLock;
+    private final Lock writeLock;
 
     public Model() {
         this(FieldDimension.FOUR_AND_FOUR);
     }
 
     public Model(FieldDimension dimension) {
+        ReadWriteLock readWriteLock = new ReentrantReadWriteLock(true);
+        this.readLock = readWriteLock.readLock();
+        this.writeLock = readWriteLock.writeLock();
         this.scores = BigInteger.ZERO;
         this.field = new Field(dimension);
         CellGenerator.setRandomFieldElements(field, 2);
@@ -48,6 +51,7 @@ public final class Model implements Externalizable, Publisher {
             out.writeObject(field);
             out.writeObject(scores);
             out.writeObject(history);
+            out.writeBoolean(gameIsOver);
             out.writeObject(subscribers);
         } finally {
             readLock.unlock();
@@ -63,6 +67,7 @@ public final class Model implements Externalizable, Publisher {
             @SuppressWarnings("unchecked")
             List<Memento> hist = (List<Memento>) in.readObject();
             this.history = hist;
+            this.gameIsOver = in.readBoolean();
             @SuppressWarnings("unchecked")
             Collection<Subscriber> subscribers = (Collection<Subscriber>) in.readObject();
             this.subscribers = subscribers;
@@ -232,6 +237,24 @@ public final class Model implements Externalizable, Publisher {
             return field.getFieldDimension();
         } finally {
             readLock.unlock();
+        }
+    }
+
+    public boolean gameIsOver() {
+        readLock.lock();
+        try{
+            return gameIsOver;
+        }finally {
+            readLock.unlock();
+        }
+    }
+
+    public void setGameIsOver(boolean gameIsOver) {
+        writeLock.lock();
+        try {
+            this.gameIsOver = gameIsOver;
+        }finally {
+            writeLock.unlock();
         }
     }
 
