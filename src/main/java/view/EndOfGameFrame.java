@@ -26,10 +26,10 @@ public final class EndOfGameFrame extends JFrame implements Subscriber {
     private Theme theme;
 
     @Autowired
-    public EndOfGameFrame(Theme theme) {
+    public EndOfGameFrame(Theme theme, StandardButton exitAndSaveButton) {
         this.theme = theme;
         this.restartButton = new StandardButton("Restart", theme, null);
-        this.exitButton = new StandardButton("Exit", theme, null);
+        this.exitButton = exitAndSaveButton;
         styleComponents();
         configComponents();
         constructWindow();

@@ -1,7 +1,10 @@
 package config;
 
+import command.ExitAndSaveCommand;
+import command.ExitCommand;
 import command.MoveBackCommand;
-import controller.MoveBackController;
+import controller.exit.ExitController;
+import controller.moveBack.MoveBackController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -46,9 +49,24 @@ public class ViewConfig {
     @Bean
     public StandardButton moveBackButton() {
         MoveBackController moveBackController = applicationContext.getBean("moveBackController", MoveBackController.class);
-        return new StandardButton("Move back", theme(), new MoveBackCommand(moveBackController));
+        Theme theme = applicationContext.getBean("theme", Theme.class);
+        return new StandardButton("Move back", theme, new MoveBackCommand(moveBackController));
     }
-        
+
+    @Bean
+    public StandardButton exitAndSaveButton(){
+        ExitController exitController = applicationContext.getBean("exitController", ExitController.class);
+        Theme theme = applicationContext.getBean("theme", Theme.class);
+        return new StandardButton("Exit", theme, new ExitAndSaveCommand(exitController));
+    }
+
+    @Bean
+    public StandardButton exitButton() {
+        ExitController exitController = applicationContext.getBean("exitController", ExitController.class);
+        Theme theme = applicationContext.getBean("theme", Theme.class);
+        return new StandardButton("Exit", theme, new ExitCommand(exitController));
+    }
+
     private Theme loadTheme(String path) {
         Properties properties = new Properties();
         try (BufferedReader bufferedReader = Files.newBufferedReader(

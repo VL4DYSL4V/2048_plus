@@ -1,4 +1,4 @@
-package controller;
+package controller.shift;
 
 import entity.Coordinates2D;
 import entity.Field;

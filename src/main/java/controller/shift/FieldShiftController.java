@@ -1,4 +1,4 @@
-package controller;
+package controller.shift;
 
 import enums.Direction;
 

@@ -128,7 +128,7 @@ public final class FieldCanvas extends Canvas {
     }
 
     private void drawField(Graphics g) {
-        Field field = model.getField().copy();
+        Field field = model.getField();
         FieldDimension dimension = field.getFieldDimension();
         for (int i = 0; i < dimension.getHeight(); i++) {
             for (FieldElement element : field.getRow(i)) {

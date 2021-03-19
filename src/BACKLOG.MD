@@ -19,10 +19,11 @@ which can be executed after call Model.replaceState(Model another)
 18) Create controller to handle restarting game 
 19) Create controller to handle moving back 
 20) Create controller to handle navigation between windows
-21) Create controller to handle exit
+++++ 21) Create controller to handle exit
 22) ScoreLabel.representation() uses deprecated method Toolkit.getDefaultToolkit().getFontMetrics
 ++++ 23) Create enum Event 
 ++++ 24) Eliminate EndOfGameException by modifying Observer pattern to pass Event instances
 25) Change logic of obtaining Theme object: it must be stored in some kind of RenderingContext
 26) Move theme loading into some theme dao
+27) Create class GameModel to store only game information: field, scores and history
 

@@ -1,6 +1,6 @@
 package command;
 
-import controller.MoveBackController;
+import controller.moveBack.MoveBackController;
 
 public final class MoveBackCommand implements Command {
 

@@ -1,6 +1,8 @@
 package main;
 
 import config.AppConfig;
+import controller.exit.ExitController;
+import controller.exit.ExitControllerImpl;
 import entity.Field;
 import entity.FieldElement;
 import model.Model;
@@ -11,6 +13,9 @@ import view.GameFrame;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
 
@@ -41,6 +46,7 @@ public class Main {
         Model model = context.getBean("model", Model.class);
         model.subscribe(gameFrame);
         model.subscribe(endOfGameFrame);
+
         SwingUtilities.invokeLater(() -> gameFrame.setVisible(true));
 
     }

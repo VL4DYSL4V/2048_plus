@@ -1,6 +1,6 @@
 package view.listener;
 
-import controller.FieldShiftController;
+import controller.shift.FieldShiftController;
 import enums.Direction;
 import org.springframework.stereotype.Component;
 

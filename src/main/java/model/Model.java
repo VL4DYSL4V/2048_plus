@@ -8,10 +8,7 @@ import observer.event.EventType;
 import util.CellGenerator;
 
 import javax.annotation.concurrent.ThreadSafe;
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.*;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -25,11 +22,12 @@ public final class Model implements Externalizable, Publisher {
     private BigInteger scores;
     private List<Memento> history;
     private boolean gameIsOver = false;
-    private static final int MAX_HISTORY_SIZE = 3;
     private Collection<Subscriber> subscribers = new HashSet<>();
 
     private final Lock readLock;
     private final Lock writeLock;
+
+    private static final int MAX_HISTORY_SIZE = 3;
 
     public Model() {
         this(FieldDimension.FOUR_AND_FOUR);
@@ -52,8 +50,6 @@ public final class Model implements Externalizable, Publisher {
             out.writeObject(field);
             out.writeObject(scores);
             out.writeObject(history);
-            out.writeBoolean(gameIsOver);
-            out.writeObject(subscribers);
         } finally {
             readLock.unlock();
         }
@@ -68,10 +64,6 @@ public final class Model implements Externalizable, Publisher {
             @SuppressWarnings("unchecked")
             List<Memento> hist = (List<Memento>) in.readObject();
             this.history = hist;
-            this.gameIsOver = in.readBoolean();
-            @SuppressWarnings("unchecked")
-            Collection<Subscriber> subscribers = (Collection<Subscriber>) in.readObject();
-            this.subscribers = subscribers;
         } finally {
             writeLock.unlock();
         }
@@ -109,20 +101,18 @@ public final class Model implements Externalizable, Publisher {
         }
     }
 
-    public final class Memento {
+    public final class Memento implements Serializable {
 
         private final BigInteger scores;
         private final Field field;
-        private final List<Memento> history;
-        private final boolean gameIsOver;
 
-        public Memento(BigInteger scores, Field field, List<Memento> history, boolean gameIsOver) {
+        private static final long serialVersionUID = 5761738890498234L;
+
+        public Memento(BigInteger scores, Field field) {
             readLock.lock();
             try {
                 this.scores = scores;
                 this.field = field.copy();
-                this.history = new LinkedList<>(history);
-                this.gameIsOver = gameIsOver;
             } finally {
                 readLock.unlock();
             }
@@ -133,29 +123,27 @@ public final class Model implements Externalizable, Publisher {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Memento memento = (Memento) o;
-            return gameIsOver == memento.gameIsOver &&
-                    Objects.equals(scores, memento.scores) &&
-                    Objects.equals(field, memento.field) &&
-                    Objects.equals(history, memento.history);
+            return  Objects.equals(scores, memento.scores) &&
+                    Objects.equals(field, memento.field);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(scores, field, history, gameIsOver);
+            return Objects.hash(scores, field, gameIsOver);
         }
+
     }
 
-    /**
-     * Method is designed to replace the entire state of this object with state of {@param another}
+      /**
+     * Method is designed to replace the game-concerning state of this object with state of {@param another}
+       * Parallel invocation of this.replaceState(another) and another.replaceState(this) may cause deadlock
      **/
     public void replaceState(Model another) {
         writeLock.lock();
         try {
-            Memento anotherMemento = another.save();
-            this.scores = anotherMemento.scores;
-            this.field = anotherMemento.field;
-            this.history = anotherMemento.history;
-            this.gameIsOver = anotherMemento.gameIsOver;
+            this.scores = another.getScores();
+            this.field = another.getField();
+            this.history = another.getHistory();
         } finally {
             writeLock.unlock();
         }
@@ -165,7 +153,7 @@ public final class Model implements Externalizable, Publisher {
     private Memento save() {
         readLock.lock();
         try {
-            return new Memento(scores, field, history, gameIsOver);
+            return new Memento(scores, field);
         } finally {
             readLock.unlock();
         }
@@ -178,9 +166,9 @@ public final class Model implements Externalizable, Publisher {
         writeLock.lock();
         try {
             if (this.field.getFieldDimension() == field.getFieldDimension()) {
-                Memento memento = new Memento(this.scores, this.field, history, gameIsOver);
+                Memento memento = new Memento(this.scores, this.field);
                 saveHistory(memento);
-                this.field = field;
+                this.field = field.copy();
                 this.scores = this.scores.add(scoresToAdd);
             }
         } finally {
@@ -211,7 +199,6 @@ public final class Model implements Externalizable, Publisher {
             Memento last = history.remove(lastIndex);
             this.scores = last.scores;
             this.field = last.field;
-            this.gameIsOver = last.gameIsOver;
         } finally {
             writeLock.unlock();
         }
@@ -263,6 +250,15 @@ public final class Model implements Externalizable, Publisher {
             }
         } finally {
             writeLock.unlock();
+        }
+    }
+
+    private List<Memento> getHistory(){
+        readLock.lock();
+        try {
+            return history;
+        } finally {
+            readLock.unlock();
         }
     }
 
