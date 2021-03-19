@@ -17,3 +17,4 @@ which can be executed after call Model.replaceState(Model another)
 restarting game, moving back, shifting field and navigation between windows
 16) ScoreLabel.representation() uses deprecated method Toolkit.getDefaultToolkit().getFontMetrics
 17) Handle EndOfGameException in FieldMovementListener.keyPressed
+18) Subscribe components to model

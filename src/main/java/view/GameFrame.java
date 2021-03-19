@@ -1,7 +1,8 @@
 package view;
 
 import controller.FieldShiftController;
-import entity.Model;
+import model.Model;
+import observer.Subscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ import javax.swing.*;
 import java.awt.*;
 
 @Component
-public final class GameFrame extends JFrame {
+public final class GameFrame extends JFrame implements Subscriber {
 
     private final JPanel rootPanel = new JPanel();
     private final JPanel controlPanel = new JPanel();
@@ -27,13 +28,11 @@ public final class GameFrame extends JFrame {
     private final ScoreLabel scoreLabel;
     private final FieldCanvas fieldCanvas;
 
-    private final Model model;
     private Theme theme;
 
     @Autowired
     public GameFrame(Model model, FieldShiftController fieldShiftController,
                      @Qualifier("theme") Theme theme) {
-        this.model = model;
         this.theme = theme;
         this.moveBackButton = new StandardButton("Move back", theme);
         this.toMenuButton = new StandardButton("Menu", theme);
@@ -82,6 +81,7 @@ public final class GameFrame extends JFrame {
         configBackButton();
         configToMenuButton();
         configRestartButton();
+        configFieldCanvas();
     }
 
     private void styleComponents() {
@@ -89,6 +89,10 @@ public final class GameFrame extends JFrame {
         styleRootPanel();
         styleControlPanel();
         styleFieldCanvas();
+    }
+
+    private void configFieldCanvas(){
+        fieldCanvas.setFocusable(false);
     }
 
     private void styleFieldCanvas() {
@@ -150,9 +154,11 @@ public final class GameFrame extends JFrame {
         setResizable(false);
     }
 
-    public void updateScoresAndField(){
-        scoreLabel.updateValue();
-        fieldCanvas.updateField();
+    @Override
+    public void reactOnNotification() {
+//        SwingUtilities.invokeLater(() -> {
+            scoreLabel.updateValue();
+            fieldCanvas.updateField();
+//        });
     }
-
 }

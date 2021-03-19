@@ -2,7 +2,7 @@ package view.component;
 
 import entity.Field;
 import entity.FieldElement;
-import entity.Model;
+import model.Model;
 import enums.FieldDimension;
 import view.theme.Theme;
 

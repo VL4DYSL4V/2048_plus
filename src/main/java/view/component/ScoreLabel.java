@@ -1,6 +1,6 @@
 package view.component;
 
-import entity.Model;
+import model.Model;
 import view.enums.Fonts;
 import view.enums.FrameSize;
 import view.theme.Theme;

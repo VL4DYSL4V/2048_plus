@@ -1,6 +1,9 @@
-package entity;
+package model;
 
+import entity.Field;
 import enums.FieldDimension;
+import observer.Publisher;
+import observer.Subscriber;
 import util.CellGenerator;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -9,30 +12,29 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.math.BigInteger;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @ThreadSafe
-public final class Model implements Externalizable {
+public final class Model implements Externalizable, Publisher {
 
     private Field field;
     private BigInteger scores;
     private List<Memento> history;
     private static final int MAX_HISTORY_SIZE = 3;
+    private Collection<Subscriber> subscribers = new HashSet<>();
 
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock(true);
     private final Lock readLock = readWriteLock.readLock();
     private final Lock writeLock = readWriteLock.writeLock();
 
-    public Model(){
+    public Model() {
         this(FieldDimension.FOUR_AND_FOUR);
     }
 
-    public Model(FieldDimension dimension){
+    public Model(FieldDimension dimension) {
         this.scores = BigInteger.ZERO;
         this.field = new Field(dimension);
         CellGenerator.setRandomFieldElements(field, 2);
@@ -42,11 +44,12 @@ public final class Model implements Externalizable {
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         readLock.lock();
-        try{
+        try {
             out.writeObject(field);
             out.writeObject(scores);
             out.writeObject(history);
-        }finally {
+            out.writeObject(subscribers);
+        } finally {
             readLock.unlock();
         }
     }
@@ -54,14 +57,49 @@ public final class Model implements Externalizable {
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         writeLock.lock();
-        try{
+        try {
             this.field = (Field) in.readObject();
             this.scores = (BigInteger) in.readObject();
             @SuppressWarnings("unchecked")
             List<Memento> hist = (List<Memento>) in.readObject();
             this.history = hist;
-        }finally {
+            @SuppressWarnings("unchecked")
+            Collection<Subscriber> subscribers = (Collection<Subscriber>) in.readObject();
+            this.subscribers = subscribers;
+        } finally {
             writeLock.unlock();
+        }
+    }
+
+    @Override
+    public void subscribe(Subscriber subscriber) {
+        writeLock.lock();
+        try {
+            subscribers.add(subscriber);
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    @Override
+    public void unsubscribe(Subscriber subscriber) {
+        writeLock.lock();
+        try {
+            subscribers.remove(subscriber);
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    @Override
+    public void notifySubscribers() {
+        readLock.lock();
+        try {
+            for (Subscriber subscriber : subscribers) {
+                subscriber.reactOnNotification();
+            }
+        } finally {
+            readLock.unlock();
         }
     }
 
@@ -99,7 +137,8 @@ public final class Model implements Externalizable {
 
     }
 
-    /** Method is designed to replace the entire state of this object with state of {@param another}
+    /**
+     * Method is designed to replace the entire state of this object with state of {@param another}
      **/
     public void replaceState(Model another) {
         writeLock.lock();
@@ -111,83 +150,87 @@ public final class Model implements Externalizable {
         } finally {
             writeLock.unlock();
         }
+        notifySubscribers();
     }
 
     private Memento save() {
         readLock.lock();
         try {
             return new Memento(scores, field, history);
-        }finally {
+        } finally {
             readLock.unlock();
         }
     }
 
-    /**This method is designed to update state of this object and change
-     * */
-    public void updateAndSaveHistory(Field field, BigInteger scoresToAdd){
+    /**
+     * This method is designed to update state of this object and change
+     */
+    public void updateAndSaveHistory(Field field, BigInteger scoresToAdd) {
         writeLock.lock();
-        try{
-            if(this.field.getFieldDimension() == field.getFieldDimension()) {
+        try {
+            if (this.field.getFieldDimension() == field.getFieldDimension()) {
                 Memento memento = new Memento(this.scores, this.field, history);
                 saveHistory(memento);
                 this.field = field;
                 this.scores = this.scores.add(scoresToAdd);
             }
-        }finally {
+        } finally {
             writeLock.unlock();
         }
+        notifySubscribers();
     }
 
-    private void saveHistory(Memento memento){
+    private void saveHistory(Memento memento) {
         writeLock.lock();
         try {
-            if(history.size() == MAX_HISTORY_SIZE){
+            if (history.size() == MAX_HISTORY_SIZE) {
                 history.remove(0);
             }
             history.add(memento);
-        }finally {
+        } finally {
             writeLock.unlock();
         }
     }
 
-    public void restore(){
+    public void restore() {
         writeLock.lock();
-        try{
-            if(history.isEmpty()){
+        try {
+            if (history.isEmpty()) {
                 return;
             }
             int lastIndex = history.size() - 1;
             Memento last = history.remove(lastIndex);
             this.scores = last.scores;
             this.field = last.field;
-        }finally {
+        } finally {
             writeLock.unlock();
         }
+        notifySubscribers();
     }
 
-    public BigInteger getScores(){
+    public BigInteger getScores() {
         readLock.lock();
-        try{
+        try {
             return scores;
-        }finally {
+        } finally {
             readLock.unlock();
         }
     }
 
-    public Field getField(){
+    public Field getField() {
         readLock.lock();
-        try{
+        try {
             return field.copy();
-        }finally {
+        } finally {
             readLock.unlock();
         }
     }
 
-    public FieldDimension getFieldDimension(){
+    public FieldDimension getFieldDimension() {
         readLock.lock();
-        try{
+        try {
             return field.getFieldDimension();
-        }finally {
+        } finally {
             readLock.unlock();
         }
     }
@@ -201,8 +244,9 @@ public final class Model implements Externalizable {
                     ", scores=" + scores +
                     ", history=" + history +
                     '}';
-        }finally {
+        } finally {
             readLock.unlock();
         }
     }
+
 }
