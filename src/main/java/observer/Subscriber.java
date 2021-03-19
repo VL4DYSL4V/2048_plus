@@ -1,7 +1,9 @@
 package observer;
 
+import observer.event.EventType;
+
 public interface Subscriber {
 
-    void reactOnNotification();
+    void reactOnNotification(EventType eventType);
 
 }

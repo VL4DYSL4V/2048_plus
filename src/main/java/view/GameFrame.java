@@ -3,6 +3,7 @@ package view;
 import controller.FieldShiftController;
 import model.Model;
 import observer.Subscriber;
+import observer.event.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -155,10 +156,12 @@ public final class GameFrame extends JFrame implements Subscriber {
     }
 
     @Override
-    public void reactOnNotification() {
-        SwingUtilities.invokeLater(() -> {
-            scoreLabel.updateValue();
-            fieldCanvas.updateField();
-        });
+    public void reactOnNotification(EventType eventType) {
+        if(eventType == EventType.MODEL_CHANGED) {
+            SwingUtilities.invokeLater(() -> {
+                scoreLabel.updateValue();
+                fieldCanvas.updateField();
+            });
+        }
     }
 }

@@ -4,6 +4,7 @@ import entity.Field;
 import enums.FieldDimension;
 import observer.Publisher;
 import observer.Subscriber;
+import observer.event.EventType;
 import util.CellGenerator;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -97,11 +98,11 @@ public final class Model implements Externalizable, Publisher {
     }
 
     @Override
-    public void notifySubscribers() {
+    public void notifySubscribers(EventType eventType) {
         readLock.lock();
         try {
             for (Subscriber subscriber : subscribers) {
-                subscriber.reactOnNotification();
+                subscriber.reactOnNotification(eventType);
             }
         } finally {
             readLock.unlock();
@@ -155,7 +156,7 @@ public final class Model implements Externalizable, Publisher {
         } finally {
             writeLock.unlock();
         }
-        notifySubscribers();
+        notifySubscribers(EventType.MODEL_CHANGED);
     }
 
     private Memento save() {
@@ -182,7 +183,7 @@ public final class Model implements Externalizable, Publisher {
         } finally {
             writeLock.unlock();
         }
-        notifySubscribers();
+        notifySubscribers(EventType.MODEL_CHANGED);
     }
 
     private void saveHistory(Memento memento) {
@@ -210,7 +211,7 @@ public final class Model implements Externalizable, Publisher {
         } finally {
             writeLock.unlock();
         }
-        notifySubscribers();
+        notifySubscribers(EventType.MODEL_CHANGED);
     }
 
     public BigInteger getScores() {
@@ -242,9 +243,9 @@ public final class Model implements Externalizable, Publisher {
 
     public boolean gameIsOver() {
         readLock.lock();
-        try{
+        try {
             return gameIsOver;
-        }finally {
+        } finally {
             readLock.unlock();
         }
     }
@@ -253,7 +254,10 @@ public final class Model implements Externalizable, Publisher {
         writeLock.lock();
         try {
             this.gameIsOver = gameIsOver;
-        }finally {
+            if (gameIsOver) {
+                notifySubscribers(EventType.GAME_OVER);
+            }
+        } finally {
             writeLock.unlock();
         }
     }
