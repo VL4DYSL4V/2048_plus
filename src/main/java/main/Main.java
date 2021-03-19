@@ -6,6 +6,7 @@ import entity.FieldElement;
 import model.Model;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import view.EndOfGameFrame;
 import view.GameFrame;
 
 import javax.swing.*;
@@ -36,8 +37,10 @@ public class Main {
 //
 //        System.exit(0);
         GameFrame gameFrame = context.getBean("gameFrame", GameFrame.class);
+        EndOfGameFrame endOfGameFrame = context.getBean("endOfGameFrame", EndOfGameFrame.class);
         Model model = context.getBean("model", Model.class);
         model.subscribe(gameFrame);
+        model.subscribe(endOfGameFrame);
         SwingUtilities.invokeLater(() -> gameFrame.setVisible(true));
 
     }

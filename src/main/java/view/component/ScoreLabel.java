@@ -18,7 +18,6 @@ public final class ScoreLabel extends JLabel {
         this.model = model;
         updateValue();
         setForeground(theme.getForeground());
-        setOpaque(false);
         setFont(Fonts.STANDARD_FONT.getFont());
     }
 
