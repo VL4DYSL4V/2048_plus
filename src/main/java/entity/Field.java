@@ -19,14 +19,16 @@ public final class Field implements Serializable {
     private final List<List<FieldElement>> fieldElements = new ArrayList<>();
     private final FieldDimension fieldDimension;
 
-    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock(true);
-    private final Lock readLock = readWriteLock.readLock();
-    private final Lock writeLock = readWriteLock.writeLock();
+    private final Lock readLock;
+    private final Lock writeLock;
 
     private static final long serialVersionUID = 1726351751L;
 
     public Field(FieldDimension fieldDimension) {
         this.fieldDimension = fieldDimension;
+        ReadWriteLock readWriteLock = new ReentrantReadWriteLock(true);
+        this.readLock = readWriteLock.readLock();
+        this.writeLock = readWriteLock.writeLock();
         reset();
     }
 
@@ -154,7 +156,7 @@ public final class Field implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(fieldElements, fieldDimension, readWriteLock, readLock, writeLock);
+        return Objects.hash(fieldElements, fieldDimension, readLock, writeLock);
     }
 
     @Override
