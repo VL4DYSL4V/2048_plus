@@ -1,7 +1,7 @@
 package config;
 
-import dao.FileSystemModelDao;
-import dao.ModelDao;
+import dao.model.FileSystemModelDao;
+import dao.model.ModelDao;
 import enums.FieldDimension;
 import exception.FetchException;
 import model.Model;

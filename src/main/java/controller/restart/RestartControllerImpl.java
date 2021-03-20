@@ -1,6 +1,6 @@
 package controller.restart;
 
-import dao.ModelDao;
+import dao.model.ModelDao;
 import exception.StoreException;
 import model.Model;
 import org.springframework.stereotype.Controller;
