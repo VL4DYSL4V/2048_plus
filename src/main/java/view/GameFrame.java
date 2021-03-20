@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import view.component.FieldCanvas;
 import view.component.ScoreLabel;
 import view.component.StandardButton;
+import view.context.ThemeHolder;
 import view.enums.FrameSize;
 import view.theme.Theme;
 import view.util.ScreenUtils;
@@ -28,21 +29,22 @@ public final class GameFrame extends JFrame implements Subscriber {
     private final ScoreLabel scoreLabel;
     private final FieldCanvas fieldCanvas;
 
-    private Theme theme;
+    private final ThemeHolder themeHolder;
 
     @Autowired
     public GameFrame(Model model, KeyListener fieldMovementListener,
                      StandardButton moveBackButton,
                      StandardButton restartButton,
-                     @Qualifier("theme") Theme theme) {
-        this.theme = theme;
+                     @Qualifier("renderingContext") ThemeHolder themeHolder) {
+        this.themeHolder = themeHolder;
         this.moveBackButton = moveBackButton;
-        this.toMenuButton = new StandardButton("Menu", theme, null);
+        Theme theme = themeHolder.getTheme();
+        this.toMenuButton = new StandardButton("Menu", themeHolder, null);
         this.restartButton = restartButton;
-        this.scoreLabel = new ScoreLabel(model, theme);
-        this.fieldCanvas = new FieldCanvas(model, theme);
+        this.scoreLabel = new ScoreLabel(model, themeHolder);
+        this.fieldCanvas = new FieldCanvas(model, themeHolder);
         configComponents();
-        styleComponents();
+        styleComponents(theme);
         constructWindow();
         addKeyListener(fieldMovementListener);
     }
@@ -83,25 +85,25 @@ public final class GameFrame extends JFrame implements Subscriber {
         configFieldCanvas();
     }
 
-    private void styleComponents() {
+    private void styleComponents(Theme theme) {
         styleFrame();
-        styleRootPanel();
-        styleControlPanel();
-        styleFieldCanvas();
+        styleRootPanel(theme);
+        styleControlPanel(theme);
+        styleFieldCanvas(theme);
     }
 
     private void configFieldCanvas() {
         fieldCanvas.setFocusable(false);
     }
 
-    private void styleFieldCanvas() {
+    private void styleFieldCanvas(Theme theme) {
         fieldCanvas.setBackground(theme.getBackground());
         fieldCanvas.setForeground(theme.getForeground());
         Dimension frameDimension = FrameSize.GAME_FRAME.getDimension();
         fieldCanvas.setPreferredSize(new Dimension(frameDimension.width, Math.min(frameDimension.width, frameDimension.height)));
     }
 
-    private void styleControlPanel() {
+    private void styleControlPanel(Theme theme) {
         controlPanel.setBackground(theme.getBackground());
         controlPanel.setForeground(theme.getForeground());
         controlPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -113,7 +115,7 @@ public final class GameFrame extends JFrame implements Subscriber {
         controlPanel.setLayout(new GridBagLayout());
     }
 
-    private void styleRootPanel() {
+    private void styleRootPanel(Theme theme) {
         rootPanel.setBackground(theme.getBackground());
         rootPanel.setForeground(theme.getForeground());
         rootPanel.setSize(FrameSize.GAME_FRAME.getDimension());

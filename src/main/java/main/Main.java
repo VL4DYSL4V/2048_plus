@@ -22,25 +22,6 @@ public class Main {
     public static void main(String[] args) throws Throwable {
 
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-//        ModelDao modelDao = context.getBean("fileSystemModelDao", FileSystemModelDao.class);
-//        Model model = modelDao.getByDimension(FieldDimension.FOUR_AND_FOUR);
-//        FieldShiftController controller = new FieldShiftControllerImpl(model);
-//        printResult(model);
-//        controller.shift(Direction.DOWN);
-////        Thread.sleep(2000);
-//        printResult(model);
-//        model.replaceState(new Model(FieldDimension.FIVE_AND_FIVE));
-//        printResult(model);
-//        controller.cancelShifts();
-//
-//        controller.shift(Direction.DOWN);
-////        Thread.sleep(2000);
-//        printResult(model);
-//        controller.shift(Direction.DOWN);
-////        Thread.sleep(2000);
-//        printResult(model);
-//
-//        System.exit(0);
         GameFrame gameFrame = context.getBean("gameFrame", GameFrame.class);
         EndOfGameFrame endOfGameFrame = context.getBean("endOfGameFrame", EndOfGameFrame.class);
         Model model = context.getBean("model", Model.class);

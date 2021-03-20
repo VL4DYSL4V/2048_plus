@@ -1,6 +1,7 @@
 package view.component;
 
 import model.Model;
+import view.context.ThemeHolder;
 import view.enums.Fonts;
 import view.enums.FrameSize;
 import view.theme.Theme;
@@ -12,11 +13,17 @@ public final class ScoreLabel extends JLabel {
 
     private static final String SCORES = "Scores: ";
     private static final String END_OF_TOO_LONG_SCORES = "*10^";
+    private final ThemeHolder themeHolder;
     private final Model model;
 
-    public ScoreLabel(Model model, Theme theme) {
+    public ScoreLabel(Model model, ThemeHolder themeHolder) {
         this.model = model;
+        this.themeHolder = themeHolder;
         updateValue();
+        style(themeHolder.getTheme());
+    }
+
+    private void style(Theme theme){
         setForeground(theme.getForeground());
         setFont(Fonts.STANDARD_FONT.getFont());
     }

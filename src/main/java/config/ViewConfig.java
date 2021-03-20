@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import view.component.StandardButton;
+import view.context.RenderingContext;
+import view.context.ThemeHolder;
 import view.theme.Theme;
 
 @Configuration
@@ -40,32 +42,40 @@ public class ViewConfig {
     }
 
     @Bean
+    public RenderingContext renderingContext(){
+        RenderingContext renderingContext = new RenderingContext();
+        Theme theme = applicationContext.getBean("theme", Theme.class);
+        renderingContext.setTheme(theme);
+        return renderingContext;
+    }
+
+    @Bean
     public StandardButton moveBackButton() {
         MoveBackController moveBackController = applicationContext.getBean("moveBackController", MoveBackController.class);
-        Theme theme = applicationContext.getBean("theme", Theme.class);
-        return new StandardButton("Move back", theme, new MoveBackCommand(moveBackController));
+        ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
+        return new StandardButton("Move back", themeHolder, new MoveBackCommand(moveBackController));
     }
 
     @Bean
     public StandardButton exitAndSaveButton() {
         ExitController exitController = applicationContext.getBean("exitController", ExitController.class);
-        Theme theme = applicationContext.getBean("theme", Theme.class);
-        return new StandardButton("Exit", theme, new ExitAndSaveCommand(exitController));
+        ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
+        return new StandardButton("Exit", themeHolder, new ExitAndSaveCommand(exitController));
     }
 
     @Bean
     public StandardButton exitButton() {
         ExitController exitController = applicationContext.getBean("exitController", ExitController.class);
-        Theme theme = applicationContext.getBean("theme", Theme.class);
-        return new StandardButton("Exit", theme, new ExitCommand(exitController));
+        ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
+        return new StandardButton("Exit", themeHolder, new ExitCommand(exitController));
     }
 
     @Bean
     @Scope("prototype")
     public StandardButton restartButton() {
         RestartController restartController = applicationContext.getBean("restartController", RestartControllerImpl.class);
-        Theme theme = applicationContext.getBean("theme", Theme.class);
-        return new StandardButton("Restart", theme, new RestartCommand(restartController));
+        ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
+        return new StandardButton("Restart", themeHolder, new RestartCommand(restartController));
     }
 
 }

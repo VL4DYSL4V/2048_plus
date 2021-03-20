@@ -4,6 +4,7 @@ import entity.Field;
 import entity.FieldElement;
 import model.Model;
 import enums.FieldDimension;
+import view.context.ThemeHolder;
 import view.theme.Theme;
 
 import java.awt.*;
@@ -13,17 +14,17 @@ import java.util.Map;
 public final class FieldCanvas extends Canvas {
 
     private final Model model;
-    private final RenderingContext renderingContext;
-    private Theme theme;
+    private final FieldRenderingContext fieldRenderingContext;
+    private final ThemeHolder themeHolder;
     private boolean firstRendered = true;
 
-    public FieldCanvas(Model model, Theme theme) {
+    public FieldCanvas(Model model, ThemeHolder themeHolder) {
         this.model = model;
-        this.theme = theme;
-        this.renderingContext = new RenderingContext(model.getFieldDimension());
+        this.themeHolder = themeHolder;
+        this.fieldRenderingContext = new FieldRenderingContext(model.getFieldDimension());
     }
 
-    private final class RenderingContext {
+    private final class FieldRenderingContext {
 
         private FieldDimension fieldDimension;
         private final Map<Integer, Integer> indexToRectangleX = new HashMap<>();
@@ -36,7 +37,7 @@ public final class FieldCanvas extends Canvas {
         private int centerX;
         private int centerY;
 
-        public RenderingContext(FieldDimension fieldDimension) {
+        public FieldRenderingContext(FieldDimension fieldDimension) {
             this.fieldDimension = fieldDimension;
         }
 
@@ -55,6 +56,7 @@ public final class FieldCanvas extends Canvas {
 
         private void setupPowerToScaledImage(){
             powerToScaledImage.clear();
+            Theme theme = themeHolder.getTheme();
             Map<Integer, Image> powerToImageMap = theme.powerToImageMap();
             for(Integer power: powerToImageMap.keySet()){
                 Image unscaled = powerToImageMap.get(power);
@@ -121,7 +123,7 @@ public final class FieldCanvas extends Canvas {
     public void paint(Graphics g) {
         if(firstRendered){
             firstRendered = false;
-            renderingContext.updateDueToChanges();
+            fieldRenderingContext.updateDueToChanges();
         }
         super.paint(g);
         drawField(g);
@@ -132,9 +134,9 @@ public final class FieldCanvas extends Canvas {
         FieldDimension dimension = field.getFieldDimension();
         for (int i = 0; i < dimension.getHeight(); i++) {
             for (FieldElement element : field.getRow(i)) {
-                int x = renderingContext.getRectangleX(element.getCoordinates2D().getX());
-                int y = renderingContext.getRectangleY(element.getCoordinates2D().getY());
-                Image image = renderingContext.getImage(element.getValue());
+                int x = fieldRenderingContext.getRectangleX(element.getCoordinates2D().getX());
+                int y = fieldRenderingContext.getRectangleY(element.getCoordinates2D().getY());
+                Image image = fieldRenderingContext.getImage(element.getValue());
                 g.drawImage(image, x, y, this);
             }
         }

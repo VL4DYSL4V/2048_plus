@@ -4,8 +4,10 @@ import model.Model;
 import observer.Subscriber;
 import observer.event.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import view.component.StandardButton;
+import view.context.ThemeHolder;
 import view.enums.Fonts;
 import view.enums.FrameSize;
 import view.theme.Theme;
@@ -24,16 +26,18 @@ public final class EndOfGameFrame extends JFrame implements Subscriber {
     private final JButton restartButton;
     private final JButton exitButton;
 
-    private Theme theme;
     private final Model model;
+    private final ThemeHolder themeHolder;
 
     @Autowired
-    public EndOfGameFrame(Model model, Theme theme, StandardButton exitAndSaveButton, StandardButton restartButton) {
-        this.theme = theme;
+    public EndOfGameFrame(Model model, @Qualifier("renderingContext") ThemeHolder themeHolder,
+                          StandardButton exitAndSaveButton, StandardButton restartButton) {
         this.restartButton = restartButton;
         this.exitButton = exitAndSaveButton;
         this.model = model;
-        styleComponents();
+        this.themeHolder = themeHolder;
+        Theme theme = themeHolder.getTheme();
+        styleComponents(theme);
         configComponents();
         constructWindow();
     }
@@ -60,19 +64,19 @@ public final class EndOfGameFrame extends JFrame implements Subscriber {
         configRootPanel();
     }
 
-    private void styleComponents() {
+    private void styleComponents(Theme theme) {
         styleFrame();
-        styleRootPanel();
-        styleMessageLabel();
+        styleRootPanel(theme);
+        styleMessageLabel(theme);
     }
 
-    private void styleMessageLabel() {
+    private void styleMessageLabel(Theme theme) {
         messageLabel.setForeground(theme.getForeground());
         messageLabel.setFont(Fonts.STANDARD_FONT.getFont());
         messageLabel.setText(END_OF_GAME_MESSAGE);
     }
 
-    private void styleRootPanel() {
+    private void styleRootPanel(Theme theme) {
         rootPanel.setBackground(theme.getBackground());
         rootPanel.setForeground(theme.getForeground());
         rootPanel.setSize(FrameSize.END_OF_GAME_FRAME.getDimension());
@@ -98,12 +102,15 @@ public final class EndOfGameFrame extends JFrame implements Subscriber {
 
     @Override
     public void reactOnNotification(EventType eventType) {
-        if(eventType == EventType.MODEL_CHANGED){
-            if(! this.isVisible() && model.gameIsOver()){
-                setVisible(true);
-            }else if(!model.gameIsOver()){
-                setVisible(false);
-            }
+        if (eventType == EventType.MODEL_CHANGED) {
+            SwingUtilities.invokeLater(() -> {
+                boolean gameIsOver = model.gameIsOver();
+                if (gameIsOver && !this.isVisible()) {
+                    setVisible(true);
+                } else if (!model.gameIsOver()) {
+                    setVisible(false);
+                }
+            });
         }
     }
 
