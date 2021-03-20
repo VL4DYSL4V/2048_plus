@@ -23,7 +23,7 @@ public class AppConfig {
 
     @Bean
     public Model model() {
-        ModelDao modelDao = applicationContext.getBean("fileSystemModelDao", FileSystemModelDao.class);
+        ModelDao modelDao = applicationContext.getBean("modelDao", FileSystemModelDao.class);
         try {
             return modelDao.getByDimension(FieldDimension.FOUR_AND_FOUR);
         } catch (FetchException e) {

@@ -24,7 +24,7 @@ which can be executed after call Model.replaceState(Model another)
 ++++ 23) Create enum Event 
 ++++ 24) Eliminate EndOfGameException by modifying Observer pattern to pass Event instances
 25) Change logic of obtaining Theme object: it must be stored in some kind of RenderingContext
-26) Move theme loading into some ThemeDao
+++++ 26) Move theme loading into some ThemeDao
 27) Create class GameModel (immutable) to store only game information: field, scores and history
 28) Exit from EndOfGameForm should be exit to Menu
 29) Think about ModelDao threadSafety.

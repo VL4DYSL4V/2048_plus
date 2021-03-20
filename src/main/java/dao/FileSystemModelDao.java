@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 
-@Repository
+@Repository("modelDao")
 public final class FileSystemModelDao implements ModelDao {
 
     private final Map<FieldDimension, Path> repositories;

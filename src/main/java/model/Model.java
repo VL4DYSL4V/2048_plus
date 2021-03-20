@@ -130,7 +130,7 @@ public final class Model implements Externalizable, Publisher {
 
         @Override
         public int hashCode() {
-            return Objects.hash(scores, field, gameIsOver);
+            return Objects.hash(scores, field);
         }
 
     }
