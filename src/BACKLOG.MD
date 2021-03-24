@@ -1,7 +1,7 @@
 ++++ 1) Implement concept of storing only powers of 2 in a fieldElements.
 ++++ 2) Create threadsafe Model class, which must store: field, BigInteger scores and history
 ++++ 3) Crate ModelDao to persist Model somewhere;
-4) Names of files are tied to names of FieldDimension's instances; Ask what to do about it;
+++++ 4) Names of files are tied to names of FieldDimension's instances; Ask what to do about it;
 
 ++++ 5) Create FieldShiftingController interface and implementation;
 ++++ 6) You must add ability to cancel every model-modifying operation ;
@@ -32,7 +32,6 @@ which can be executed after call Model.replaceState(Model another);
 ++++ 27) Create class GameModel to store only game information: field, scores and history
 
 28) Exit from EndOfGameForm should be exit to Menu
-29) Think about ModelDao threadSafety.
- There is a vulnerability!! 27-th task contains an idea how to avoid it 
+++++ 29) Add auto-saving every 10 seconds;
 30) Style view components in Frames, not in viewConfig;
 ++++ 31) Make model support blocking on clint side;

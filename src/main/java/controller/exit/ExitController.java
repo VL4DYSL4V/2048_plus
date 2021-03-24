@@ -4,6 +4,6 @@ public interface ExitController {
 
     void exit();
 
-    void exitAndSave();
+    void exitAndSave(Runnable savingTask);
 
 }

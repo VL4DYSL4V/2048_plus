@@ -156,7 +156,7 @@ public final class Field implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(fieldElements, fieldDimension, readLock, writeLock);
+        return Objects.hash(fieldElements, fieldDimension);
     }
 
     @Override

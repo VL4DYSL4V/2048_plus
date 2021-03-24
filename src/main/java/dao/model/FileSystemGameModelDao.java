@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 
-@Repository("modelDao")
+@Repository("gameModelDao")
 public final class FileSystemGameModelDao implements GameModelDao {
 
     private final Map<FieldDimension, Path> repositories;

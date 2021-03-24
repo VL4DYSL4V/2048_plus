@@ -60,7 +60,8 @@ public class ViewConfig {
     public StandardButton exitAndSaveButton() {
         ExitController exitController = applicationContext.getBean("exitController", ExitController.class);
         ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
-        return new StandardButton("Exit", themeHolder, new ExitAndSaveCommand(exitController));
+        Runnable savingTask = applicationContext.getBean("savingTask", Runnable.class);
+        return new StandardButton("Exit", themeHolder, new ExitAndSaveCommand(exitController, savingTask));
     }
 
     @Bean

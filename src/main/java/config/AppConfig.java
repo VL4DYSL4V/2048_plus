@@ -9,9 +9,10 @@ import model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
+import task.SavingTask;
 
 @Configuration
-@ComponentScan({"controller", "dao", "view"})
+@ComponentScan({"controller", "dao", "view", "service"})
 @Import({RepositoryConfig.class, ViewConfig.class})
 public class AppConfig {
 
@@ -24,10 +25,10 @@ public class AppConfig {
 
     @Bean
     public Model model() {
-        GameModelDao gameModelDao = applicationContext.getBean("modelDao", FileSystemGameModelDao.class);
+        GameModelDao gameModelDao = applicationContext.getBean("gameModelDao", FileSystemGameModelDao.class);
         try {
-            GameModel gameModel = gameModelDao.getByDimension(FieldDimension.FOUR_AND_FOUR);
             Model model = new Model();
+            GameModel gameModel = gameModelDao.getByDimension(FieldDimension.FOUR_AND_FOUR);
             model.setGameModel(gameModel);
             return model;
         } catch (FetchException e) {
@@ -38,6 +39,13 @@ public class AppConfig {
     @Bean
     public ApplicationContext applicationContext() {
         return new AnnotationConfigApplicationContext(getClass());
+    }
+
+    @Bean
+    public Runnable savingTask(){
+        Model model = applicationContext.getBean("model", Model.class);
+        GameModelDao gameModelDao = applicationContext.getBean("gameModelDao", GameModelDao.class);
+        return new SavingTask(model, gameModelDao);
     }
 
 }

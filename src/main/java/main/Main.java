@@ -1,25 +1,22 @@
 package main;
 
 import config.AppConfig;
-import controller.exit.ExitController;
-import controller.exit.ExitControllerImpl;
 import entity.Field;
 import entity.FieldElement;
 import model.Model;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import service.GameSaver;
+import service.PeriodicalSavingService;
 import view.EndOfGameFrame;
 import view.GameFrame;
 
 import javax.swing.*;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Main {
 
-    public static void main(String[] args) throws Throwable {
+    public static void main(String[] args) {
 
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         GameFrame gameFrame = context.getBean("gameFrame", GameFrame.class);
@@ -29,14 +26,15 @@ public class Main {
         model.subscribe(endOfGameFrame);
 
         SwingUtilities.invokeLater(() -> gameFrame.setVisible(true));
-
+        PeriodicalSavingService gameSaver = context.getBean("gameSaver", GameSaver.class);
+        gameSaver.start();
     }
 
     private static void printResult(Model model) {
         StringBuilder sb = new StringBuilder(100);
         sb.append(model.getScores()).append('\n');
         Field f = model.getField();
-        for(int i = 0; i < f.getFieldDimension().getHeight(); i++){
+        for (int i = 0; i < f.getFieldDimension().getHeight(); i++) {
             List<FieldElement> row = f.getRow(i);
             for (FieldElement fieldElement : row) {
                 sb.append(fieldElement.getValue()).append('\t');
