@@ -1,9 +1,9 @@
 package dao.model;
 
-import model.Model;
 import enums.FieldDimension;
 import exception.FetchException;
 import exception.StoreException;
+import model.GameModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -15,39 +15,37 @@ import java.util.Collection;
 import java.util.Map;
 
 @Repository("modelDao")
-public final class FileSystemModelDao implements ModelDao {
+public final class FileSystemGameModelDao implements GameModelDao {
 
     private final Map<FieldDimension, Path> repositories;
 
     @Autowired
-    public FileSystemModelDao(@Qualifier("repositories") Map<FieldDimension, Path> repositories) {
+    public FileSystemGameModelDao(@Qualifier("repositories") Map<FieldDimension, Path> repositories) {
         this.repositories = repositories;
-        try{
+        try {
             createRepositories(repositories.values());
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    //TODO: WHAT IF after model.getFieldDimension() dimension (and state of model) will change!!!
-    public void save(Model model) throws StoreException {
-        Path path = repositories.get(model.getFieldDimension());
+    public void save(GameModel gameModel, FieldDimension fieldDimension) throws StoreException {
+        Path path = repositories.get(fieldDimension);
         if (path == null) {
             throw new StoreException("No such path");
         }
         try (FileOutputStream fileOutputStream = new FileOutputStream(path.toFile());
              BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(bufferedOutputStream)) {
-//            objectOutputStream.writeObject(model);
-            model.writeExternal(objectOutputStream);
+            gameModel.writeExternal(objectOutputStream);
         } catch (IOException e) {
             throw new StoreException(e);
         }
     }
 
     @Override
-    public Model getByDimension(FieldDimension fieldDimension) throws FetchException {
+    public GameModel getByDimension(FieldDimension fieldDimension) throws FetchException {
         Path path = repositories.get(fieldDimension);
         if (path == null) {
             throw new FetchException("No such path");
@@ -55,19 +53,19 @@ public final class FileSystemModelDao implements ModelDao {
         try (FileInputStream fileInputStream = new FileInputStream(path.toFile());
              BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
              ObjectInputStream objectInputStream = new ObjectInputStream(bufferedInputStream)) {
-            Model out = new Model();
+            GameModel out = new GameModel();
             out.readExternal(objectInputStream);
             return out;
-        } catch (EOFException e){
-            return new Model(fieldDimension);
-        }catch (IOException | ClassNotFoundException e) {
+        } catch (EOFException e) {
+            return new GameModel(fieldDimension);
+        } catch (IOException | ClassNotFoundException e) {
             throw new FetchException(e);
         }
     }
 
     private void createRepositories(Collection<Path> values) throws IOException {
         for (Path p : values) {
-            if (! Files.exists(p)) {
+            if (!Files.exists(p)) {
                 Files.createFile(p);
             }
         }

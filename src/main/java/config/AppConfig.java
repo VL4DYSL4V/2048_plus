@@ -1,9 +1,10 @@
 package config;
 
-import dao.model.FileSystemModelDao;
-import dao.model.ModelDao;
+import dao.model.FileSystemGameModelDao;
+import dao.model.GameModelDao;
 import enums.FieldDimension;
 import exception.FetchException;
+import model.GameModel;
 import model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -23,9 +24,12 @@ public class AppConfig {
 
     @Bean
     public Model model() {
-        ModelDao modelDao = applicationContext.getBean("modelDao", FileSystemModelDao.class);
+        GameModelDao gameModelDao = applicationContext.getBean("modelDao", FileSystemGameModelDao.class);
         try {
-            return modelDao.getByDimension(FieldDimension.FOUR_AND_FOUR);
+            GameModel gameModel = gameModelDao.getByDimension(FieldDimension.FOUR_AND_FOUR);
+            Model model = new Model();
+            model.setGameModel(gameModel);
+            return model;
         } catch (FetchException e) {
             throw new RuntimeException(e);
         }

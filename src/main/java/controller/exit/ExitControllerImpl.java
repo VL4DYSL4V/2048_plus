@@ -1,7 +1,9 @@
 package controller.exit;
 
-import dao.model.ModelDao;
+import dao.model.GameModelDao;
+import enums.FieldDimension;
 import exception.StoreException;
+import model.GameModel;
 import model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,14 +15,14 @@ import java.util.concurrent.Executors;
 public final class ExitControllerImpl implements ExitController {
 
     private final Model model;
-    private final ModelDao modelDao;
+    private final GameModelDao gameModelDao;
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private final Object lock = new Object();
 
     @Autowired
-    public ExitControllerImpl(Model model, ModelDao modelDao) {
+    public ExitControllerImpl(Model model, GameModelDao gameModelDao) {
         this.model = model;
-        this.modelDao = modelDao;
+        this.gameModelDao = gameModelDao;
     }
 
     @Override
@@ -28,10 +30,18 @@ public final class ExitControllerImpl implements ExitController {
         synchronized (lock) {
             executorService.submit(() -> {
                 try {
-                    if (!model.gameIsOver()) {
-                        modelDao.save(model);
+                    GameModel gameModel;
+                    FieldDimension dimension;
+                    boolean gameIsOver;
+                    synchronized (model) {
+                        gameModel = model.getGameModel();
+                        dimension = model.getFieldDimension();
+                        gameIsOver = model.gameIsOver();
+                    }
+                    if (gameIsOver) {
+                        gameModelDao.save(new GameModel(dimension), dimension);
                     } else {
-                        modelDao.save(new Model(model.getFieldDimension()));
+                        gameModelDao.save(gameModel, dimension);
                     }
                 } catch (StoreException e) {
                     e.printStackTrace();

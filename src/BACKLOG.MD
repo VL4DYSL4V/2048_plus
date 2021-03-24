@@ -7,7 +7,7 @@
 ++++ 6) You must add ability to cancel every model-modifying operation ;
 which can be executed after call Model.replaceState(Model another);
 ++++ 7) FieldShiftControllerImpl is not thread-safe;
-8) Create view classes
+8) Create view classes: GameFrame, EndOfGameFrame, MainMenu, Settings
 ++++ 9) Create different Themes (at least the dark one)
 ++++ 10) Create ViewConfiguration, which loads paths from resources and then loads images.
 ++++ 11) Create actual images and specify them in <theme>.properties
@@ -29,9 +29,10 @@ which can be executed after call Model.replaceState(Model another);
 ++++ 24) Eliminate EndOfGameException by modifying Observer pattern to pass Event instances
 ++++ 25) Change logic of obtaining Theme object: it must be stored in some kind of RenderingContext
 ++++ 26) Move theme loading into some ThemeDao
+++++ 27) Create class GameModel to store only game information: field, scores and history
 
-27) Create class GameModel (immutable) to store only game information: field, scores and history
 28) Exit from EndOfGameForm should be exit to Menu
 29) Think about ModelDao threadSafety.
  There is a vulnerability!! 27-th task contains an idea how to avoid it 
 30) Style view components in Frames, not in viewConfig;
+++++ 31) Make model support blocking on clint side;

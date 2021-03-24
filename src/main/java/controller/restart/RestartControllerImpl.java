@@ -1,7 +1,9 @@
 package controller.restart;
 
-import dao.model.ModelDao;
+import dao.model.GameModelDao;
+import enums.FieldDimension;
 import exception.StoreException;
+import model.GameModel;
 import model.Model;
 import org.springframework.stereotype.Controller;
 
@@ -9,26 +11,32 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Controller("restartController")
-public final class RestartControllerImpl implements RestartController{
+public final class RestartControllerImpl implements RestartController {
 
     private final Model model;
-    private final ModelDao modelDao;
+    private final GameModelDao gameModelDao;
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private final Object lock = new Object();
 
-    public RestartControllerImpl(Model model, ModelDao modelDao) {
+    public RestartControllerImpl(Model model, GameModelDao gameModelDao) {
         this.model = model;
-        this.modelDao = modelDao;
+        this.gameModelDao = gameModelDao;
     }
 
     @Override
     public void restart() {
-        synchronized (lock){
+        synchronized (lock) {
             executorService.execute(() -> {
-                model.reset();
+                GameModel gameModel;
+                FieldDimension dimension;
+                synchronized (model) {
+                    model.reset();
+                    gameModel = model.getGameModel();
+                    dimension = model.getFieldDimension();
+                }
                 try {
-                    modelDao.save(model);
-                }catch (StoreException e){
+                    gameModelDao.save(gameModel, dimension);
+                } catch (StoreException e) {
                     e.printStackTrace();
                 }
             });

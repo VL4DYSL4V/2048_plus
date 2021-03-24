@@ -23,8 +23,10 @@ public final class MoveBackControllerImpl implements MoveBackController {
     public void moveBack() {
         synchronized (lock) {
             executorService.execute(() -> {
-                if (model.restore()) {
-                    model.setGameIsOver(false);
+                synchronized (model) {
+                    if (model.restore()) {
+                        model.setGameIsOver(false);
+                    }
                 }
             });
         }
