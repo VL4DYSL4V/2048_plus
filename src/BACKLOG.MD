@@ -33,5 +33,5 @@ which can be executed after call Model.replaceState(Model another);
 
 28) Exit from EndOfGameForm should be exit to Menu
 ++++ 29) Add auto-saving every 10 seconds;
-30) Style view components in Frames, not in viewConfig;
+++++ 30) Style view components in Frames, not in viewConfig;
 ++++ 31) Make model support blocking on clint side;

@@ -90,6 +90,16 @@ public final class GameFrame extends JFrame implements Subscriber {
         styleRootPanel(theme);
         styleControlPanel(theme);
         styleFieldCanvas(theme);
+        styleMoveBackButton();
+        styleRestartButton();
+    }
+
+    private void styleRestartButton(){
+        restartButton.setText("Restart");
+    }
+
+    private void styleMoveBackButton(){
+        moveBackButton.setText("Move back");
     }
 
     private void configFieldCanvas() {

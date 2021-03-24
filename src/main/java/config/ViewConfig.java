@@ -53,7 +53,7 @@ public class ViewConfig {
     public StandardButton moveBackButton() {
         MoveBackController moveBackController = applicationContext.getBean("moveBackController", MoveBackController.class);
         ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
-        return new StandardButton("Move back", themeHolder, new MoveBackCommand(moveBackController));
+        return new StandardButton(null, themeHolder, new MoveBackCommand(moveBackController));
     }
 
     @Bean
@@ -61,14 +61,14 @@ public class ViewConfig {
         ExitController exitController = applicationContext.getBean("exitController", ExitController.class);
         ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
         Runnable savingTask = applicationContext.getBean("savingTask", Runnable.class);
-        return new StandardButton("Exit", themeHolder, new ExitAndSaveCommand(exitController, savingTask));
+        return new StandardButton(null, themeHolder, new ExitAndSaveCommand(exitController, savingTask));
     }
 
     @Bean
     public StandardButton exitButton() {
         ExitController exitController = applicationContext.getBean("exitController", ExitController.class);
         ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
-        return new StandardButton("Exit", themeHolder, new ExitCommand(exitController));
+        return new StandardButton(null, themeHolder, new ExitCommand(exitController));
     }
 
     @Bean
@@ -76,7 +76,7 @@ public class ViewConfig {
     public StandardButton restartButton() {
         RestartController restartController = applicationContext.getBean("restartController", RestartControllerImpl.class);
         ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
-        return new StandardButton("Restart", themeHolder, new RestartCommand(restartController));
+        return new StandardButton(null, themeHolder, new RestartCommand(restartController));
     }
 
 }
