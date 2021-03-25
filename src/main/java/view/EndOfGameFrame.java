@@ -69,6 +69,7 @@ public final class EndOfGameFrame extends JFrame implements Subscriber {
         styleRootPanel(theme);
         styleMessageLabel(theme);
         styleRestartButton();
+        styleExitButton();
     }
 
     private void styleExitButton(){
