@@ -1,5 +1,7 @@
 package config;
 
+import command.ShiftFieldCommand;
+import controller.CommandExecutor;
 import dao.model.FileSystemGameModelDao;
 import dao.model.GameModelDao;
 import enums.FieldDimension;
@@ -48,4 +50,10 @@ public class AppConfig {
         return new SavingTask(model, gameModelDao);
     }
 
+    @Bean
+    public ShiftFieldCommand shiftFieldCommand(){
+        CommandExecutor commandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
+        Model model = applicationContext.getBean("model", Model.class);
+        return new ShiftFieldCommand(commandExecutor, model);
+    }
 }

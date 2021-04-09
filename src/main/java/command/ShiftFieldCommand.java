@@ -1,62 +1,51 @@
-package controller.shift;
+package command;
 
+import controller.CommandExecutor;
 import entity.Coordinates2D;
 import entity.Field;
 import entity.FieldElement;
 import enums.Direction;
 import model.Model;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import util.CellGenerator;
 import util.PowerOfTwoHolder;
 
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-@Controller("fieldShiftController")
-public final class FieldShiftControllerImpl implements FieldShiftController {
+public final class ShiftFieldCommand implements Command {
 
+    private final CommandExecutor commandExecutor;
     private final Model model;
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private final Object lock = new Object();
+    private Direction direction;
 
-    @Autowired
-    public FieldShiftControllerImpl(Model model) {
+    public ShiftFieldCommand(CommandExecutor commandExecutor, Model model) {
+        this.commandExecutor = commandExecutor;
         this.model = model;
     }
 
     @Override
-    public void shift(Direction direction) {
-        synchronized (lock) {
+    public void execute() {
+        commandExecutor.execute(() -> {
             if (model.gameIsOver()) {
                 return;
             }
-            executorService.execute(() -> {
-                Field field = model.getField();
-                Field copy = field.copy();
-                BigInteger scores = shiftField(direction, field);
-                if (Objects.equals(field, copy)) {
-                    if (checkIfEnd(field)) {
-                        model.setGameIsOver(true);
-                        cancelShifts();
-                    }
-                } else {
-                    CellGenerator.setRandomFieldElement(field);
-                    model.updateAndSaveHistory(field, scores);
+            Field field = model.getField();
+            Field copy = field.copy();
+            BigInteger scores = shiftField(direction, field);
+            if (Objects.equals(field, copy)) {
+                if (checkIfEnd(field)) {
+                    model.setGameIsOver(true);
                 }
-            });
-        }
+            } else {
+                CellGenerator.setRandomFieldElement(field);
+                model.updateAndSaveHistory(field, scores);
+            }
+        });
     }
 
-    @Override
-    public void cancelShifts() {
-        synchronized (lock) {
-            executorService.shutdownNow();
-            executorService = Executors.newSingleThreadExecutor();
-        }
+    public void setDirection(Direction direction) {
+        this.direction = direction;
     }
 
     private boolean checkIfEnd(Field field) {

@@ -1,20 +1,23 @@
 package command;
 
-import controller.exit.ExitController;
+import controller.CommandExecutor;
 
-public final class ExitAndSaveCommand implements Command{
+public final class ExitAndSaveCommand implements Command {
 
-    private final ExitController exitController;
+    private final CommandExecutor commandExecutor;
     private final Runnable saveTask;
 
-    public ExitAndSaveCommand(ExitController exitController, Runnable saveTask) {
-        this.exitController = exitController;
+    public ExitAndSaveCommand(CommandExecutor commandExecutor, Runnable saveTask) {
+        this.commandExecutor = commandExecutor;
         this.saveTask = saveTask;
     }
 
     @Override
     public void execute() {
-        exitController.exitAndSave(saveTask);
+        commandExecutor.execute(() -> {
+            saveTask.run();
+            System.exit(0);
+        });
     }
 
 }

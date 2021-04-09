@@ -4,12 +4,10 @@ import command.ExitAndSaveCommand;
 import command.ExitCommand;
 import command.MoveBackCommand;
 import command.RestartCommand;
-import controller.exit.ExitController;
-import controller.moveBack.MoveBackController;
-import controller.restart.RestartController;
-import controller.restart.RestartControllerImpl;
+import controller.CommandExecutor;
 import dao.theme.FileSystemThemeDao;
 import dao.theme.ThemeDao;
+import model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +40,7 @@ public class ViewConfig {
     }
 
     @Bean
-    public RenderingContext renderingContext(){
+    public RenderingContext renderingContext() {
         RenderingContext renderingContext = new RenderingContext();
         Theme theme = applicationContext.getBean("theme", Theme.class);
         renderingContext.setTheme(theme);
@@ -51,32 +49,35 @@ public class ViewConfig {
 
     @Bean
     public StandardButton moveBackButton() {
-        MoveBackController moveBackController = applicationContext.getBean("moveBackController", MoveBackController.class);
+        Model model = applicationContext.getBean("model", Model.class);
         ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
-        return new StandardButton(null, themeHolder, new MoveBackCommand(moveBackController));
+        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
+        return new StandardButton(null, themeHolder, new MoveBackCommand(model, uiCommandExecutor));
     }
 
     @Bean
     public StandardButton exitAndSaveButton() {
-        ExitController exitController = applicationContext.getBean("exitController", ExitController.class);
-        ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
         Runnable savingTask = applicationContext.getBean("savingTask", Runnable.class);
-        return new StandardButton(null, themeHolder, new ExitAndSaveCommand(exitController, savingTask));
+        ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
+        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
+        return new StandardButton(null, themeHolder, new ExitAndSaveCommand(uiCommandExecutor, savingTask));
     }
 
     @Bean
     public StandardButton exitButton() {
-        ExitController exitController = applicationContext.getBean("exitController", ExitController.class);
         ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
-        return new StandardButton(null, themeHolder, new ExitCommand(exitController));
+        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
+        return new StandardButton(null, themeHolder, new ExitCommand(uiCommandExecutor));
     }
 
     @Bean
     @Scope("prototype")
     public StandardButton restartButton() {
-        RestartController restartController = applicationContext.getBean("restartController", RestartControllerImpl.class);
         ThemeHolder themeHolder = applicationContext.getBean("renderingContext", RenderingContext.class);
-        return new StandardButton(null, themeHolder, new RestartCommand(restartController));
+        Model model = applicationContext.getBean("model", Model.class);
+        Runnable savingTask = applicationContext.getBean("savingTask", Runnable.class);
+        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
+        return new StandardButton(null, themeHolder, new RestartCommand(model, savingTask, uiCommandExecutor));
     }
 
 }

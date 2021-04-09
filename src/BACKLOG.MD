@@ -15,14 +15,14 @@ which can be executed after call Model.replaceState(Model another);
 
 ++++ 13) Create canvas for field 
 ++++ 14) Create a class, which stores scaled images of field elements images
-++++ 15) Create controller to handle shifting field
+++++ 15) Create commandExecutor to handle shifting field
 ++++ 16) Subscribe components to model
-17) Create controller to handle switching field dimension;
+17) Create commandExecutor to handle switching field dimension;
 
-++++ 18) Create controller to handle restarting game 
-++++ 19) Create controller to handle moving back 
-20) Create controller to handle navigation between windows
-++++ 21) Create controller to handle exit
+++++ 18) Create commandExecutor to handle restarting game 
+++++ 19) Create commandExecutor to handle moving back 
+20) Create commandExecutor to handle navigation between windows
+++++ 21) Create commandExecutor to handle exit
 22) ScoreLabel.representation() uses deprecated method Toolkit.getDefaultToolkit().getFontMetrics
 
 ++++ 23) Create enum Event 
@@ -31,7 +31,8 @@ which can be executed after call Model.replaceState(Model another);
 ++++ 26) Move theme loading into some ThemeDao
 ++++ 27) Create class GameModel to store only game information: field, scores and history
 
-28) Exit from EndOfGameForm should be exit to Menu
+28) Replace EndOfGameForm with dialogWindow (or just remove buttons from there)
 ++++ 29) Add auto-saving every 10 seconds;
 ++++ 30) Style view components in Frames, not in viewConfig;
 ++++ 31) Make model support blocking on clint side;
+32) Merge MoveBackController, RestartController, FieldShiftController into one commandExecutor;

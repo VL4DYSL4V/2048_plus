@@ -1,18 +1,18 @@
 package command;
 
-import controller.exit.ExitController;
+import controller.CommandExecutor;
 
-public final class ExitCommand implements Command{
+public final class ExitCommand implements Command {
 
-    private final ExitController exitController;
+    private final CommandExecutor commandExecutor;
 
-    public ExitCommand(ExitController exitController) {
-        this.exitController = exitController;
+    public ExitCommand(CommandExecutor commandExecutor) {
+        this.commandExecutor = commandExecutor;
     }
 
     @Override
     public void execute() {
-        exitController.exit();
+        commandExecutor.execute(() -> System.exit(0));
     }
 
 }

@@ -1,6 +1,6 @@
 package view.listener;
 
-import controller.shift.FieldShiftController;
+import command.ShiftFieldCommand;
 import enums.Direction;
 import org.springframework.stereotype.Component;
 
@@ -10,10 +10,10 @@ import java.awt.event.KeyEvent;
 @Component
 public final class FieldMovementListener extends KeyAdapter {
 
-    private final FieldShiftController fieldShiftController;
+    private final ShiftFieldCommand shiftFieldCommand;
 
-    public FieldMovementListener(FieldShiftController fieldShiftController) {
-        this.fieldShiftController = fieldShiftController;
+    public FieldMovementListener(ShiftFieldCommand shiftFieldCommand) {
+        this.shiftFieldCommand = shiftFieldCommand;
     }
 
     @Override
@@ -21,18 +21,19 @@ public final class FieldMovementListener extends KeyAdapter {
         int code = e.getKeyCode();
         switch (code) {
             case KeyEvent.VK_UP:
-                fieldShiftController.shift(Direction.UP);
+                shiftFieldCommand.setDirection(Direction.UP);
                 break;
             case KeyEvent.VK_DOWN:
-                fieldShiftController.shift(Direction.DOWN);
+                shiftFieldCommand.setDirection(Direction.DOWN);
                 break;
             case KeyEvent.VK_LEFT:
-                fieldShiftController.shift(Direction.LEFT);
+                shiftFieldCommand.setDirection(Direction.LEFT);
                 break;
             case KeyEvent.VK_RIGHT:
-                fieldShiftController.shift(Direction.RIGHT);
+                shiftFieldCommand.setDirection(Direction.RIGHT);
                 break;
         }
+        shiftFieldCommand.execute();
     }
 
 }
