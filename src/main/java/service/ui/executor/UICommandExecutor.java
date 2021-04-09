@@ -1,4 +1,4 @@
-package controller;
+package service.ui.executor;
 
 import org.springframework.stereotype.Controller;
 

@@ -1,6 +1,6 @@
 package command;
 
-import controller.CommandExecutor;
+import service.ui.executor.CommandExecutor;
 import model.Model;
 
 public final class MoveBackCommand implements Command {

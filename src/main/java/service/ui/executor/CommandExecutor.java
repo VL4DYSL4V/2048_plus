@@ -1,4 +1,4 @@
-package controller;
+package service.ui.executor;
 
 public interface CommandExecutor {
 

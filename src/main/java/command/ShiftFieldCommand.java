@@ -1,6 +1,6 @@
 package command;
 
-import controller.CommandExecutor;
+import service.ui.executor.CommandExecutor;
 import entity.Coordinates2D;
 import entity.Field;
 import entity.FieldElement;

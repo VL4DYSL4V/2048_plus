@@ -2,11 +2,10 @@ package enums;
 
 public enum FieldDimension {
 
+    THREE_AND_THREE("3 x 3", 3, 3),
     FOUR_AND_FOUR("4 x 4", 4, 4),
     FIVE_AND_FIVE("5 x 5", 5, 5),
-    SIX_AND_SIX("6 x 6", 6, 6),
-    SEVEN_AND_SEVEN("7 x 7", 7, 7),
-    EIGHT_AND_EIGHT("8 x 8", 8, 8);
+    SIX_AND_SIX("6 x 6", 6, 6);
 
     private final String representation;
     private final int width;

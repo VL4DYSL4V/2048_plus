@@ -6,8 +6,8 @@ import entity.FieldElement;
 import model.Model;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import service.GameSaver;
-import service.PeriodicalSavingService;
+import service.saver.GameSaver;
+import service.saver.PeriodicalSavingService;
 import view.EndOfGameFrame;
 import view.GameFrame;
 

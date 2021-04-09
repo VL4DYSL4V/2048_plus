@@ -1,7 +1,7 @@
 package config;
 
 import command.ShiftFieldCommand;
-import controller.CommandExecutor;
+import service.ui.executor.CommandExecutor;
 import dao.model.FileSystemGameModelDao;
 import dao.model.GameModelDao;
 import enums.FieldDimension;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.*;
 import task.SavingTask;
 
 @Configuration
-@ComponentScan({"controller", "dao", "view", "service"})
+@ComponentScan({"dao", "view", "service"})
 @Import({RepositoryConfig.class, ViewConfig.class})
 public class AppConfig {
 
