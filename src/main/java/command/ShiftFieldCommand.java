@@ -17,7 +17,7 @@ public final class ShiftFieldCommand implements Command {
 
     private final CommandExecutor commandExecutor;
     private final Model model;
-    private Direction direction;
+    private volatile Direction direction;
 
     public ShiftFieldCommand(CommandExecutor commandExecutor, Model model) {
         this.commandExecutor = commandExecutor;

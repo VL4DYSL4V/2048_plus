@@ -29,7 +29,9 @@ public final class GameFrame extends JFrame implements Subscriber {
     private final ScoreLabel scoreLabel;
     private final FieldCanvas fieldCanvas;
 
+    private final Model model;
     private final ThemeHolder themeHolder;
+    private JDialog gameOverMessage = null;
 
     @Autowired
     public GameFrame(Model model, KeyListener fieldMovementListener,
@@ -41,6 +43,7 @@ public final class GameFrame extends JFrame implements Subscriber {
         Theme theme = themeHolder.getTheme();
         this.toMenuButton = new StandardButton("Menu", themeHolder, null);
         this.restartButton = restartButton;
+        this.model = model;
         this.scoreLabel = new ScoreLabel(model, themeHolder);
         this.fieldCanvas = new FieldCanvas(model, themeHolder);
         configComponents();
@@ -94,11 +97,11 @@ public final class GameFrame extends JFrame implements Subscriber {
         styleRestartButton();
     }
 
-    private void styleRestartButton(){
+    private void styleRestartButton() {
         restartButton.setText("Restart");
     }
 
-    private void styleMoveBackButton(){
+    private void styleMoveBackButton() {
         moveBackButton.setText("Move back");
     }
 
@@ -154,7 +157,28 @@ public final class GameFrame extends JFrame implements Subscriber {
             SwingUtilities.invokeLater(() -> {
                 scoreLabel.updateValue();
                 fieldCanvas.updateField();
+                if (model.gameIsOver()) {
+                    assignAndShowGameOver();
+                } else {
+                    disposeAndDiscardGameOver();
+                }
             });
+        }
+    }
+
+    private void assignAndShowGameOver() {
+        if (this.gameOverMessage == null) {
+            this.gameOverMessage = new EndOfGameDialog(this, themeHolder,
+                    "Game is over!",
+                    new Dimension(270, 180));
+        }
+        this.gameOverMessage.setVisible(true);
+    }
+
+    private void disposeAndDiscardGameOver() {
+        if (this.gameOverMessage != null) {
+            this.gameOverMessage.dispose();
+            this.gameOverMessage = null;
         }
     }
 }

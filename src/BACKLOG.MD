@@ -3,3 +3,4 @@
 3) Create commandExecutor to handle switching field dimension;
 4) Create commandExecutor to handle navigation between windows
 5) ScoreLabel.representation() uses deprecated method Toolkit.getDefaultToolkit().getFontMetrics
+++++ 6) Delete MessageDialogCreator and create class MessageDialog that extends JDialog 

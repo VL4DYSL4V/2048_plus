@@ -15,4 +15,6 @@ public interface Theme {
 
     Map<Integer, Image> powerToImageMap();
 
+    Image gameOverImage();
+
 }

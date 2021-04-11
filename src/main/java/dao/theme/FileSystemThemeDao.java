@@ -47,7 +47,8 @@ public final class FileSystemThemeDao implements ThemeDao{
                 powToImageMap.put(Integer.valueOf(key), load(powerFolder.resolve((String) properties.get(key)).toString()));
             }
         }
-        return new ViewTheme(bgColor, fgColor, fieldBgImage, welcomeImage, powToImageMap);
+        Image gameOverImage = load(properties.getProperty("game_over_image"));
+        return new ViewTheme(bgColor, fgColor, fieldBgImage, welcomeImage, powToImageMap, gameOverImage);
     }
 
     private Image load(String fileName) {
