@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import service.saver.GameSaver;
 import service.saver.PeriodicalSavingService;
+import view.EndOfGameDialog;
 import view.GameFrame;
 
 import javax.swing.*;
@@ -19,10 +20,10 @@ public class Main {
 
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         GameFrame gameFrame = context.getBean("gameFrame", GameFrame.class);
-//        EndOfGameFrame endOfGameFrame = context.getBean("endOfGameFrame", EndOfGameFrame.class);
+        EndOfGameDialog endOfGameDialog = context.getBean("endOfGameDialog", EndOfGameDialog.class);
         Model model = context.getBean("model", Model.class);
         model.subscribe(gameFrame);
-//        model.subscribe(endOfGameFrame);
+        model.subscribe(endOfGameDialog);
 
         SwingUtilities.invokeLater(() -> gameFrame.setVisible(true));
         PeriodicalSavingService gameSaver = context.getBean("gameSaver", GameSaver.class);

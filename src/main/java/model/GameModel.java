@@ -21,8 +21,6 @@ public final class GameModel implements Externalizable {
     private List<Memento> history = new LinkedList<>();
     private boolean gameIsOver;
 
-    private static final long serialVersionUID = 283472364288148L;
-
     GameModel(GameModel gameModel){
         this.field = gameModel.field.copy();
         this.scores = gameModel.scores;

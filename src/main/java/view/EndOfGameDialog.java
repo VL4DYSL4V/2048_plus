@@ -1,5 +1,8 @@
 package view;
 
+import model.Model;
+import observer.Subscriber;
+import observer.event.EventType;
 import view.context.ThemeHolder;
 import view.theme.Theme;
 import view.util.ScreenUtils;
@@ -7,14 +10,16 @@ import view.util.ScreenUtils;
 import javax.swing.*;
 import java.awt.*;
 
-final class EndOfGameDialog extends JDialog {
+public final class EndOfGameDialog extends JDialog implements Subscriber {
 
     private final ThemeHolder themeHolder;
+    private final Model model;
     private final Dimension dimension;
 
-    public EndOfGameDialog(JFrame owner, ThemeHolder themeHolder, String title, Dimension dimension) {
-        super(owner, title);
+    public EndOfGameDialog(JFrame owner, Model model, ThemeHolder themeHolder, Dimension dimension) {
+        super(owner);
         this.themeHolder = themeHolder;
+        this.model = model;
         this.dimension = dimension;
         configureJDialog();
         styleJDialog();
@@ -34,7 +39,7 @@ final class EndOfGameDialog extends JDialog {
     private ImageIcon getScaledImageIcon() {
         Image gameOverImage = themeHolder.getTheme().gameOverImage();
         int width = dimension.width;
-        int height = dimension.height * 8 / 10;
+        int height = dimension.height;
         return new ImageIcon(gameOverImage.getScaledInstance(width, height, Image.SCALE_SMOOTH));
     }
 
@@ -51,5 +56,15 @@ final class EndOfGameDialog extends JDialog {
                 (ScreenUtils.getScreenHeight() - dimension.height) / 2);
         Theme theme = themeHolder.getTheme();
         getContentPane().setBackground(theme.getBackground());
+        setUndecorated(true);
+    }
+
+    @Override
+    public void reactOnNotification(EventType eventType) {
+        if(model.gameIsOver()){
+            setVisible(true);
+        }else{
+            setVisible(false);
+        }
     }
 }
