@@ -3,31 +3,29 @@ package view;
 import model.Model;
 import observer.Subscriber;
 import observer.event.EventType;
-import view.context.ThemeHolder;
 import view.theme.Theme;
 import view.util.ScreenUtils;
 
 import javax.swing.*;
 import java.awt.*;
 
-public final class EndOfGameDialog extends JDialog implements Subscriber {
+public final class EndOfGameDialog extends JDialog implements Subscriber, StyleVaryingComponent {
 
-    private final ThemeHolder themeHolder;
     private final Model model;
     private final Dimension dimension;
+    private final JLabel iconLabel;
 
-    public EndOfGameDialog(JFrame owner, Model model, ThemeHolder themeHolder, Dimension dimension) {
+    public EndOfGameDialog(JFrame owner, Model model, Theme theme, Dimension dimension) {
         super(owner);
-        this.themeHolder = themeHolder;
         this.model = model;
         this.dimension = dimension;
+        this.iconLabel = new JLabel(getScaledImageIcon(theme));
         configureJDialog();
-        styleJDialog();
+        styleJDialog(theme);
         constructDialog();
     }
 
     public void constructDialog() {
-        JLabel iconLabel = new JLabel(getScaledImageIcon());
         SpringLayout layout = new SpringLayout();
         setLayout(layout);
         Component contentPane = getContentPane();
@@ -36,8 +34,8 @@ public final class EndOfGameDialog extends JDialog implements Subscriber {
         add(iconLabel);
     }
 
-    private ImageIcon getScaledImageIcon() {
-        Image gameOverImage = themeHolder.getTheme().gameOverImage();
+    private ImageIcon getScaledImageIcon(Theme theme) {
+        Image gameOverImage = theme.gameOverImage();
         int width = dimension.width;
         int height = dimension.height;
         return new ImageIcon(gameOverImage.getScaledInstance(width, height, Image.SCALE_SMOOTH));
@@ -50,21 +48,29 @@ public final class EndOfGameDialog extends JDialog implements Subscriber {
         setFocusable(false);
     }
 
-    private void styleJDialog() {
+    private void styleJDialog(Theme theme) {
         setSize(dimension);
         setLocation((ScreenUtils.getScreenWidth() - dimension.width) / 2,
                 (ScreenUtils.getScreenHeight() - dimension.height) / 2);
-        Theme theme = themeHolder.getTheme();
         getContentPane().setBackground(theme.getBackground());
         setUndecorated(true);
     }
 
     @Override
     public void reactOnNotification(EventType eventType) {
-        if(model.gameIsOver()){
+        if (model.gameIsOver()) {
             setVisible(true);
-        }else{
+        } else {
             setVisible(false);
         }
+    }
+
+    @Override
+    public void update(Theme neuTheme) {
+        SwingUtilities.invokeLater(() -> {
+            styleJDialog(neuTheme);
+            iconLabel.setIcon(getScaledImageIcon(neuTheme));
+            repaint();
+        });
     }
 }

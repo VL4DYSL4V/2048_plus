@@ -2,25 +2,27 @@ package view.component;
 
 import entity.Field;
 import entity.FieldElement;
-import model.Model;
 import enums.FieldDimension;
-import view.context.ThemeHolder;
+import model.Model;
+import view.StyleVaryingComponent;
 import view.theme.Theme;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class FieldCanvas extends Canvas {
+public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
 
     private final Model model;
     private final FieldRenderingContext fieldRenderingContext;
-    private final ThemeHolder themeHolder;
+    private volatile Theme theme;
+    private Image scaledFieldBcgImage;
     private boolean firstRendered = true;
 
-    public FieldCanvas(Model model, ThemeHolder themeHolder) {
+    public FieldCanvas(Model model, Theme theme) {
         this.model = model;
-        this.themeHolder = themeHolder;
+        this.theme = theme;
         this.fieldRenderingContext = new FieldRenderingContext(model.getFieldDimension());
     }
 
@@ -42,6 +44,11 @@ public final class FieldCanvas extends Canvas {
         }
 
         private void updateDueToChanges() {
+            updateDueToDimensionChange();
+            setupPowerToScaledImage();
+        }
+
+        private void updateDueToDimensionChange(){
             this.fieldDimension = model.getFieldDimension();
             centerX = FieldCanvas.super.getWidth() / 2;
             centerY = FieldCanvas.super.getHeight() / 2;
@@ -51,14 +58,12 @@ public final class FieldCanvas extends Canvas {
             cellHeightMargin = cellHeight / fieldDimension.getHeight() - 1;
             setupIndexToRectangleX();
             setupIndexToRectangleY();
-            setupPowerToScaledImage();
         }
 
-        private void setupPowerToScaledImage(){
+        private void setupPowerToScaledImage() {
             powerToScaledImage.clear();
-            Theme theme = themeHolder.getTheme();
             Map<Integer, Image> powerToImageMap = theme.powerToImageMap();
-            for(Integer power: powerToImageMap.keySet()){
+            for (Integer power : powerToImageMap.keySet()) {
                 Image unscaled = powerToImageMap.get(power);
                 powerToScaledImage.put(power, unscaled.getScaledInstance(cellWidth, cellHeight, Image.SCALE_SMOOTH));
             }
@@ -114,19 +119,30 @@ public final class FieldCanvas extends Canvas {
             return indexToRectangleY.get(coordY);
         }
 
-        private Image getImage(Integer power){
+        private Image getImage(Integer power) {
             return powerToScaledImage.get(power);
         }
     }
 
     @Override
     public void paint(Graphics g) {
-        if(firstRendered){
+        if (firstRendered) {
             firstRendered = false;
             fieldRenderingContext.updateDueToChanges();
+            scaledFieldBcgImage = scaledFieldBcgImage(theme.fieldBackgroundImage());
         }
         super.paint(g);
+        drawFieldBackground(g);
         drawField(g);
+    }
+
+    private void drawFieldBackground(Graphics g) {
+        Image image = scaledFieldBcgImage;
+        g.drawImage(image, 0, 0, this);
+    }
+
+    private Image scaledFieldBcgImage(Image image) {
+        return image.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH);
     }
 
     private void drawField(Graphics g) {
@@ -142,8 +158,22 @@ public final class FieldCanvas extends Canvas {
         }
     }
 
-    public void updateField(){
+    public void updateField() {
         repaint();
+    }
+
+    private void updateDueToThemeChange(){
+        fieldRenderingContext.setupPowerToScaledImage();
+        scaledFieldBcgImage = scaledFieldBcgImage(theme.fieldBackgroundImage());
+    }
+
+    @Override
+    public void update(Theme neuTheme) {
+        SwingUtilities.invokeLater(() -> {
+            this.theme = neuTheme;
+            updateDueToThemeChange();
+            repaint();
+        });
     }
 
 }

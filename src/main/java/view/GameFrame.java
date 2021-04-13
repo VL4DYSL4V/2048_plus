@@ -4,12 +4,10 @@ import model.Model;
 import observer.Subscriber;
 import observer.event.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import view.component.FieldCanvas;
 import view.component.ScoreLabel;
 import view.component.StandardButton;
-import view.context.ThemeHolder;
 import view.enums.FrameSize;
 import view.theme.Theme;
 import view.util.ScreenUtils;
@@ -19,7 +17,7 @@ import java.awt.*;
 import java.awt.event.KeyListener;
 
 @Component
-public final class GameFrame extends JFrame implements Subscriber {
+public final class GameFrame extends JFrame implements Subscriber, StyleVaryingComponent {
 
     private final JPanel rootPanel = new JPanel();
     private final JPanel controlPanel = new JPanel();
@@ -29,20 +27,16 @@ public final class GameFrame extends JFrame implements Subscriber {
     private final ScoreLabel scoreLabel;
     private final FieldCanvas fieldCanvas;
 
-    private final ThemeHolder themeHolder;
-
     @Autowired
     public GameFrame(Model model, KeyListener fieldMovementListener,
                      StandardButton moveBackButton,
                      StandardButton restartButton,
-                     @Qualifier("renderingContext") ThemeHolder themeHolder) {
-        this.themeHolder = themeHolder;
+                     Theme theme) {
         this.moveBackButton = moveBackButton;
-        Theme theme = themeHolder.getTheme();
-        this.toMenuButton = new StandardButton("Menu", themeHolder, null);
+        this.toMenuButton = new StandardButton("Menu", theme, null);
         this.restartButton = restartButton;
-        this.scoreLabel = new ScoreLabel(model, themeHolder);
-        this.fieldCanvas = new FieldCanvas(model, themeHolder);
+        this.scoreLabel = new ScoreLabel(model, theme);
+        this.fieldCanvas = new FieldCanvas(model, theme);
         configComponents();
         styleComponents(theme);
         constructWindow();
@@ -158,4 +152,11 @@ public final class GameFrame extends JFrame implements Subscriber {
         }
     }
 
+    @Override
+    public void update(Theme neuTheme) {
+        SwingUtilities.invokeLater(() -> {
+            styleComponents(neuTheme);
+            repaint();
+        });
+    }
 }
