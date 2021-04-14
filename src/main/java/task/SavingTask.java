@@ -1,36 +1,36 @@
 package task;
 
-import dao.model.GameModelDao;
+import dao.model.GameDataDao;
 import enums.FieldDimension;
 import exception.StoreException;
+import model.GameData;
 import model.GameModel;
-import model.Model;
 
 public final class SavingTask implements Runnable {
 
-    private final Model model;
-    private final GameModelDao gameModelDao;
+    private final GameModel gameModel;
+    private final GameDataDao gameDataDao;
 
-    public SavingTask(Model model, GameModelDao gameModelDao) {
-        this.model = model;
-        this.gameModelDao = gameModelDao;
+    public SavingTask(GameModel gameModel, GameDataDao gameDataDao) {
+        this.gameModel = gameModel;
+        this.gameDataDao = gameDataDao;
     }
 
     @Override
     public void run() {
         try {
-            GameModel gameModel;
+            GameData gameData;
             FieldDimension dimension;
             boolean gameIsOver;
-            synchronized (model) {
-                gameModel = model.getGameModel();
-                dimension = model.getFieldDimension();
-                gameIsOver = model.gameIsOver();
+            synchronized (gameModel) {
+                gameData = gameModel.getGameData();
+                dimension = gameModel.getFieldDimension();
+                gameIsOver = gameModel.gameIsOver();
             }
             if (gameIsOver) {
-                gameModelDao.save(new GameModel(dimension), dimension);
+                gameDataDao.save(new GameData(dimension), dimension);
             } else {
-                gameModelDao.save(gameModel, dimension);
+                gameDataDao.save(gameData, dimension);
             }
         } catch (StoreException e) {
             e.printStackTrace();

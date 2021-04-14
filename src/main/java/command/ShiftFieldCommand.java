@@ -5,7 +5,7 @@ import entity.Coordinates2D;
 import entity.Field;
 import entity.FieldElement;
 import enums.Direction;
-import model.Model;
+import model.GameModel;
 import util.CellGenerator;
 import util.PowerOfTwoHolder;
 
@@ -16,30 +16,30 @@ import java.util.Objects;
 public final class ShiftFieldCommand implements Command {
 
     private final CommandExecutor commandExecutor;
-    private final Model model;
+    private final GameModel gameModel;
     private volatile Direction direction;
 
-    public ShiftFieldCommand(CommandExecutor commandExecutor, Model model) {
+    public ShiftFieldCommand(CommandExecutor commandExecutor, GameModel gameModel) {
         this.commandExecutor = commandExecutor;
-        this.model = model;
+        this.gameModel = gameModel;
     }
 
     @Override
     public void execute() {
         commandExecutor.execute(() -> {
-            if (model.gameIsOver()) {
+            if (gameModel.gameIsOver()) {
                 return;
             }
-            Field field = model.getField();
+            Field field = gameModel.getField();
             Field copy = field.copy();
             BigInteger scores = shiftField(direction, field);
             if (Objects.equals(field, copy)) {
                 if (checkIfEnd(field)) {
-                    model.setGameIsOver(true);
+                    gameModel.setGameIsOver(true);
                 }
             } else {
                 CellGenerator.setRandomFieldElement(field);
-                model.updateAndSaveHistory(field, scores);
+                gameModel.updateAndSaveHistory(field, scores);
             }
         });
     }

@@ -2,11 +2,11 @@ package command;
 
 import service.ui.executor.CommandExecutor;
 
-public class FromGameFrameToMenuCommand implements Command{
+public class GameFrameToMenuCommand implements Command{
 
     private final CommandExecutor commandExecutor;
 
-    public FromGameFrameToMenuCommand(CommandExecutor commandExecutor) {
+    public GameFrameToMenuCommand(CommandExecutor commandExecutor) {
         this.commandExecutor = commandExecutor;
     }
 

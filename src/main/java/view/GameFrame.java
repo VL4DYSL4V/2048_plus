@@ -1,9 +1,12 @@
 package view;
 
-import model.Model;
+import command.Command;
+import context.ViewContext;
+import model.GameModel;
 import observer.Subscriber;
 import observer.event.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import view.component.FieldCanvas;
 import view.component.ScoreLabel;
@@ -15,30 +18,37 @@ import view.util.ScreenUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
+import java.util.Locale;
 
 @Component
-public final class GameFrame extends JFrame implements Subscriber, StyleVaryingComponent {
+public final class GameFrame extends JFrame implements Subscriber{
 
     private final JPanel rootPanel = new JPanel();
     private final JPanel controlPanel = new JPanel();
-    private final JButton moveBackButton;
-    private final JButton toMenuButton;
-    private final JButton restartButton;
+    private final StandardButton moveBackButton;
+    private final StandardButton toMenuButton;
+    private final StandardButton restartButton;
     private final ScoreLabel scoreLabel;
     private final FieldCanvas fieldCanvas;
 
+    private final MessageSource messageSource;
+    private final ViewContext viewContext;
+
     @Autowired
-    public GameFrame(Model model, KeyListener fieldMovementListener,
-                     StandardButton moveBackButton,
-                     StandardButton restartButton,
-                     Theme theme) {
-        this.moveBackButton = moveBackButton;
-        this.toMenuButton = new StandardButton("Menu", theme, null);
-        this.restartButton = restartButton;
-        this.scoreLabel = new ScoreLabel(model, theme);
-        this.fieldCanvas = new FieldCanvas(model, theme);
+    public GameFrame(GameModel gameModel, MessageSource messageSource,
+                     ViewContext viewContext, KeyListener fieldMovementListener,
+                     Command moveBackCommand,
+                     Command restartCommand,
+                     Command gameFrameToMenuCommand) {
+        this.messageSource = messageSource;
+        this.viewContext = viewContext;
+        this.moveBackButton = new StandardButton(viewContext, moveBackCommand);
+        this.toMenuButton = new StandardButton(viewContext, gameFrameToMenuCommand);
+        this.restartButton = new StandardButton(viewContext, restartCommand);
+        this.scoreLabel = new ScoreLabel(gameModel, viewContext);
+        this.fieldCanvas = new FieldCanvas(gameModel, viewContext);
         configComponents();
-        styleComponents(theme);
+        styleComponents();
         constructWindow();
         addKeyListener(fieldMovementListener);
     }
@@ -79,21 +89,31 @@ public final class GameFrame extends JFrame implements Subscriber, StyleVaryingC
         configFieldCanvas();
     }
 
-    private void styleComponents(Theme theme) {
+    private void styleComponents() {
+        Theme theme = viewContext.getCurrentTheme();
+        Locale locale = viewContext.getCurrentLocale();
         styleFrame();
         styleRootPanel(theme);
         styleControlPanel(theme);
         styleFieldCanvas(theme);
-        styleMoveBackButton();
-        styleRestartButton();
+        styleToMenuButton(locale);
+        styleMoveBackButton(locale);
+        styleRestartButton(locale);
     }
 
-    private void styleRestartButton() {
-        restartButton.setText("Restart");
+    private void styleToMenuButton(Locale locale) {
+        String text = messageSource.getMessage("gameFrame.toMenu", null, locale);
+        toMenuButton.setText(text);
     }
 
-    private void styleMoveBackButton() {
-        moveBackButton.setText("Move back");
+    private void styleRestartButton(Locale locale) {
+        String text = messageSource.getMessage("gameFrame.restart", null, locale);
+        restartButton.setText(text);
+    }
+
+    private void styleMoveBackButton(Locale locale) {
+        String text = messageSource.getMessage("gameFrame.moveBack", null, locale);
+        moveBackButton.setText(text);
     }
 
     private void configFieldCanvas() {
@@ -134,29 +154,39 @@ public final class GameFrame extends JFrame implements Subscriber, StyleVaryingC
         setSize(dimension);
         setLocation((ScreenUtils.getScreenWidth() - dimension.width) / 2,
                 (ScreenUtils.getScreenHeight() - dimension.height) / 2);
-        setTitle("2048+");
+        setUndecorated(true);
     }
 
     private void configFrame() {
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setResizable(false);
     }
 
     @Override
     public void reactOnNotification(EventType eventType) {
-        if (eventType == EventType.MODEL_CHANGED) {
-            SwingUtilities.invokeLater(() -> {
-                scoreLabel.updateValue();
-                fieldCanvas.updateField();
-            });
-        }
+        SwingUtilities.invokeLater(computeReaction(eventType));
     }
 
-    @Override
-    public void update(Theme neuTheme) {
-        SwingUtilities.invokeLater(() -> {
-            styleComponents(neuTheme);
-            repaint();
-        });
+    private Runnable computeReaction(EventType eventType) {
+        switch (eventType) {
+            case GAME_DATA_CHANGED:
+                return () -> {
+                    scoreLabel.updateValue();
+                    fieldCanvas.updateField();
+                };
+            case VIEW_CONTEXT_CHANGED:
+                return this::updateStyle;
+        }
+        return () -> {
+        };
+    }
+
+    private void updateStyle() {
+        styleComponents();
+        scoreLabel.updateStyle();
+        fieldCanvas.updateStyle();
+        toMenuButton.updateStyle();
+        restartButton.updateStyle();
+        restartButton.updateStyle();
+        repaint();
     }
 }

@@ -1,24 +1,20 @@
 package config;
 
-import command.ExitAndSaveCommand;
-import command.ExitCommand;
-import command.MoveBackCommand;
-import command.RestartCommand;
+import context.ViewContext;
+import context.ViewContextImpl;
 import dao.theme.FileSystemThemeDao;
 import dao.theme.ThemeDao;
-import model.Model;
+import model.GameModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import service.ui.executor.CommandExecutor;
 import view.EndOfGameDialog;
 import view.GameFrame;
-import view.component.StandardButton;
 import view.theme.Theme;
 
 import java.awt.*;
+import java.util.Locale;
 
 @Configuration
 public class ViewConfig {
@@ -31,8 +27,8 @@ public class ViewConfig {
     }
 
     @Bean
-    public Theme theme() {
-        return darkTheme();
+    public ViewContext viewContext(){
+        return new ViewContextImpl(Locale.ENGLISH, darkTheme());
     }
 
     @Bean
@@ -42,38 +38,9 @@ public class ViewConfig {
     }
 
     @Bean
-    public StandardButton moveBackButton() {
-        Model model = applicationContext.getBean("model", Model.class);
-        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
-        return new StandardButton(null, theme(), new MoveBackCommand(model, uiCommandExecutor));
-    }
-
-    @Bean
-    public StandardButton exitAndSaveButton() {
-        Runnable savingTask = applicationContext.getBean("savingTask", Runnable.class);
-        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
-        return new StandardButton(null, theme(), new ExitAndSaveCommand(uiCommandExecutor, savingTask));
-    }
-
-    @Bean
-    public StandardButton exitButton() {
-        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
-        return new StandardButton(null, theme(), new ExitCommand(uiCommandExecutor));
-    }
-
-    @Bean
-    @Scope("prototype")
-    public StandardButton restartButton() {
-        Model model = applicationContext.getBean("model", Model.class);
-        Runnable savingTask = applicationContext.getBean("savingTask", Runnable.class);
-        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
-        return new StandardButton(null, theme(), new RestartCommand(model, savingTask, uiCommandExecutor));
-    }
-
-    @Bean
     public EndOfGameDialog endOfGameDialog() {
         GameFrame gameFrame = applicationContext.getBean("gameFrame", GameFrame.class);
-        Model model = applicationContext.getBean("model", Model.class);
-        return new EndOfGameDialog(gameFrame, model, theme(), new Dimension(270, 180));
+        GameModel gameModel = applicationContext.getBean("gameModel", GameModel.class);
+        return new EndOfGameDialog(gameFrame, gameModel, viewContext(), new Dimension(270, 180));
     }
 }

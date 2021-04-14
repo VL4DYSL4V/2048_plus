@@ -2,145 +2,90 @@ package model;
 
 import entity.Field;
 import enums.FieldDimension;
-import util.CellGenerator;
+import observer.Publisher;
+import observer.Subscriber;
+import observer.event.EventType;
 
-import javax.annotation.concurrent.NotThreadSafe;
-import java.io.*;
+import javax.annotation.concurrent.ThreadSafe;
 import java.math.BigInteger;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.Collection;
+import java.util.HashSet;
 
-@NotThreadSafe
-public final class GameModel implements Externalizable {
+@ThreadSafe
+public final class GameModel implements Publisher {
 
-    private static final int MAX_HISTORY_SIZE = 3;
-
-    private Field field;
-    private BigInteger scores = BigInteger.ZERO;
-    private List<Memento> history = new LinkedList<>();
-    private boolean gameIsOver;
-
-    GameModel(GameModel gameModel){
-        this.field = gameModel.field.copy();
-        this.scores = gameModel.scores;
-        this.gameIsOver = gameModel.gameIsOver;
-        this.history = new LinkedList<>(gameModel.history);
-    }
+    private GameData gameData;
+    private Collection<Subscriber> subscribers = new HashSet<>();
 
     public GameModel() {
         this(FieldDimension.FOUR_AND_FOUR);
     }
 
-    public GameModel(FieldDimension fieldDimension) {
-        this.field = new Field(fieldDimension);
-        CellGenerator.setRandomFieldElements(field, 2);
-    }
-
-    private static final class Memento implements Serializable {
-
-        private final BigInteger scores;
-        private final Field field;
-
-        private static final long serialVersionUID = 5761738890498234L;
-
-        private Memento(BigInteger scores, Field field) {
-            this.scores = scores;
-            this.field = field.copy();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Memento memento = (Memento) o;
-            return Objects.equals(scores, memento.scores) &&
-                    Objects.equals(field, memento.field);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(scores, field);
-        }
-
+    public GameModel(FieldDimension dimension) {
+        this.gameData = new GameData(dimension);
     }
 
     @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(field);
-        out.writeObject(scores);
-        out.writeObject(history);
+    public synchronized void subscribe(Subscriber subscriber) {
+        subscribers.add(subscriber);
     }
 
     @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        this.field = (Field) in.readObject();
-        this.scores = (BigInteger) in.readObject();
-        @SuppressWarnings("unchecked")
-        List<Memento> hist = (List<Memento>) in.readObject();
-        this.history = hist;
+    public synchronized void unsubscribe(Subscriber subscriber) {
+        subscribers.remove(subscriber);
     }
 
-    private Memento save() {
-        return new Memento(scores, field);
-    }
-
-    /**
-     * This method is designed to update state of this object and change
-     */
-    void updateAndSaveHistory(Field field, BigInteger scoresToAdd) {
-        if (this.field.getFieldDimension() == field.getFieldDimension()) {
-            Memento memento = save();
-            saveHistory(memento);
-            this.field = field.copy();
-            this.scores = this.scores.add(scoresToAdd);
+    @Override
+    public synchronized void notifySubscribers(EventType eventType) {
+        for (Subscriber subscriber : subscribers) {
+            subscriber.reactOnNotification(eventType);
         }
     }
 
-    private void saveHistory(Memento memento) {
-        if (history.size() == MAX_HISTORY_SIZE) {
-            history.remove(0);
-        }
-        history.add(memento);
+    public synchronized void updateAndSaveHistory(Field field, BigInteger scoresToAdd) {
+        gameData.updateAndSaveHistory(field, scoresToAdd);
+        notifySubscribers(EventType.GAME_DATA_CHANGED);
     }
 
-    void reset() {
-        scores = BigInteger.ZERO;
-        field.reset();
-        CellGenerator.setRandomFieldElements(field, 2);
-        history.clear();
-        gameIsOver = false;
+    public synchronized void reset() {
+        gameData.reset();
+        notifySubscribers(EventType.GAME_DATA_CHANGED);
     }
 
-    boolean restore() {
-        if (history.isEmpty()) {
-            return false;
-        }
-        int lastIndex = history.size() - 1;
-        Memento last = history.remove(lastIndex);
-        this.scores = last.scores;
-        this.field = last.field;
-        return true;
+    public synchronized boolean restore() {
+        boolean out = gameData.restore();
+        notifySubscribers(EventType.GAME_DATA_CHANGED);
+        return out;
     }
 
-    BigInteger getScores() {
-        return scores;
+    public synchronized BigInteger getScores() {
+        return gameData.getScores();
     }
 
-    Field getField() {
-        return field.copy();
+    public synchronized Field getField() {
+        return gameData.getField();
     }
 
-    FieldDimension getFieldDimension() {
-        return field.getFieldDimension();
+    public synchronized FieldDimension getFieldDimension() {
+        return gameData.getFieldDimension();
     }
 
-    boolean gameIsOver() {
-        return gameIsOver;
+    public synchronized boolean gameIsOver() {
+        return gameData.gameIsOver();
     }
 
-    void setGameIsOver(boolean gameIsOver) {
-        this.gameIsOver = gameIsOver;
+    public synchronized void setGameIsOver(boolean gameIsOver) {
+        gameData.setGameIsOver(gameIsOver);
+        notifySubscribers(EventType.GAME_DATA_CHANGED);
+    }
+
+    public synchronized void setGameData(GameData gameData) {
+        this.gameData = gameData;
+        notifySubscribers(EventType.GAME_DATA_CHANGED);
+    }
+
+    public synchronized GameData getGameData() {
+        return new GameData(gameData);
     }
 
 }

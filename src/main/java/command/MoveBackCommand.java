@@ -1,24 +1,24 @@
 package command;
 
 import service.ui.executor.CommandExecutor;
-import model.Model;
+import model.GameModel;
 
 public final class MoveBackCommand implements Command {
 
-    private final Model model;
+    private final GameModel gameModel;
     private final CommandExecutor commandExecutor;
 
-    public MoveBackCommand(Model model, CommandExecutor commandExecutor) {
-        this.model = model;
+    public MoveBackCommand(GameModel gameModel, CommandExecutor commandExecutor) {
+        this.gameModel = gameModel;
         this.commandExecutor = commandExecutor;
     }
 
     @Override
     public void execute() {
         commandExecutor.execute(() -> {
-            synchronized (model) {
-                if (model.restore()) {
-                    model.setGameIsOver(false);
+            synchronized (gameModel) {
+                if (gameModel.restore()) {
+                    gameModel.setGameIsOver(false);
                 }
             }
         });

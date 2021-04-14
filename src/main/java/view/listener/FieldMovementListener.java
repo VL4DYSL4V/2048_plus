@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-@Component
 public final class FieldMovementListener extends KeyAdapter {
 
     private final ShiftFieldCommand shiftFieldCommand;

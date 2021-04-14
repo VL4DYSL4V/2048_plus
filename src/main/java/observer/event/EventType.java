@@ -1,7 +1,7 @@
 package observer.event;
 
-public enum  EventType {
+public enum EventType {
 
-    MODEL_CHANGED
+    GAME_DATA_CHANGED, VIEW_CONTEXT_CHANGED
 
 }

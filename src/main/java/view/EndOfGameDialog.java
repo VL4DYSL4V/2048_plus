@@ -1,6 +1,7 @@
 package view;
 
-import model.Model;
+import context.ViewContext;
+import model.GameModel;
 import observer.Subscriber;
 import observer.event.EventType;
 import view.theme.Theme;
@@ -9,19 +10,21 @@ import view.util.ScreenUtils;
 import javax.swing.*;
 import java.awt.*;
 
-public final class EndOfGameDialog extends JDialog implements Subscriber, StyleVaryingComponent {
+public final class EndOfGameDialog extends JDialog implements Subscriber {
 
-    private final Model model;
+    private final GameModel gameModel;
     private final Dimension dimension;
     private final JLabel iconLabel;
+    private final ViewContext viewContext;
 
-    public EndOfGameDialog(JFrame owner, Model model, Theme theme, Dimension dimension) {
+    public EndOfGameDialog(JFrame owner, GameModel gameModel, ViewContext viewContext, Dimension dimension) {
         super(owner);
-        this.model = model;
+        this.gameModel = gameModel;
+        this.viewContext = viewContext;
         this.dimension = dimension;
-        this.iconLabel = new JLabel(getScaledImageIcon(theme));
+        this.iconLabel = new JLabel(getScaledImageIcon());
         configureJDialog();
-        styleJDialog(theme);
+        styleJDialog();
         constructDialog();
     }
 
@@ -34,8 +37,8 @@ public final class EndOfGameDialog extends JDialog implements Subscriber, StyleV
         add(iconLabel);
     }
 
-    private ImageIcon getScaledImageIcon(Theme theme) {
-        Image gameOverImage = theme.gameOverImage();
+    private ImageIcon getScaledImageIcon() {
+        Image gameOverImage = viewContext.getCurrentTheme().gameOverImage();
         int width = dimension.width;
         int height = dimension.height;
         return new ImageIcon(gameOverImage.getScaledInstance(width, height, Image.SCALE_SMOOTH));
@@ -48,29 +51,41 @@ public final class EndOfGameDialog extends JDialog implements Subscriber, StyleV
         setFocusable(false);
     }
 
-    private void styleJDialog(Theme theme) {
+    private void styleJDialog() {
         setSize(dimension);
         setLocation((ScreenUtils.getScreenWidth() - dimension.width) / 2,
                 (ScreenUtils.getScreenHeight() - dimension.height) / 2);
+        Theme theme = viewContext.getCurrentTheme();
         getContentPane().setBackground(theme.getBackground());
         setUndecorated(true);
     }
 
     @Override
     public void reactOnNotification(EventType eventType) {
-        if (model.gameIsOver()) {
-            setVisible(true);
-        } else {
-            setVisible(false);
-        }
+        SwingUtilities.invokeLater(computeReaction(eventType));
     }
 
-    @Override
-    public void update(Theme neuTheme) {
-        SwingUtilities.invokeLater(() -> {
-            styleJDialog(neuTheme);
-            iconLabel.setIcon(getScaledImageIcon(neuTheme));
-            repaint();
-        });
+    private Runnable computeReaction(EventType eventType) {
+        switch (eventType) {
+            case GAME_DATA_CHANGED:
+                return () -> {
+                    if (gameModel.gameIsOver()) {
+                        setVisible(true);
+                    } else {
+                        setVisible(false);
+                    }
+                };
+            case VIEW_CONTEXT_CHANGED:
+                return this::updateStyle;
+        }
+        return () -> {
+        };
+    }
+
+    private void updateStyle() {
+        Theme theme = viewContext.getCurrentTheme();
+        getContentPane().setBackground(theme.getBackground());
+        iconLabel.setIcon(getScaledImageIcon());
+        repaint();
     }
 }

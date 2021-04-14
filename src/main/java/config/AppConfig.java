@@ -1,17 +1,25 @@
 package config;
 
-import command.ShiftFieldCommand;
-import service.ui.executor.CommandExecutor;
-import dao.model.FileSystemGameModelDao;
-import dao.model.GameModelDao;
+import command.*;
+import dao.model.FileSystemGameDataDao;
+import dao.model.GameDataDao;
 import enums.FieldDimension;
 import exception.FetchException;
+import model.GameData;
 import model.GameModel;
-import model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import service.ui.executor.CommandExecutor;
 import task.SavingTask;
+import view.listener.FieldMovementListener;
+
+import java.awt.event.KeyListener;
+import java.nio.file.Path;
+import java.util.Locale;
+import java.util.Map;
 
 @Configuration
 @ComponentScan({"dao", "view", "service"})
@@ -26,13 +34,19 @@ public class AppConfig {
     }
 
     @Bean
-    public Model model() {
-        GameModelDao gameModelDao = applicationContext.getBean("gameModelDao", FileSystemGameModelDao.class);
+    public GameDataDao gameDataDao(){
+        @SuppressWarnings("unchecked")
+        Map<FieldDimension, Path> repositories = (Map<FieldDimension, Path>) applicationContext.getBean("repositories");
+        return new FileSystemGameDataDao(repositories);
+    }
+
+    @Bean
+    public GameModel gameModel() {
         try {
-            Model model = new Model();
-            GameModel gameModel = gameModelDao.getByDimension(FieldDimension.FOUR_AND_FOUR);
-            model.setGameModel(gameModel);
-            return model;
+            GameModel gameModel = new GameModel();
+            GameData gameData = gameDataDao().getByDimension(FieldDimension.FOUR_AND_FOUR);
+            gameModel.setGameData(gameData);
+            return gameModel;
         } catch (FetchException e) {
             throw new RuntimeException(e);
         }
@@ -44,16 +58,49 @@ public class AppConfig {
     }
 
     @Bean
-    public Runnable savingTask(){
-        Model model = applicationContext.getBean("model", Model.class);
-        GameModelDao gameModelDao = applicationContext.getBean("gameModelDao", GameModelDao.class);
-        return new SavingTask(model, gameModelDao);
+    public Runnable savingTask() {
+        GameDataDao gameDataDao = applicationContext.getBean("gameDataDao", GameDataDao.class);
+        return new SavingTask(gameModel(), gameDataDao);
     }
 
     @Bean
-    public ShiftFieldCommand shiftFieldCommand(){
+    public ShiftFieldCommand shiftFieldCommand() {
         CommandExecutor commandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
-        Model model = applicationContext.getBean("model", Model.class);
-        return new ShiftFieldCommand(commandExecutor, model);
+        GameModel gameModel = applicationContext.getBean("gameModel", GameModel.class);
+        return new ShiftFieldCommand(commandExecutor, gameModel);
+    }
+
+    @Bean
+    public Command moveBackCommand() {
+        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
+        return new MoveBackCommand(gameModel(), uiCommandExecutor);
+    }
+
+    @Bean
+    public Command restartCommand() {
+        Runnable savingTask = applicationContext.getBean("savingTask", Runnable.class);
+        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
+        return new RestartCommand(gameModel(), savingTask, uiCommandExecutor);
+    }
+
+    @Bean
+    public Command gameFrameToMenuCommand() {
+        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
+        return new GameFrameToMenuCommand(uiCommandExecutor);
+    }
+
+    @Bean
+    public KeyListener fieldMovementListener() {
+        ShiftFieldCommand filedShiftCommand = applicationContext.getBean("shiftFieldCommand", ShiftFieldCommand.class);
+        return new FieldMovementListener(filedShiftCommand);
+    }
+
+    @Bean
+    public MessageSource messageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasename("messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setDefaultLocale(Locale.forLanguageTag("en"));
+        return messageSource;
     }
 }

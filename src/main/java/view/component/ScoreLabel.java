@@ -1,7 +1,7 @@
 package view.component;
 
-import model.Model;
-import view.StyleVaryingComponent;
+import context.ViewContext;
+import model.GameModel;
 import view.enums.Fonts;
 import view.enums.FrameSize;
 import view.theme.Theme;
@@ -13,15 +13,18 @@ public final class ScoreLabel extends JLabel implements StyleVaryingComponent {
 
     private static final String SCORES = "Scores: ";
     private static final String END_OF_TOO_LONG_SCORES = "*10^";
-    private final Model model;
+    private final GameModel gameModel;
+    private final ViewContext viewContext;
 
-    public ScoreLabel(Model model, Theme theme) {
-        this.model = model;
+    public ScoreLabel(GameModel gameModel, ViewContext viewContext) {
+        this.gameModel = gameModel;
+        this.viewContext = viewContext;
         updateValue();
-        style(theme);
+        style();
     }
 
-    private void style(Theme theme) {
+    private void style() {
+        Theme theme = viewContext.getCurrentTheme();
         setForeground(theme.getForeground());
         setFont(Fonts.STANDARD_FONT.getFont());
     }
@@ -31,7 +34,7 @@ public final class ScoreLabel extends JLabel implements StyleVaryingComponent {
     }
 
     private String representation() {
-        StringBuilder scoreRepresentation = new StringBuilder(model.getScores().toString());
+        StringBuilder scoreRepresentation = new StringBuilder(gameModel.getScores().toString());
         FontMetrics fm = Toolkit.getDefaultToolkit().getFontMetrics(Fonts.STANDARD_FONT.getFont());
         int initialWidth = fm.stringWidth(SCORES);
         int endOfLineWidth = fm.stringWidth(END_OF_TOO_LONG_SCORES);
@@ -53,10 +56,7 @@ public final class ScoreLabel extends JLabel implements StyleVaryingComponent {
     }
 
     @Override
-    public void update(Theme neuTheme) {
-        SwingUtilities.invokeLater(() -> {
-            style(neuTheme);
-            repaint();
-        });
+    public void updateStyle() {
+        style();
     }
 }

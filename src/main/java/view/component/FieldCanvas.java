@@ -1,29 +1,28 @@
 package view.component;
 
+import context.ViewContext;
 import entity.Field;
 import entity.FieldElement;
 import enums.FieldDimension;
-import model.Model;
-import view.StyleVaryingComponent;
+import model.GameModel;
 import view.theme.Theme;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
 
-    private final Model model;
+    private final GameModel gameModel;
     private final FieldRenderingContext fieldRenderingContext;
-    private volatile Theme theme;
+    private final ViewContext viewContext;
     private Image scaledFieldBcgImage;
     private boolean firstRendered = true;
 
-    public FieldCanvas(Model model, Theme theme) {
-        this.model = model;
-        this.theme = theme;
-        this.fieldRenderingContext = new FieldRenderingContext(model.getFieldDimension());
+    public FieldCanvas(GameModel gameModel, ViewContext viewContext) {
+        this.gameModel = gameModel;
+        this.viewContext = viewContext;
+        this.fieldRenderingContext = new FieldRenderingContext(gameModel.getFieldDimension());
     }
 
     private final class FieldRenderingContext {
@@ -43,13 +42,12 @@ public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
             this.fieldDimension = fieldDimension;
         }
 
-        private void updateDueToChanges() {
-            updateDueToDimensionChange();
-            setupPowerToScaledImage();
+        private void updateDueToThemeChange(Theme theme) {
+            setupPowerToScaledImage(theme);
         }
 
-        private void updateDueToDimensionChange(){
-            this.fieldDimension = model.getFieldDimension();
+        private void updateDueToDimensionChange() {
+            this.fieldDimension = gameModel.getFieldDimension();
             centerX = FieldCanvas.super.getWidth() / 2;
             centerY = FieldCanvas.super.getHeight() / 2;
             cellWidth = FieldCanvas.super.getWidth() / (fieldDimension.getWidth() + 2);
@@ -60,7 +58,7 @@ public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
             setupIndexToRectangleY();
         }
 
-        private void setupPowerToScaledImage() {
+        private void setupPowerToScaledImage(Theme theme) {
             powerToScaledImage.clear();
             Map<Integer, Image> powerToImageMap = theme.powerToImageMap();
             for (Integer power : powerToImageMap.keySet()) {
@@ -128,8 +126,8 @@ public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
     public void paint(Graphics g) {
         if (firstRendered) {
             firstRendered = false;
-            fieldRenderingContext.updateDueToChanges();
-            scaledFieldBcgImage = scaledFieldBcgImage(theme.fieldBackgroundImage());
+            fieldRenderingContext.updateDueToDimensionChange();
+            updateDueToThemeChange();
         }
         super.paint(g);
         drawFieldBackground(g);
@@ -146,7 +144,7 @@ public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
     }
 
     private void drawField(Graphics g) {
-        Field field = model.getField();
+        Field field = gameModel.getField();
         FieldDimension dimension = field.getFieldDimension();
         for (int i = 0; i < dimension.getHeight(); i++) {
             for (FieldElement element : field.getRow(i)) {
@@ -162,18 +160,15 @@ public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
         repaint();
     }
 
-    private void updateDueToThemeChange(){
-        fieldRenderingContext.setupPowerToScaledImage();
+    private void updateDueToThemeChange() {
+        Theme theme = viewContext.getCurrentTheme();
+        fieldRenderingContext.updateDueToThemeChange(theme);
         scaledFieldBcgImage = scaledFieldBcgImage(theme.fieldBackgroundImage());
     }
 
     @Override
-    public void update(Theme neuTheme) {
-        SwingUtilities.invokeLater(() -> {
-            this.theme = neuTheme;
-            updateDueToThemeChange();
-            repaint();
-        });
+    public void updateStyle() {
+        updateDueToThemeChange();
     }
 
 }

@@ -1,16 +1,16 @@
 package command;
 
 import service.ui.executor.CommandExecutor;
-import model.Model;
+import model.GameModel;
 
 public final class RestartCommand implements Command {
 
-    private final Model model;
+    private final GameModel gameModel;
     private final Runnable savingTask;
     private final CommandExecutor controller;
 
-    public RestartCommand(Model model, Runnable savingTask, CommandExecutor controller) {
-        this.model = model;
+    public RestartCommand(GameModel gameModel, Runnable savingTask, CommandExecutor controller) {
+        this.gameModel = gameModel;
         this.savingTask = savingTask;
         this.controller = controller;
     }
@@ -18,8 +18,8 @@ public final class RestartCommand implements Command {
     @Override
     public void execute() {
         controller.execute(() -> {
-            synchronized (model) {
-                model.reset();
+            synchronized (gameModel) {
+                gameModel.reset();
                 savingTask.run();
             }
         });
