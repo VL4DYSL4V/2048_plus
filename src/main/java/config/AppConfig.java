@@ -1,8 +1,8 @@
 package config;
 
 import command.*;
-import dao.model.FileSystemGameDataDao;
-import dao.model.GameDataDao;
+import dao.game.FileSystemGameDataDao;
+import dao.game.GameDataDao;
 import enums.FieldDimension;
 import exception.FetchException;
 import model.GameData;

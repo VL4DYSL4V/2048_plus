@@ -2,7 +2,6 @@ package view.listener;
 
 import command.ShiftFieldCommand;
 import enums.Direction;
-import org.springframework.stereotype.Component;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

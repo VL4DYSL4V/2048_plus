@@ -62,7 +62,7 @@ public final class CoordinateGenerationUtils {
         return coordinates;
     }
 
-    public static Coordinates2D walkRightAndDown(Coordinates2D from, int where2StartNewRowX, FieldDimension fieldDimension) {
+    private static Coordinates2D walkRightAndDown(Coordinates2D from, int where2StartNewRowX, FieldDimension fieldDimension) {
         if (from.getX() < fieldDimension.getMaxX()) {
             return walkRight(from);
         } else if (from.getY() < fieldDimension.getMaxY()) {
@@ -72,7 +72,7 @@ public final class CoordinateGenerationUtils {
         }
     }
 
-    public static Coordinates2D walkLeftAndDown(Coordinates2D from, int where2StartNewRowX, FieldDimension fieldDimension) {
+    private static Coordinates2D walkLeftAndDown(Coordinates2D from, int where2StartNewRowX, FieldDimension fieldDimension) {
         if (from.getX() > fieldDimension.getMinX()) {
             return walkLeft(from);
         } else if (from.getY() < fieldDimension.getMaxY()) {
@@ -82,7 +82,7 @@ public final class CoordinateGenerationUtils {
         }
     }
 
-    public static Coordinates2D walkLeftAndUp(Coordinates2D from, int where2StartNewRowX, FieldDimension fieldDimension) {
+    private static Coordinates2D walkLeftAndUp(Coordinates2D from, int where2StartNewRowX, FieldDimension fieldDimension) {
         if (from.getX() > fieldDimension.getMinX()) {
             return walkLeft(from);
         } else if (from.getY() > fieldDimension.getMinY()) {
@@ -92,7 +92,7 @@ public final class CoordinateGenerationUtils {
         }
     }
 
-    public static Coordinates2D walkRightAndUp(Coordinates2D from, int where2StartNewRowX, FieldDimension fieldDimension) {
+    private static Coordinates2D walkRightAndUp(Coordinates2D from, int where2StartNewRowX, FieldDimension fieldDimension) {
         if (from.getX() < fieldDimension.getMaxX()) {
             return walkRight(from);
         } else if (from.getY() > fieldDimension.getMinY()) {
@@ -102,35 +102,27 @@ public final class CoordinateGenerationUtils {
         }
     }
 
-    public static Coordinates2D walkRight(Coordinates2D from) {
+    private static Coordinates2D walkRight(Coordinates2D from) {
         return new Coordinates2D(from.getX() + 1, from.getY());
     }
 
-    public static Coordinates2D walkLeft(Coordinates2D from) {
+    private static Coordinates2D walkLeft(Coordinates2D from) {
         return new Coordinates2D(from.getX() - 1, from.getY());
     }
 
-    public static Coordinates2D walkUp(Coordinates2D from) {
-        return new Coordinates2D(from.getX(), from.getY() - 1);
-    }
-
-    public static Coordinates2D walkDown(Coordinates2D from) {
-        return new Coordinates2D(from.getX(), from.getY() + 1);
-    }
-
-    public static Coordinates2D generateLeftUpperCorner(FieldDimension fieldDimension) {
+    private static Coordinates2D generateLeftUpperCorner(FieldDimension fieldDimension) {
         return new Coordinates2D(fieldDimension.getMinX(), fieldDimension.getMinY());
     }
 
-    public static Coordinates2D generateRightBottomCorner(FieldDimension fieldDimension) {
+    private static Coordinates2D generateRightBottomCorner(FieldDimension fieldDimension) {
         return new Coordinates2D(fieldDimension.getMaxX(), fieldDimension.getMaxY());
     }
 
-    public static Coordinates2D generateRightUpperCorner(FieldDimension fieldDimension) {
+    private static Coordinates2D generateRightUpperCorner(FieldDimension fieldDimension) {
         return new Coordinates2D(fieldDimension.getMaxX(), fieldDimension.getMinY());
     }
 
-    public static Coordinates2D generateLeftBottomCorner(FieldDimension fieldDimension) {
+    private static Coordinates2D generateLeftBottomCorner(FieldDimension fieldDimension) {
         return new Coordinates2D(fieldDimension.getMinX(), fieldDimension.getMaxY());
     }
 

@@ -1,6 +1,6 @@
 package task;
 
-import dao.model.GameDataDao;
+import dao.game.GameDataDao;
 import enums.FieldDimension;
 import exception.StoreException;
 import model.GameData;
@@ -18,15 +18,15 @@ public final class SavingTask implements Runnable {
 
     @Override
     public void run() {
+        GameData gameData;
+        FieldDimension dimension;
+        boolean gameIsOver;
+        synchronized (gameModel) {
+            gameData = gameModel.getGameData();
+            dimension = gameModel.getFieldDimension();
+            gameIsOver = gameModel.gameIsOver();
+        }
         try {
-            GameData gameData;
-            FieldDimension dimension;
-            boolean gameIsOver;
-            synchronized (gameModel) {
-                gameData = gameModel.getGameData();
-                dimension = gameModel.getFieldDimension();
-                gameIsOver = gameModel.gameIsOver();
-            }
             if (gameIsOver) {
                 gameDataDao.save(new GameData(dimension), dimension);
             } else {

@@ -1,4 +1,4 @@
-package dao.model;
+package dao.game;
 
 import enums.FieldDimension;
 import exception.FetchException;

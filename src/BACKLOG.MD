@@ -1,7 +1,8 @@
 1) Create view classes: MainMenu, Settings
-2) ViewConfig.theme() must return the last theme, selected by user
-3) Create commandExecutor to handle switching field dimension;
-4) Create commandExecutor to handle navigation between windows
-5) ScoreLabel.representation() uses deprecated method Toolkit.getDefaultToolkit().getFontMetrics
-6) Field background image is not used
-7) Delete RenderingContext, simple setter for theme will suffice
+2) ScoreLabel.representation() uses deprecated method Toolkit.getDefaultToolkit().getFontMetrics
+3) Most of classes from view.component are sensitive only to theme change, they don't need ViewContext field;
+    Think of refactoring StyleVaryingComponent.updateStyle() method to consume new theme and 
+    re-style depending on it;
+4) Refactor ScoreLabel to take MessageSource as constructor-arg and not to use constant SCORES
+5) Think about where and how to store available languages
+6) Move dark.properties from 'theme' directory to classpath and rename it to 'theme_dark.properties'

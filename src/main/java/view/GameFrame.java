@@ -21,6 +21,7 @@ import java.awt.event.KeyListener;
 import java.util.Locale;
 
 @Component
+//Todo: spot all view-context dependent styling and do it in separate methods
 public final class GameFrame extends JFrame implements Subscriber{
 
     private final JPanel rootPanel = new JPanel();
@@ -48,6 +49,7 @@ public final class GameFrame extends JFrame implements Subscriber{
         this.scoreLabel = new ScoreLabel(gameModel, viewContext);
         this.fieldCanvas = new FieldCanvas(gameModel, viewContext);
         configComponents();
+        styleFrame();
         styleComponents();
         constructWindow();
         addKeyListener(fieldMovementListener);
@@ -92,7 +94,6 @@ public final class GameFrame extends JFrame implements Subscriber{
     private void styleComponents() {
         Theme theme = viewContext.getCurrentTheme();
         Locale locale = viewContext.getCurrentLocale();
-        styleFrame();
         styleRootPanel(theme);
         styleControlPanel(theme);
         styleFieldCanvas(theme);

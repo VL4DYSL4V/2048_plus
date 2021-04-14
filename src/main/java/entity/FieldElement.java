@@ -17,7 +17,7 @@ public final class FieldElement implements Serializable {
         this.value = value;
     }
 
-    public static FieldElement zero(Coordinates2D coordinates2D){
+    public static FieldElement zero(Coordinates2D coordinates2D) {
         return new FieldElement(coordinates2D, 0);
     }
 
@@ -31,14 +31,9 @@ public final class FieldElement implements Serializable {
 
     @Override
     public String toString() {
-        return
-//                "FieldElement" +
-                "{" +
-//                "coordinates2D=" +
-                coordinates2D +
-                ", value=" + value +
-//                ", color=" + color +
-                '}';
+        return "FieldElement{" +
+                "coordinates2D=" + coordinates2D +
+                ", value=" + value + '}';
     }
 
     @Override

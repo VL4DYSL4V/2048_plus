@@ -1,8 +1,8 @@
 package main;
 
 import config.AppConfig;
-import entity.Field;
-import entity.FieldElement;
+import context.ViewContext;
+import context.ViewContextImpl;
 import model.GameModel;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -13,7 +13,7 @@ import view.GameFrame;
 import view.MainFrame;
 
 import javax.swing.*;
-import java.util.List;
+import java.util.Locale;
 
 public class Main {
 
@@ -26,24 +26,23 @@ public class Main {
         GameModel gameModel = context.getBean("gameModel", GameModel.class);
         gameModel.subscribe(gameFrame);
         gameModel.subscribe(endOfGameDialog);
+        ViewContext viewContext = context.getBean("viewContext", ViewContext.class);
+        ViewContextImpl viewContextImpl = (ViewContextImpl) viewContext;
+        viewContextImpl.subscribe(gameFrame);
+        viewContextImpl.subscribe(endOfGameDialog);
 
         SwingUtilities.invokeLater(() -> gameFrame.setVisible(true));
         PeriodicalSavingService gameSaver = context.getBean("gameSaver", GameSaver.class);
         gameSaver.start();
-    }
 
-    private static void printResult(GameModel gameModel) {
-        StringBuilder sb = new StringBuilder(100);
-        sb.append(gameModel.getScores()).append('\n');
-        Field f = gameModel.getField();
-        for (int i = 0; i < f.getFieldDimension().getHeight(); i++) {
-            List<FieldElement> row = f.getRow(i);
-            for (FieldElement fieldElement : row) {
-                sb.append(fieldElement.getValue()).append('\t');
+        new Thread(() -> {
+            try {
+                Thread.sleep(10_000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            sb.append('\n');
-        }
-        System.out.println(sb);
+            viewContextImpl.setLocale(new Locale("ru"));
+        }).start();
     }
 
 }
