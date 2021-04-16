@@ -1,11 +1,14 @@
 package config;
 
 import command.Command;
+import command.DimensionChangeCommand;
 import command.ExitCommand;
+import command.VolatileCommand;
 import command.game.MoveBackCommand;
 import command.game.RestartCommand;
 import command.game.ShiftFieldCommand;
 import command.transition.TransitionCommand;
+import context.UserPreferences;
 import dao.game.FileSystemGameDataDao;
 import dao.game.GameDataDao;
 import enums.FieldDimension;
@@ -119,6 +122,12 @@ public class AppConfig {
     @Bean
     public KeyListener fieldMovementListener() {
         return new FieldMovementListener(shiftFieldCommand());
+    }
+
+    @Bean
+    public VolatileCommand<FieldDimension> dimensionChangeCommand(){
+        UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
+        return new DimensionChangeCommand(userPreferences, uiCommandHandler());
     }
 
     @Bean

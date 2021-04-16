@@ -1,5 +1,6 @@
 package context;
 
+import enums.FieldDimension;
 import view.theme.Theme;
 
 import java.util.Locale;
@@ -8,10 +9,14 @@ public interface UserPreferences {
 
     Locale getLocale();
 
-    void setLocale(Locale locale);
+    boolean setLocale(Locale locale);
 
     Theme getTheme();
 
-    void setTheme(Theme theme);
+    boolean setTheme(Theme theme);
+
+    FieldDimension getFieldDimension();
+
+    boolean setFieldDimension(FieldDimension fieldDimension);
 
 }

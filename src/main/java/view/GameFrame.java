@@ -175,7 +175,7 @@ public final class GameFrame extends JFrame implements Subscriber{
                     scoreLabel.updateValue();
                     fieldCanvas.updateField();
                 };
-            case VIEW_CONTEXT_CHANGED:
+            case USER_PREFERENCES_CHANGED:
                 return this::updateStyle;
         }
         return () -> {

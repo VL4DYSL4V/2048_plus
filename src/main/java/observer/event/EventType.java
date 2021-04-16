@@ -2,6 +2,6 @@ package observer.event;
 
 public enum EventType {
 
-    GAME_DATA_CHANGED, VIEW_CONTEXT_CHANGED
+    GAME_DATA_CHANGED, USER_PREFERENCES_CHANGED
 
 }

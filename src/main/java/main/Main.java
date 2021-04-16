@@ -26,7 +26,7 @@ public class Main {
         GameModel gameModel = context.getBean("gameModel", GameModel.class);
         gameModel.subscribe(gameFrame);
         gameModel.subscribe(endOfGameDialog);
-        UserPreferences userPreferences = context.getBean("viewContext", UserPreferences.class);
+        UserPreferences userPreferences = context.getBean("userPreferences", UserPreferences.class);
         UserPreferencesImpl viewContextImpl = (UserPreferencesImpl) userPreferences;
         viewContextImpl.subscribe(gameFrame);
         viewContextImpl.subscribe(endOfGameDialog);

@@ -1,11 +1,11 @@
 package command.game;
 
-import command.Command;
-import handler.CommandHandler;
+import command.VolatileCommand;
 import entity.Coordinates2D;
 import entity.Field;
 import entity.FieldElement;
 import enums.Direction;
+import handler.CommandHandler;
 import model.GameModel;
 import util.CellGenerator;
 import util.PowerOfTwoHolder;
@@ -14,7 +14,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 
-public final class ShiftFieldCommand implements Command {
+public final class ShiftFieldCommand implements VolatileCommand<Direction> {
 
     private final CommandHandler commandHandler;
     private final GameModel gameModel;
@@ -45,8 +45,9 @@ public final class ShiftFieldCommand implements Command {
         });
     }
 
-    public void setDirection(Direction direction) {
-        this.direction = direction;
+    @Override
+    public void setParam(Direction param) {
+        this.direction = param;
     }
 
     private boolean checkIfEnd(Field field) {

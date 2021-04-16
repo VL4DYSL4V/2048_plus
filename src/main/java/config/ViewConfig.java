@@ -4,6 +4,7 @@ import context.UserPreferences;
 import context.UserPreferencesImpl;
 import dao.theme.FileSystemThemeDao;
 import dao.theme.ThemeDao;
+import enums.FieldDimension;
 import model.GameModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -27,8 +28,8 @@ public class ViewConfig {
     }
 
     @Bean
-    public UserPreferences viewContext(){
-        return new UserPreferencesImpl(Locale.ENGLISH, darkTheme());
+    public UserPreferences userPreferences(){
+        return new UserPreferencesImpl(Locale.ENGLISH, darkTheme(), FieldDimension.FOUR_AND_FOUR);
     }
 
     @Bean
@@ -41,6 +42,6 @@ public class ViewConfig {
     public EndOfGameDialog endOfGameDialog() {
         GameFrame gameFrame = applicationContext.getBean("gameFrame", GameFrame.class);
         GameModel gameModel = applicationContext.getBean("gameModel", GameModel.class);
-        return new EndOfGameDialog(gameFrame, gameModel, viewContext(), new Dimension(270, 180));
+        return new EndOfGameDialog(gameFrame, gameModel, userPreferences(), new Dimension(270, 180));
     }
 }

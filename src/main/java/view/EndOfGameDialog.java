@@ -75,7 +75,7 @@ public final class EndOfGameDialog extends JDialog implements Subscriber {
                         setVisible(false);
                     }
                 };
-            case VIEW_CONTEXT_CHANGED:
+            case USER_PREFERENCES_CHANGED:
                 return this::updateStyle;
         }
         return () -> {

@@ -1,13 +1,16 @@
 package view;
 
 import command.Command;
+import command.VolatileCommand;
 import context.UserPreferences;
+import enums.FieldDimension;
 import observer.Subscriber;
 import observer.event.EventType;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import view.component.BackgroundPanel;
+import view.component.DimensionJComboBox;
 import view.component.StandardButton;
 import view.enums.FrameSize;
 import view.util.ScreenUtils;
@@ -24,17 +27,20 @@ public final class MainFrame extends JFrame implements Subscriber {
     private final StandardButton toGameButton;
     private final StandardButton exitButton;
     private final StandardButton settingsButton;
+    private final JComboBox<String> dimensionJComboBox;
 
     private final MessageSource messageSource;
     private final UserPreferences userPreferences;
 
     public MainFrame(MessageSource messageSource, UserPreferences userPreferences,
                      Command exitCommand,
-                     @Lazy Command menuToGameFrameCommand) {
+                     @Lazy Command menuToGameFrameCommand,
+                     VolatileCommand<FieldDimension> dimensionChangeCommand) {
         this.rootPanel = new BackgroundPanel(FrameSize.MAIN_FRAME.getDimension(), userPreferences);
         this.toGameButton = new StandardButton(userPreferences, menuToGameFrameCommand);
         this.exitButton = new StandardButton(userPreferences, exitCommand);
         this.settingsButton = new StandardButton(userPreferences, null);
+        this.dimensionJComboBox = new DimensionJComboBox(userPreferences, dimensionChangeCommand);
         this.controlPanel = new JPanel();
         this.messageSource = messageSource;
         this.userPreferences = userPreferences;
@@ -56,8 +62,10 @@ public final class MainFrame extends JFrame implements Subscriber {
         constraints.insets = new Insets(5, 0, 0, 0);
         controlPanel.add(toGameButton, constraints);
         constraints.gridy = 1;
-        controlPanel.add(settingsButton, constraints);
+        controlPanel.add(dimensionJComboBox, constraints);
         constraints.gridy = 2;
+        controlPanel.add(settingsButton, constraints);
+        constraints.gridy = 3;
         controlPanel.add(exitButton, constraints);
     }
 
@@ -121,7 +129,7 @@ public final class MainFrame extends JFrame implements Subscriber {
     }
 
     private Runnable computeReaction(EventType eventType) {
-        if (eventType == EventType.VIEW_CONTEXT_CHANGED) {
+        if (eventType == EventType.USER_PREFERENCES_CHANGED) {
             return () -> {
                 styleComponents();
                 rootPanel.updateStyle();
