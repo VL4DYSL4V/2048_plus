@@ -22,8 +22,7 @@ public final class FieldCanvas extends Canvas implements ThemeVaryingComponent {
         this.gameModel = gameModel;
         this.userPreferences = userPreferences;
         this.fieldRenderingContext = new FieldRenderingContext(gameModel.getFieldDimension());
-        style(dimension);
-        setupCaches();
+        configure(dimension);
     }
 
     private final class FieldRenderingContext {
@@ -47,7 +46,7 @@ public final class FieldCanvas extends Canvas implements ThemeVaryingComponent {
             setupPowerToScaledImage(theme);
         }
 
-        private void updateDimension(Theme theme) {
+        private void configure(Theme theme) {
             this.fieldDimension = gameModel.getFieldDimension();
             centerX = FieldCanvas.super.getWidth() / 2;
             centerY = FieldCanvas.super.getHeight() / 2;
@@ -124,14 +123,15 @@ public final class FieldCanvas extends Canvas implements ThemeVaryingComponent {
         }
     }
 
-    private void style(Dimension dimension) {
+    private void configure(Dimension dimension) {
         setSize(dimension);
         setPreferredSize(dimension);
-        updateTheme();
+        setupRenderingContext();
+        scaledFieldBcgImage = scaledFieldBcgImage(userPreferences.getTheme().fieldBackgroundImage());
     }
 
-    private void setupCaches() {
-        fieldRenderingContext.updateDimension(userPreferences.getTheme());
+    private void setupRenderingContext() {
+        fieldRenderingContext.configure(userPreferences.getTheme());
     }
 
     @Override
@@ -151,7 +151,7 @@ public final class FieldCanvas extends Canvas implements ThemeVaryingComponent {
     }
 
     public void updateDimension() {
-        setupCaches();
+        setupRenderingContext();
     }
 
     private void updateTheme() {
