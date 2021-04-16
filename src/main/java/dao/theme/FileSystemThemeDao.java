@@ -34,6 +34,7 @@ public final class FileSystemThemeDao implements ThemeDao{
     }
 
     private Theme encodeIntoTheme(Properties properties) {
+        String name = properties.getProperty("name");
         Color bgColor = new Color(Integer.parseInt(properties.getProperty("bg_red")),
                 Integer.parseInt(properties.getProperty("bg_green")), Integer.parseInt(properties.getProperty("bg_blue")));
         Color fgColor = new Color(Integer.parseInt(properties.getProperty("fg_red")),
@@ -48,7 +49,7 @@ public final class FileSystemThemeDao implements ThemeDao{
             }
         }
         Image gameOverImage = load(properties.getProperty("game_over_image"));
-        return new ViewTheme(bgColor, fgColor, fieldBgImage, welcomeImage, powToImageMap, gameOverImage);
+        return new ViewTheme(name, bgColor, fgColor, fieldBgImage, welcomeImage, powToImageMap, gameOverImage);
     }
 
     private Image load(String fileName) {

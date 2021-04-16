@@ -10,7 +10,8 @@ import view.theme.Theme;
 import javax.swing.*;
 import java.awt.*;
 
-public final class ScoreLabel extends JLabel implements StyleVaryingComponent {
+public final class ScoreLabel extends JLabel
+        implements ThemeVaryingComponent, LocaleVaryingComponent{
 
     private static final String SCORES_DELIMITER = ": ";
     private static final String END_OF_TOO_LONG_SCORES = "*10^";
@@ -24,17 +25,26 @@ public final class ScoreLabel extends JLabel implements StyleVaryingComponent {
         this.messageSource = messageSource;
         this.userPreferences = userPreferences;
         this.scores = messageSource.getMessage("gameFrame.scores", null, userPreferences.getLocale());
-        updateValue();
         style();
     }
 
     private void style() {
-        Theme theme = userPreferences.getTheme();
-        setForeground(theme.getForeground());
         setFont(Fonts.STANDARD_FONT.getFont());
+        updateTheme();
+        updateLocale();
     }
 
-    public final void updateValue() {
+    private void updateTheme(){
+        Theme theme = userPreferences.getTheme();
+        setForeground(theme.getForeground());
+    }
+
+    private void updateLocale(){
+        this.scores = messageSource.getMessage("gameFrame.scores", null, userPreferences.getLocale());
+        updateValue();
+    }
+
+    public void updateValue() {
         setText(scoresWithDelimiter().concat(representation()));
     }
 
@@ -65,8 +75,12 @@ public final class ScoreLabel extends JLabel implements StyleVaryingComponent {
     }
 
     @Override
-    public void updateStyle() {
-        style();
-        this.scores = messageSource.getMessage("gameFrame.scores", null, userPreferences.getLocale());
+    public void applyNewTheme() {
+        updateTheme();
+    }
+
+    @Override
+    public void applyNewLocale() {
+        updateLocale();
     }
 }

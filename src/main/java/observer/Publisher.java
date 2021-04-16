@@ -1,12 +1,10 @@
 package observer;
 
-import observer.event.EventType;
+public interface Publisher<EventType> {
 
-public interface Publisher {
+    void subscribe(Subscriber<EventType> subscriber);
 
-    void subscribe(Subscriber subscriber);
-
-    void unsubscribe(Subscriber subscriber);
+    void unsubscribe(Subscriber<EventType> subscriber);
 
     void notifySubscribers(EventType eventType);
 

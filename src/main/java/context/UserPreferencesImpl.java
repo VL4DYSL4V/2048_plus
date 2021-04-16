@@ -3,7 +3,7 @@ package context;
 import enums.FieldDimension;
 import observer.Publisher;
 import observer.Subscriber;
-import observer.event.EventType;
+import observer.event.UserPreferencesEvent;
 import view.theme.Theme;
 
 import java.util.Collection;
@@ -11,12 +11,12 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Objects;
 
-public final class UserPreferencesImpl implements UserPreferences, Publisher {
+public final class UserPreferencesImpl implements UserPreferences, Publisher<UserPreferencesEvent> {
 
     private Locale locale;
     private Theme theme;
     private FieldDimension fieldDimension;
-    private final Collection<Subscriber> subscribers = new HashSet<>();
+    private final Collection<Subscriber<UserPreferencesEvent>> subscribers = new HashSet<>();
 
     public UserPreferencesImpl(Locale locale, Theme theme, FieldDimension fieldDimension) {
         this.locale = locale;
@@ -33,7 +33,7 @@ public final class UserPreferencesImpl implements UserPreferences, Publisher {
     public synchronized boolean setLocale(Locale locale) {
         if(!Objects.equals(locale, this.locale)) {
             this.locale = locale;
-            notifySubscribers(EventType.USER_PREFERENCES_CHANGED);
+            notifySubscribers(UserPreferencesEvent.LOCALE_CHANGED);
             return true;
         }
         return false;
@@ -48,40 +48,39 @@ public final class UserPreferencesImpl implements UserPreferences, Publisher {
     public synchronized boolean setTheme(Theme theme) {
         if(!Objects.equals(theme, this.theme)){
             this.theme = theme;
-            notifySubscribers(EventType.USER_PREFERENCES_CHANGED);
+            notifySubscribers(UserPreferencesEvent.THEME_CHANGED);
             return true;
         }
         return false;
     }
 
     @Override
-    public FieldDimension getFieldDimension() {
+    public synchronized FieldDimension getFieldDimension() {
         return fieldDimension;
     }
 
     @Override
-    public boolean setFieldDimension(FieldDimension fieldDimension) {
+    public synchronized boolean setFieldDimension(FieldDimension fieldDimension) {
         if(! Objects.equals(fieldDimension, this.fieldDimension)){
             this.fieldDimension = fieldDimension;
-            notifySubscribers(EventType.USER_PREFERENCES_CHANGED);
             return true;
         }
         return false;
     }
 
     @Override
-    public synchronized void subscribe(Subscriber subscriber) {
+    public synchronized void subscribe(Subscriber<UserPreferencesEvent> subscriber) {
         subscribers.add(subscriber);
     }
 
     @Override
-    public synchronized void unsubscribe(Subscriber subscriber) {
+    public synchronized void unsubscribe(Subscriber<UserPreferencesEvent> subscriber) {
         subscribers.remove(subscriber);
     }
 
     @Override
-    public synchronized void notifySubscribers(EventType eventType) {
-        for (Subscriber subscriber: subscribers){
+    public synchronized void notifySubscribers(UserPreferencesEvent eventType) {
+        for (Subscriber<UserPreferencesEvent> subscriber: subscribers){
             subscriber.reactOnNotification(eventType);
         }
     }

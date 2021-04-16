@@ -1,7 +1,6 @@
 package view.listener;
 
 import command.VolatileCommand;
-import command.game.ShiftFieldCommand;
 import enums.Direction;
 
 import java.awt.event.KeyAdapter;

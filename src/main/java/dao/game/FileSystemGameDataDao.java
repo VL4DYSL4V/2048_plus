@@ -4,6 +4,7 @@ import enums.FieldDimension;
 import exception.FetchException;
 import exception.StoreException;
 import model.GameData;
+import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -11,6 +12,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 
+@Repository("gameDataDao")
 public final class FileSystemGameDataDao implements GameDataDao {
 
     private final Map<FieldDimension, Path> repositories;

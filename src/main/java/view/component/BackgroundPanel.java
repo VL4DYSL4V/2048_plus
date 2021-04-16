@@ -6,7 +6,7 @@ import view.theme.Theme;
 import javax.swing.*;
 import java.awt.*;
 
-public final class BackgroundPanel extends JPanel implements StyleVaryingComponent{
+public final class BackgroundPanel extends JPanel implements ThemeVaryingComponent {
 
     private final Dimension dimension;
     private final UserPreferences userPreferences;
@@ -34,7 +34,7 @@ public final class BackgroundPanel extends JPanel implements StyleVaryingCompone
     }
 
     @Override
-    public void updateStyle() {
+    public void applyNewTheme() {
         this.image = scaledImageIcon();
     }
 }

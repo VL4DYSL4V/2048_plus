@@ -7,7 +7,7 @@ import view.theme.Theme;
 
 import javax.swing.*;
 
-public final class StandardButton extends JButton implements StyleVaryingComponent {
+public final class StandardButton extends JButton implements ThemeVaryingComponent {
 
     private final UserPreferences userPreferences;
 
@@ -19,14 +19,18 @@ public final class StandardButton extends JButton implements StyleVaryingCompone
     }
 
     private void style() {
-        Theme theme = userPreferences.getTheme();
-        setBackground(theme.getBackground());
-        setForeground(theme.getForeground());
+        updateTheme();
         setFont(Fonts.STANDARD_FONT.getFont());
     }
 
+    private void updateTheme(){
+        Theme theme = userPreferences.getTheme();
+        setBackground(theme.getBackground());
+        setForeground(theme.getForeground());
+    }
+
     @Override
-    public void updateStyle() {
-        style();
+    public void applyNewTheme() {
+        updateTheme();
     }
 }

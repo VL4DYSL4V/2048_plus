@@ -9,49 +9,36 @@ import command.game.RestartCommand;
 import command.game.ShiftFieldCommand;
 import command.transition.TransitionCommand;
 import context.UserPreferences;
-import dao.game.FileSystemGameDataDao;
 import dao.game.GameDataDao;
 import enums.FieldDimension;
 import exception.FetchException;
+import handler.CommandHandler;
+import handler.UICommandHandler;
 import model.GameData;
 import model.GameModel;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.lang.NonNull;
 import service.saver.GameSaver;
 import service.saver.PeriodicalSavingService;
-import handler.CommandHandler;
-import handler.UICommandHandler;
 import task.SavingTask;
 import view.GameFrame;
 import view.MainFrame;
 import view.listener.FieldMovementListener;
 
 import java.awt.event.KeyListener;
-import java.nio.file.Path;
 import java.util.Locale;
-import java.util.Map;
 
 @Configuration
 @ComponentScan({"dao", "view", "service"})
 @Import({RepositoryConfig.class, ViewConfig.class})
-public class AppConfig {
+public class AppConfig implements ApplicationContextAware {
 
-    private final ApplicationContext applicationContext;
-
-    @Autowired
-    public AppConfig(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    @Bean
-    public GameDataDao gameDataDao() {
-        @SuppressWarnings("unchecked")
-        Map<FieldDimension, Path> repositories = (Map<FieldDimension, Path>) applicationContext.getBean("repositories");
-        return new FileSystemGameDataDao(repositories);
-    }
+    private ApplicationContext applicationContext;
 
     @Bean
     public CommandHandler uiCommandHandler() {
@@ -60,19 +47,16 @@ public class AppConfig {
 
     @Bean
     public GameModel gameModel() {
+        GameModel gameModel = new GameModel();
+        GameDataDao gameDataDao = applicationContext.getBean("gameDataDao", GameDataDao.class);
+        GameData gameData;
         try {
-            GameModel gameModel = new GameModel();
-            GameData gameData = gameDataDao().getByDimension(FieldDimension.FOUR_AND_FOUR);
-            gameModel.setGameData(gameData);
-            return gameModel;
+            gameData = gameDataDao.getByDimension(FieldDimension.FOUR_AND_FOUR);
         } catch (FetchException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Bean
-    public ApplicationContext applicationContext() {
-        return new AnnotationConfigApplicationContext(getClass());
+        gameModel.setGameData(gameData);
+        return gameModel;
     }
 
     @Bean
@@ -115,7 +99,7 @@ public class AppConfig {
     }
 
     @Bean
-    public Command exitCommand(){
+    public Command exitCommand() {
         return new ExitCommand(uiCommandHandler());
     }
 
@@ -125,17 +109,23 @@ public class AppConfig {
     }
 
     @Bean
-    public VolatileCommand<FieldDimension> dimensionChangeCommand(){
+    public VolatileCommand<FieldDimension> dimensionChangeCommand() {
         UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
-        return new DimensionChangeCommand(userPreferences, uiCommandHandler());
+        GameDataDao gameDataDao = applicationContext.getBean("gameDataDao", GameDataDao.class);
+        return new DimensionChangeCommand(userPreferences, uiCommandHandler(), gameModel(), gameDataDao);
     }
 
     @Bean
     public MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename("messages");
-        messageSource.setDefaultEncoding("UTF-8");
-        messageSource.setDefaultLocale(Locale.forLanguageTag("en"));
+        messageSource.setBasename("messages" );
+        messageSource.setDefaultEncoding("UTF-8" );
+        messageSource.setDefaultLocale(Locale.forLanguageTag("en" ));
         return messageSource;
+    }
+
+    @Override
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

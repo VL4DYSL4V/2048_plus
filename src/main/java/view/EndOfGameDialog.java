@@ -3,14 +3,15 @@ package view;
 import context.UserPreferences;
 import model.GameModel;
 import observer.Subscriber;
-import observer.event.EventType;
+import observer.event.ModelEvent;
+import observer.event.UserPreferencesEvent;
 import view.theme.Theme;
 import view.util.ScreenUtils;
 
 import javax.swing.*;
 import java.awt.*;
 
-public final class EndOfGameDialog extends JDialog implements Subscriber {
+public final class EndOfGameDialog extends JDialog {
 
     private final GameModel gameModel;
     private final Dimension dimension;
@@ -26,6 +27,28 @@ public final class EndOfGameDialog extends JDialog implements Subscriber {
         configureJDialog();
         styleJDialog();
         constructDialog();
+    }
+
+    public final class ModelListener implements Subscriber<ModelEvent> {
+
+        @Override
+        public void reactOnNotification(ModelEvent modelEvent) {
+            SwingUtilities.invokeLater(() -> {
+                if (gameModel.gameIsOver()) {
+                    setVisible(true);
+                } else {
+                    setVisible(false);
+                }
+            });
+        }
+    }
+
+    public final class PreferencesListener implements Subscriber<UserPreferencesEvent> {
+
+        @Override
+        public void reactOnNotification(UserPreferencesEvent userPreferencesEvent) {
+            SwingUtilities.invokeLater(EndOfGameDialog.this::updateTheme);
+        }
     }
 
     public void constructDialog() {
@@ -60,29 +83,7 @@ public final class EndOfGameDialog extends JDialog implements Subscriber {
         setUndecorated(true);
     }
 
-    @Override
-    public void reactOnNotification(EventType eventType) {
-        SwingUtilities.invokeLater(computeReaction(eventType));
-    }
-
-    private Runnable computeReaction(EventType eventType) {
-        switch (eventType) {
-            case GAME_DATA_CHANGED:
-                return () -> {
-                    if (gameModel.gameIsOver()) {
-                        setVisible(true);
-                    } else {
-                        setVisible(false);
-                    }
-                };
-            case USER_PREFERENCES_CHANGED:
-                return this::updateStyle;
-        }
-        return () -> {
-        };
-    }
-
-    private void updateStyle() {
+    private void updateTheme() {
         Theme theme = userPreferences.getTheme();
         getContentPane().setBackground(theme.getBackground());
         iconLabel.setIcon(getScaledImageIcon());

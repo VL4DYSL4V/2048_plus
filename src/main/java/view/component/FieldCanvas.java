@@ -11,18 +11,19 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
+public final class FieldCanvas extends Canvas implements ThemeVaryingComponent {
 
     private final GameModel gameModel;
     private final FieldRenderingContext fieldRenderingContext;
     private final UserPreferences userPreferences;
     private Image scaledFieldBcgImage;
-    private boolean needToUpdateCaches = true;
 
-    public FieldCanvas(GameModel gameModel, UserPreferences userPreferences) {
+    public FieldCanvas(GameModel gameModel, UserPreferences userPreferences, Dimension dimension) {
         this.gameModel = gameModel;
         this.userPreferences = userPreferences;
         this.fieldRenderingContext = new FieldRenderingContext(gameModel.getFieldDimension());
+        style(dimension);
+        setupCaches();
     }
 
     private final class FieldRenderingContext {
@@ -42,11 +43,11 @@ public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
             this.fieldDimension = fieldDimension;
         }
 
-        private void updateDueToThemeChange(Theme theme) {
+        private void updateTheme(Theme theme) {
             setupPowerToScaledImage(theme);
         }
 
-        private void updateDueToDimensionChange() {
+        private void updateDimension(Theme theme) {
             this.fieldDimension = gameModel.getFieldDimension();
             centerX = FieldCanvas.super.getWidth() / 2;
             centerY = FieldCanvas.super.getHeight() / 2;
@@ -56,6 +57,7 @@ public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
             cellHeightMargin = cellHeight / fieldDimension.getHeight() - 1;
             setupIndexToRectangleX();
             setupIndexToRectangleY();
+            setupPowerToScaledImage(theme);
         }
 
         private void setupPowerToScaledImage(Theme theme) {
@@ -122,16 +124,40 @@ public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
         }
     }
 
+    private void style(Dimension dimension) {
+        setSize(dimension);
+        setPreferredSize(dimension);
+        updateTheme();
+    }
+
+    private void setupCaches() {
+        fieldRenderingContext.updateDimension(userPreferences.getTheme());
+    }
+
     @Override
     public void paint(Graphics g) {
-        if (needToUpdateCaches) {
-            needToUpdateCaches = false;
-            fieldRenderingContext.updateDueToDimensionChange();
-            updateDueToThemeChange();
-        }
         super.paint(g);
         drawFieldBackground(g);
         drawField(g);
+    }
+
+    public void updateField() {
+        repaint();
+    }
+
+    @Override
+    public void applyNewTheme() {
+        updateTheme();
+    }
+
+    public void updateDimension() {
+        setupCaches();
+    }
+
+    private void updateTheme() {
+        Theme theme = userPreferences.getTheme();
+        fieldRenderingContext.updateTheme(theme);
+        scaledFieldBcgImage = scaledFieldBcgImage(theme.fieldBackgroundImage());
     }
 
     private void drawFieldBackground(Graphics g) {
@@ -153,25 +179,6 @@ public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
                 Image image = fieldRenderingContext.getImage(element.getValue());
                 g.drawImage(image, x, y, this);
             }
-        }
-    }
-
-    public void updateField() {
-        repaint();
-    }
-
-    private void updateDueToThemeChange() {
-        Theme theme = userPreferences.getTheme();
-        fieldRenderingContext.updateDueToThemeChange(theme);
-        scaledFieldBcgImage = scaledFieldBcgImage(theme.fieldBackgroundImage());
-    }
-
-    @Override
-    public void updateStyle() {
-        if(isShowing()) {
-            updateDueToThemeChange();
-        }else{
-            needToUpdateCaches = true;
         }
     }
 

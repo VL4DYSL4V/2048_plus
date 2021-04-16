@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public final class DimensionJComboBox extends JComboBox<String> implements StyleVaryingComponent {
+public final class DimensionJComboBox extends JComboBox<String> implements ThemeVaryingComponent {
 
     private static final Map<String, FieldDimension> DIMENSION_MAP = new LinkedHashMap<>();
     private final UserPreferences userPreferences;
@@ -31,11 +31,11 @@ public final class DimensionJComboBox extends JComboBox<String> implements Style
     }
 
     private void style() {
-        themeSpecificStyle();
+        updateTheme();
         setFont(Fonts.STANDARD_FONT.getFont());
     }
 
-    private void themeSpecificStyle() {
+    private void updateTheme() {
         Theme theme = userPreferences.getTheme();
         setBackground(theme.getBackground());
         setForeground(theme.getForeground());
@@ -51,8 +51,8 @@ public final class DimensionJComboBox extends JComboBox<String> implements Style
     }
 
     @Override
-    public void updateStyle() {
-        themeSpecificStyle();
+    public void applyNewTheme() {
+        updateTheme();
     }
 }
 

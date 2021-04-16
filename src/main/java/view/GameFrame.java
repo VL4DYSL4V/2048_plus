@@ -4,7 +4,8 @@ import command.Command;
 import context.UserPreferences;
 import model.GameModel;
 import observer.Subscriber;
-import observer.event.EventType;
+import observer.event.ModelEvent;
+import observer.event.UserPreferencesEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
@@ -22,8 +23,7 @@ import java.awt.event.KeyListener;
 import java.util.Locale;
 
 @Component
-//Todo: spot all view-context dependent styling and do it in separate methods
-public final class GameFrame extends JFrame implements Subscriber{
+public final class GameFrame extends JFrame {
 
     private final JPanel rootPanel = new JPanel();
     private final JPanel controlPanel = new JPanel();
@@ -48,12 +48,60 @@ public final class GameFrame extends JFrame implements Subscriber{
         this.toMenuButton = new StandardButton(userPreferences, gameFrameToMenuCommand);
         this.restartButton = new StandardButton(userPreferences, restartCommand);
         this.scoreLabel = new ScoreLabel(gameModel, messageSource, userPreferences);
-        this.fieldCanvas = new FieldCanvas(gameModel, userPreferences);
-        configComponents();
-        styleFrame();
+        this.fieldCanvas = new FieldCanvas(gameModel, userPreferences, canvasSize());
+        configComponents(fieldMovementListener);
         styleComponents();
         constructWindow();
-        addKeyListener(fieldMovementListener);
+    }
+
+    public final class ModelListener implements Subscriber<ModelEvent> {
+
+        @Override
+        public void reactOnNotification(ModelEvent modelEvent) {
+            SwingUtilities.invokeLater(computeReaction(modelEvent));
+        }
+
+        private Runnable computeReaction(ModelEvent modelEvent) {
+            switch (modelEvent) {
+                case GAME_DATA_CHANGED:
+                    return () -> {
+                        scoreLabel.updateValue();
+                        fieldCanvas.updateField();
+                    };
+                case FIELD_DIMENSION_CHANGED:
+                    return fieldCanvas::updateDimension;
+                default:
+                    return () -> {
+                    };
+            }
+        }
+    }
+
+    public final class PreferencesListener implements Subscriber<UserPreferencesEvent> {
+
+        @Override
+        public void reactOnNotification(UserPreferencesEvent userPreferencesEvent) {
+            SwingUtilities.invokeLater(computeReaction(userPreferencesEvent));
+        }
+
+        @SuppressWarnings("Duplicates")
+        private Runnable computeReaction(UserPreferencesEvent userPreferencesEvent) {
+            switch (userPreferencesEvent) {
+                case THEME_CHANGED:
+                    return () -> {
+                        updateTheme();
+                        repaint();
+                    };
+                case LOCALE_CHANGED:
+                    return () -> {
+                        updateLocale();
+                        repaint();
+                    };
+                default:
+                    return () -> {
+                    };
+            }
+        }
     }
 
     private void constructWindow() {
@@ -85,53 +133,65 @@ public final class GameFrame extends JFrame implements Subscriber{
 
     }
 
-    private void configComponents() {
-        configFrame();
+    private void configComponents(KeyListener fieldMovementListener) {
+        configFrame(fieldMovementListener);
         configRootPanel();
         configControlPanel();
         configFieldCanvas();
     }
 
     private void styleComponents() {
-        Theme theme = userPreferences.getTheme();
-        Locale locale = userPreferences.getLocale();
-        styleRootPanel(theme);
-        styleControlPanel(theme);
-        styleFieldCanvas(theme);
-        styleToMenuButton(locale);
-        styleMoveBackButton(locale);
-        styleRestartButton(locale);
+        styleFrame();
+        styleRootPanel();
+        styleControlPanel();
+        updateLocale();
+        updateTheme();
     }
 
-    private void styleToMenuButton(Locale locale) {
+    private void updateLocale() {
+        Locale locale = userPreferences.getLocale();
+        localeStyleToMenuButton(locale);
+        localeStyleMoveBackButton(locale);
+        localeStyleRestartButton(locale);
+        scoreLabel.applyNewLocale();
+    }
+
+    private void localeStyleToMenuButton(Locale locale) {
         String text = messageSource.getMessage("gameFrame.toMenu", null, locale);
         toMenuButton.setText(text);
     }
 
-    private void styleRestartButton(Locale locale) {
+    private void localeStyleRestartButton(Locale locale) {
         String text = messageSource.getMessage("gameFrame.restart", null, locale);
         restartButton.setText(text);
     }
 
-    private void styleMoveBackButton(Locale locale) {
+    private void localeStyleMoveBackButton(Locale locale) {
         String text = messageSource.getMessage("gameFrame.moveBack", null, locale);
         moveBackButton.setText(text);
+    }
+
+    private void updateTheme() {
+        Theme theme = userPreferences.getTheme();
+        stylePanelWithTheme(rootPanel, theme);
+        stylePanelWithTheme(controlPanel, theme);
+    }
+
+    private void stylePanelWithTheme(JPanel jPanel, Theme theme) {
+        jPanel.setBackground(theme.getBackground());
+        jPanel.setForeground(theme.getForeground());
     }
 
     private void configFieldCanvas() {
         fieldCanvas.setFocusable(false);
     }
 
-    private void styleFieldCanvas(Theme theme) {
-        fieldCanvas.setBackground(theme.getBackground());
-        fieldCanvas.setForeground(theme.getForeground());
+    private Dimension canvasSize() {
         Dimension frameDimension = FrameSize.GAME_FRAME.getDimension();
-        fieldCanvas.setPreferredSize(new Dimension(frameDimension.width, Math.min(frameDimension.width, frameDimension.height)));
+        return new Dimension(frameDimension.width, Math.min(frameDimension.width, frameDimension.height));
     }
 
-    private void styleControlPanel(Theme theme) {
-        controlPanel.setBackground(theme.getBackground());
-        controlPanel.setForeground(theme.getForeground());
+    private void styleControlPanel() {
         controlPanel.setBorder(BorderFactory.createEtchedBorder());
         Dimension frameDimension = FrameSize.GAME_FRAME.getDimension();
         controlPanel.setPreferredSize(new Dimension(frameDimension.width, Math.abs(frameDimension.width - frameDimension.height)));
@@ -141,9 +201,7 @@ public final class GameFrame extends JFrame implements Subscriber{
         controlPanel.setLayout(new GridBagLayout());
     }
 
-    private void styleRootPanel(Theme theme) {
-        rootPanel.setBackground(theme.getBackground());
-        rootPanel.setForeground(theme.getForeground());
+    private void styleRootPanel() {
         rootPanel.setSize(FrameSize.GAME_FRAME.getDimension());
     }
 
@@ -159,34 +217,9 @@ public final class GameFrame extends JFrame implements Subscriber{
         setUndecorated(true);
     }
 
-    private void configFrame() {
+    private void configFrame(KeyListener fieldMovementListener) {
         setResizable(false);
+        addKeyListener(fieldMovementListener);
     }
 
-    @Override
-    public void reactOnNotification(EventType eventType) {
-        SwingUtilities.invokeLater(computeReaction(eventType));
-    }
-
-    private Runnable computeReaction(EventType eventType) {
-        switch (eventType) {
-            case GAME_DATA_CHANGED:
-                return () -> {
-                    scoreLabel.updateValue();
-                    fieldCanvas.updateField();
-                };
-            case USER_PREFERENCES_CHANGED:
-                return this::updateStyle;
-        }
-        return () -> {
-        };
-    }
-
-    private void updateStyle() {
-        styleComponents();
-        scoreLabel.updateStyle();
-        scoreLabel.updateValue();
-        fieldCanvas.updateStyle();
-        repaint();
-    }
 }

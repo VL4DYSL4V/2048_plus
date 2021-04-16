@@ -5,6 +5,7 @@ import java.util.Map;
 
 public final class ViewTheme implements Theme {
 
+    private final String name;
     private final Color background;
     private final Color foreground;
     private final Image fieldBackgroundImage;
@@ -12,16 +13,21 @@ public final class ViewTheme implements Theme {
     private final Map<Integer, Image> powToImageMap;
     private final Image gameOverImage;
 
-
-    public ViewTheme(Color background, Color foreground,
+    public ViewTheme(String name, Color background, Color foreground,
                      Image fieldBackgroundImage, Image welcomeImage,
                      Map<Integer, Image> powToImageMap, Image gameOverImage) {
+        this.name = name;
         this.background = background;
         this.foreground = foreground;
         this.fieldBackgroundImage = fieldBackgroundImage;
         this.welcomeImage = welcomeImage;
         this.powToImageMap = powToImageMap;
         this.gameOverImage = gameOverImage;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override

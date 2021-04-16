@@ -5,7 +5,7 @@ import command.VolatileCommand;
 import context.UserPreferences;
 import enums.FieldDimension;
 import observer.Subscriber;
-import observer.event.EventType;
+import observer.event.UserPreferencesEvent;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -20,14 +20,15 @@ import java.awt.*;
 import java.util.Locale;
 
 @Component
-public final class MainFrame extends JFrame implements Subscriber {
+public final class MainFrame extends JFrame
+        implements Subscriber<UserPreferencesEvent> {
 
     private final BackgroundPanel rootPanel;
     private final JPanel controlPanel;
     private final StandardButton toGameButton;
     private final StandardButton exitButton;
     private final StandardButton settingsButton;
-    private final JComboBox<String> dimensionJComboBox;
+    private final DimensionJComboBox dimensionJComboBox;
 
     private final MessageSource messageSource;
     private final UserPreferences userPreferences;
@@ -44,10 +45,11 @@ public final class MainFrame extends JFrame implements Subscriber {
         this.controlPanel = new JPanel();
         this.messageSource = messageSource;
         this.userPreferences = userPreferences;
-        style();
+        initialStyle();
         styleComponents();
         configComponents();
         constructWindow();
+        dimensionJComboBox.setSelectedIndex(1);
     }
 
     private void constructWindow() {
@@ -76,26 +78,38 @@ public final class MainFrame extends JFrame implements Subscriber {
     }
 
     private void styleComponents() {
-        Locale locale = userPreferences.getLocale();
-        styleToGameButton(locale);
-        styleSettingsButton(locale);
-        styleExitButton(locale);
+        updateLocale();
+        updateTheme();
         styleControlPanel();
     }
 
-    private void styleToGameButton(Locale locale) {
+    private void updateLocale() {
+        Locale locale = userPreferences.getLocale();
+        localeStyleToGameButton(locale);
+        localeStyleSettingsButton(locale);
+        localeStyleExitButton(locale);
+    }
+
+    private void localeStyleToGameButton(Locale locale) {
         String text = messageSource.getMessage("mainFrame.toGame", null, locale);
         toGameButton.setText(text);
     }
 
-    private void styleSettingsButton(Locale locale) {
+    private void localeStyleSettingsButton(Locale locale) {
         String text = messageSource.getMessage("mainFrame.settings", null, locale);
         settingsButton.setText(text);
     }
 
-    private void styleExitButton(Locale locale) {
+    private void localeStyleExitButton(Locale locale) {
         String text = messageSource.getMessage("mainFrame.exit", null, locale);
         exitButton.setText(text);
+    }
+
+    private void updateTheme() {
+        toGameButton.applyNewTheme();
+        exitButton.applyNewTheme();
+        settingsButton.applyNewTheme();
+        dimensionJComboBox.applyNewTheme();
     }
 
     private void styleControlPanel() {
@@ -110,7 +124,7 @@ public final class MainFrame extends JFrame implements Subscriber {
         rootPanel.setLayout(new GridBagLayout());
     }
 
-    private void style() {
+    private void initialStyle() {
         Dimension dimension = FrameSize.MAIN_FRAME.getDimension();
         setSize(dimension);
         setLocation((ScreenUtils.getScreenWidth() - dimension.width) / 2,
@@ -124,19 +138,27 @@ public final class MainFrame extends JFrame implements Subscriber {
     }
 
     @Override
-    public void reactOnNotification(EventType eventType) {
-        SwingUtilities.invokeLater(computeReaction(eventType));
+    public void reactOnNotification(UserPreferencesEvent userPreferencesEvent) {
+        SwingUtilities.invokeLater(computeReaction(userPreferencesEvent));
     }
 
-    private Runnable computeReaction(EventType eventType) {
-        if (eventType == EventType.USER_PREFERENCES_CHANGED) {
-            return () -> {
-                styleComponents();
-                rootPanel.updateStyle();
-                repaint();
-            };
+    @SuppressWarnings("Duplicates")
+    private Runnable computeReaction(UserPreferencesEvent eventType) {
+        switch (eventType){
+            case THEME_CHANGED:
+                return () -> {
+                    updateTheme();
+                    repaint();
+                };
+            case LOCALE_CHANGED:
+                return () -> {
+                    updateLocale();
+                    repaint();
+                };
+            default:
+                return () -> {
+                };
         }
-        return () -> {
-        };
     }
+
 }
