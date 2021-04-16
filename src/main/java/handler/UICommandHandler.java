@@ -1,12 +1,9 @@
-package service.ui.executor;
-
-import org.springframework.stereotype.Controller;
+package handler;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Controller("uiCommandExecutor")
-public final class UICommandExecutor implements CommandExecutor {
+public final class UICommandHandler implements CommandHandler {
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 

@@ -1,12 +1,13 @@
 package view;
 
 import command.Command;
-import context.ViewContext;
+import context.UserPreferences;
 import model.GameModel;
 import observer.Subscriber;
 import observer.event.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import view.component.FieldCanvas;
 import view.component.ScoreLabel;
@@ -33,21 +34,21 @@ public final class GameFrame extends JFrame implements Subscriber{
     private final FieldCanvas fieldCanvas;
 
     private final MessageSource messageSource;
-    private final ViewContext viewContext;
+    private final UserPreferences userPreferences;
 
     @Autowired
     public GameFrame(GameModel gameModel, MessageSource messageSource,
-                     ViewContext viewContext, KeyListener fieldMovementListener,
+                     UserPreferences userPreferences, KeyListener fieldMovementListener,
                      Command moveBackCommand,
                      Command restartCommand,
-                     Command gameFrameToMenuCommand) {
+                     @Lazy Command gameFrameToMenuCommand) {
         this.messageSource = messageSource;
-        this.viewContext = viewContext;
-        this.moveBackButton = new StandardButton(viewContext, moveBackCommand);
-        this.toMenuButton = new StandardButton(viewContext, gameFrameToMenuCommand);
-        this.restartButton = new StandardButton(viewContext, restartCommand);
-        this.scoreLabel = new ScoreLabel(gameModel, viewContext);
-        this.fieldCanvas = new FieldCanvas(gameModel, viewContext);
+        this.userPreferences = userPreferences;
+        this.moveBackButton = new StandardButton(userPreferences, moveBackCommand);
+        this.toMenuButton = new StandardButton(userPreferences, gameFrameToMenuCommand);
+        this.restartButton = new StandardButton(userPreferences, restartCommand);
+        this.scoreLabel = new ScoreLabel(gameModel, messageSource, userPreferences);
+        this.fieldCanvas = new FieldCanvas(gameModel, userPreferences);
         configComponents();
         styleFrame();
         styleComponents();
@@ -92,8 +93,8 @@ public final class GameFrame extends JFrame implements Subscriber{
     }
 
     private void styleComponents() {
-        Theme theme = viewContext.getCurrentTheme();
-        Locale locale = viewContext.getCurrentLocale();
+        Theme theme = userPreferences.getTheme();
+        Locale locale = userPreferences.getLocale();
         styleRootPanel(theme);
         styleControlPanel(theme);
         styleFieldCanvas(theme);
@@ -184,10 +185,8 @@ public final class GameFrame extends JFrame implements Subscriber{
     private void updateStyle() {
         styleComponents();
         scoreLabel.updateStyle();
+        scoreLabel.updateValue();
         fieldCanvas.updateStyle();
-        toMenuButton.updateStyle();
-        restartButton.updateStyle();
-        restartButton.updateStyle();
         repaint();
     }
 }

@@ -1,6 +1,6 @@
-package service.ui.executor;
+package handler;
 
-public interface CommandExecutor {
+public interface CommandHandler {
 
     void execute(Runnable runnable);
 

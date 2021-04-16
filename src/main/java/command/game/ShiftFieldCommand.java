@@ -1,6 +1,7 @@
-package command;
+package command.game;
 
-import service.ui.executor.CommandExecutor;
+import command.Command;
+import handler.CommandHandler;
 import entity.Coordinates2D;
 import entity.Field;
 import entity.FieldElement;
@@ -15,18 +16,18 @@ import java.util.Objects;
 
 public final class ShiftFieldCommand implements Command {
 
-    private final CommandExecutor commandExecutor;
+    private final CommandHandler commandHandler;
     private final GameModel gameModel;
     private volatile Direction direction;
 
-    public ShiftFieldCommand(CommandExecutor commandExecutor, GameModel gameModel) {
-        this.commandExecutor = commandExecutor;
+    public ShiftFieldCommand(CommandHandler commandHandler, GameModel gameModel) {
+        this.commandHandler = commandHandler;
         this.gameModel = gameModel;
     }
 
     @Override
     public void execute() {
-        commandExecutor.execute(() -> {
+        commandHandler.execute(() -> {
             if (gameModel.gameIsOver()) {
                 return;
             }

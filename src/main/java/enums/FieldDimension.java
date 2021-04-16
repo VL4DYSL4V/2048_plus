@@ -2,12 +2,11 @@ package enums;
 
 public enum FieldDimension {
 
-    THREE_AND_THREE("3 x 3", 3, 3),
-    FOUR_AND_FOUR("4 x 4", 4, 4),
-    FIVE_AND_FIVE("5 x 5", 5, 5),
-    SIX_AND_SIX("6 x 6", 6, 6);
+    THREE_AND_THREE(3, 3),
+    FOUR_AND_FOUR(4, 4),
+    FIVE_AND_FIVE(5, 5),
+    SIX_AND_SIX(6, 6);
 
-    private final String representation;
     private final int width;
     private final int height;
 
@@ -17,18 +16,13 @@ public enum FieldDimension {
     private final int minY;
     private final int maxY;
 
-    FieldDimension(String representation, int width, int height) {
-        this.representation = representation;
+    FieldDimension(int width, int height) {
         this.width = width;
         this.height = height;
         this.minX = 0;
         this.maxX = width - 1;
         this.minY = 0;
         this.maxY = height - 1;
-    }
-
-    public String getRepresentation() {
-        return representation;
     }
 
     public int getWidth() {

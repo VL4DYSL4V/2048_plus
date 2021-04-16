@@ -1,6 +1,6 @@
 package view.component;
 
-import context.ViewContext;
+import context.UserPreferences;
 import entity.Field;
 import entity.FieldElement;
 import enums.FieldDimension;
@@ -15,13 +15,13 @@ public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
 
     private final GameModel gameModel;
     private final FieldRenderingContext fieldRenderingContext;
-    private final ViewContext viewContext;
+    private final UserPreferences userPreferences;
     private Image scaledFieldBcgImage;
-    private boolean firstRendered = true;
+    private boolean needToUpdateCaches = true;
 
-    public FieldCanvas(GameModel gameModel, ViewContext viewContext) {
+    public FieldCanvas(GameModel gameModel, UserPreferences userPreferences) {
         this.gameModel = gameModel;
-        this.viewContext = viewContext;
+        this.userPreferences = userPreferences;
         this.fieldRenderingContext = new FieldRenderingContext(gameModel.getFieldDimension());
     }
 
@@ -124,8 +124,8 @@ public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
 
     @Override
     public void paint(Graphics g) {
-        if (firstRendered) {
-            firstRendered = false;
+        if (needToUpdateCaches) {
+            needToUpdateCaches = false;
             fieldRenderingContext.updateDueToDimensionChange();
             updateDueToThemeChange();
         }
@@ -161,14 +161,18 @@ public final class FieldCanvas extends Canvas implements StyleVaryingComponent {
     }
 
     private void updateDueToThemeChange() {
-        Theme theme = viewContext.getCurrentTheme();
+        Theme theme = userPreferences.getTheme();
         fieldRenderingContext.updateDueToThemeChange(theme);
         scaledFieldBcgImage = scaledFieldBcgImage(theme.fieldBackgroundImage());
     }
 
     @Override
     public void updateStyle() {
-        updateDueToThemeChange();
+        if(isShowing()) {
+            updateDueToThemeChange();
+        }else{
+            needToUpdateCaches = true;
+        }
     }
 
 }

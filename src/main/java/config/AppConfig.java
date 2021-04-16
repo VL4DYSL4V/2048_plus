@@ -1,6 +1,11 @@
 package config;
 
-import command.*;
+import command.Command;
+import command.ExitCommand;
+import command.game.MoveBackCommand;
+import command.game.RestartCommand;
+import command.game.ShiftFieldCommand;
+import command.transition.TransitionCommand;
 import dao.game.FileSystemGameDataDao;
 import dao.game.GameDataDao;
 import enums.FieldDimension;
@@ -12,8 +17,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import service.ui.executor.CommandExecutor;
+import service.saver.GameSaver;
+import service.saver.PeriodicalSavingService;
+import handler.CommandHandler;
+import handler.UICommandHandler;
 import task.SavingTask;
+import view.GameFrame;
+import view.MainFrame;
 import view.listener.FieldMovementListener;
 
 import java.awt.event.KeyListener;
@@ -34,10 +44,15 @@ public class AppConfig {
     }
 
     @Bean
-    public GameDataDao gameDataDao(){
+    public GameDataDao gameDataDao() {
         @SuppressWarnings("unchecked")
         Map<FieldDimension, Path> repositories = (Map<FieldDimension, Path>) applicationContext.getBean("repositories");
         return new FileSystemGameDataDao(repositories);
+    }
+
+    @Bean
+    public CommandHandler uiCommandHandler() {
+        return new UICommandHandler();
     }
 
     @Bean
@@ -65,34 +80,45 @@ public class AppConfig {
 
     @Bean
     public ShiftFieldCommand shiftFieldCommand() {
-        CommandExecutor commandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
         GameModel gameModel = applicationContext.getBean("gameModel", GameModel.class);
-        return new ShiftFieldCommand(commandExecutor, gameModel);
+        return new ShiftFieldCommand(uiCommandHandler(), gameModel);
     }
 
     @Bean
     public Command moveBackCommand() {
-        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
-        return new MoveBackCommand(gameModel(), uiCommandExecutor);
+        return new MoveBackCommand(gameModel(), uiCommandHandler());
     }
 
     @Bean
     public Command restartCommand() {
         Runnable savingTask = applicationContext.getBean("savingTask", Runnable.class);
-        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
-        return new RestartCommand(gameModel(), savingTask, uiCommandExecutor);
+        return new RestartCommand(gameModel(), savingTask, uiCommandHandler());
     }
 
     @Bean
     public Command gameFrameToMenuCommand() {
-        CommandExecutor uiCommandExecutor = applicationContext.getBean("uiCommandExecutor", CommandExecutor.class);
-        return new GameFrameToMenuCommand(uiCommandExecutor);
+        MainFrame mainFrame = applicationContext.getBean("mainFrame", MainFrame.class);
+        GameFrame gameFrame = applicationContext.getBean("gameFrame", GameFrame.class);
+        PeriodicalSavingService gameSaver = applicationContext.getBean("gameSaver", GameSaver.class);
+        return new TransitionCommand(gameFrame, mainFrame, uiCommandHandler(), gameSaver::stop);
+    }
+
+    @Bean
+    public Command menuToGameFrameCommand() {
+        MainFrame mainFrame = applicationContext.getBean("mainFrame", MainFrame.class);
+        GameFrame gameFrame = applicationContext.getBean("gameFrame", GameFrame.class);
+        PeriodicalSavingService gameSaver = applicationContext.getBean("gameSaver", GameSaver.class);
+        return new TransitionCommand(mainFrame, gameFrame, uiCommandHandler(), gameSaver::start);
+    }
+
+    @Bean
+    public Command exitCommand(){
+        return new ExitCommand(uiCommandHandler());
     }
 
     @Bean
     public KeyListener fieldMovementListener() {
-        ShiftFieldCommand filedShiftCommand = applicationContext.getBean("shiftFieldCommand", ShiftFieldCommand.class);
-        return new FieldMovementListener(filedShiftCommand);
+        return new FieldMovementListener(shiftFieldCommand());
     }
 
     @Bean

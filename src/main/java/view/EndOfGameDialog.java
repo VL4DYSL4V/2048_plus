@@ -1,6 +1,6 @@
 package view;
 
-import context.ViewContext;
+import context.UserPreferences;
 import model.GameModel;
 import observer.Subscriber;
 import observer.event.EventType;
@@ -15,12 +15,12 @@ public final class EndOfGameDialog extends JDialog implements Subscriber {
     private final GameModel gameModel;
     private final Dimension dimension;
     private final JLabel iconLabel;
-    private final ViewContext viewContext;
+    private final UserPreferences userPreferences;
 
-    public EndOfGameDialog(JFrame owner, GameModel gameModel, ViewContext viewContext, Dimension dimension) {
+    public EndOfGameDialog(JFrame owner, GameModel gameModel, UserPreferences userPreferences, Dimension dimension) {
         super(owner);
         this.gameModel = gameModel;
-        this.viewContext = viewContext;
+        this.userPreferences = userPreferences;
         this.dimension = dimension;
         this.iconLabel = new JLabel(getScaledImageIcon());
         configureJDialog();
@@ -38,7 +38,7 @@ public final class EndOfGameDialog extends JDialog implements Subscriber {
     }
 
     private ImageIcon getScaledImageIcon() {
-        Image gameOverImage = viewContext.getCurrentTheme().gameOverImage();
+        Image gameOverImage = userPreferences.getTheme().gameOverImage();
         int width = dimension.width;
         int height = dimension.height;
         return new ImageIcon(gameOverImage.getScaledInstance(width, height, Image.SCALE_SMOOTH));
@@ -55,7 +55,7 @@ public final class EndOfGameDialog extends JDialog implements Subscriber {
         setSize(dimension);
         setLocation((ScreenUtils.getScreenWidth() - dimension.width) / 2,
                 (ScreenUtils.getScreenHeight() - dimension.height) / 2);
-        Theme theme = viewContext.getCurrentTheme();
+        Theme theme = userPreferences.getTheme();
         getContentPane().setBackground(theme.getBackground());
         setUndecorated(true);
     }
@@ -83,7 +83,7 @@ public final class EndOfGameDialog extends JDialog implements Subscriber {
     }
 
     private void updateStyle() {
-        Theme theme = viewContext.getCurrentTheme();
+        Theme theme = userPreferences.getTheme();
         getContentPane().setBackground(theme.getBackground());
         iconLabel.setIcon(getScaledImageIcon());
         repaint();

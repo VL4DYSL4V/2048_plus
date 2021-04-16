@@ -4,13 +4,13 @@ import view.theme.Theme;
 
 import java.util.Locale;
 
-public interface ViewContext {
+public interface UserPreferences {
 
-    Locale getCurrentLocale();
+    Locale getLocale();
 
     void setLocale(Locale locale);
 
-    Theme getCurrentTheme();
+    Theme getTheme();
 
     void setTheme(Theme theme);
 

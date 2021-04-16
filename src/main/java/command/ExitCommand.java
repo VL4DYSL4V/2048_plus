@@ -1,18 +1,18 @@
 package command;
 
-import service.ui.executor.CommandExecutor;
+import handler.CommandHandler;
 
 public final class ExitCommand implements Command {
 
-    private final CommandExecutor commandExecutor;
+    private final CommandHandler commandHandler;
 
-    public ExitCommand(CommandExecutor commandExecutor) {
-        this.commandExecutor = commandExecutor;
+    public ExitCommand(CommandHandler commandHandler) {
+        this.commandHandler = commandHandler;
     }
 
     @Override
     public void execute() {
-        commandExecutor.execute(() -> System.exit(0));
+        commandHandler.execute(() -> System.exit(0));
     }
 
 }

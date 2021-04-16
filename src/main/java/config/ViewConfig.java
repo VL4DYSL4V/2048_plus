@@ -1,7 +1,7 @@
 package config;
 
-import context.ViewContext;
-import context.ViewContextImpl;
+import context.UserPreferences;
+import context.UserPreferencesImpl;
 import dao.theme.FileSystemThemeDao;
 import dao.theme.ThemeDao;
 import model.GameModel;
@@ -27,8 +27,8 @@ public class ViewConfig {
     }
 
     @Bean
-    public ViewContext viewContext(){
-        return new ViewContextImpl(Locale.ENGLISH, darkTheme());
+    public UserPreferences viewContext(){
+        return new UserPreferencesImpl(Locale.ENGLISH, darkTheme());
     }
 
     @Bean

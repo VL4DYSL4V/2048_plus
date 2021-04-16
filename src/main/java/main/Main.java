@@ -1,8 +1,8 @@
 package main;
 
 import config.AppConfig;
-import context.ViewContext;
-import context.ViewContextImpl;
+import context.UserPreferences;
+import context.UserPreferencesImpl;
 import model.GameModel;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -26,18 +26,19 @@ public class Main {
         GameModel gameModel = context.getBean("gameModel", GameModel.class);
         gameModel.subscribe(gameFrame);
         gameModel.subscribe(endOfGameDialog);
-        ViewContext viewContext = context.getBean("viewContext", ViewContext.class);
-        ViewContextImpl viewContextImpl = (ViewContextImpl) viewContext;
+        UserPreferences userPreferences = context.getBean("viewContext", UserPreferences.class);
+        UserPreferencesImpl viewContextImpl = (UserPreferencesImpl) userPreferences;
         viewContextImpl.subscribe(gameFrame);
         viewContextImpl.subscribe(endOfGameDialog);
+        viewContextImpl.subscribe(mainFrame);
 
-        SwingUtilities.invokeLater(() -> gameFrame.setVisible(true));
+        SwingUtilities.invokeLater(() -> mainFrame.setVisible(true));
         PeriodicalSavingService gameSaver = context.getBean("gameSaver", GameSaver.class);
         gameSaver.start();
 
         new Thread(() -> {
             try {
-                Thread.sleep(10_000);
+                Thread.sleep(5_000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

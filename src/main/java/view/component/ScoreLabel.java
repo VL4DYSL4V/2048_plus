@@ -1,7 +1,8 @@
 package view.component;
 
-import context.ViewContext;
+import context.UserPreferences;
 import model.GameModel;
+import org.springframework.context.MessageSource;
 import view.enums.Fonts;
 import view.enums.FrameSize;
 import view.theme.Theme;
@@ -11,32 +12,40 @@ import java.awt.*;
 
 public final class ScoreLabel extends JLabel implements StyleVaryingComponent {
 
-    private static final String SCORES = "Scores: ";
+    private static final String SCORES_DELIMITER = ": ";
     private static final String END_OF_TOO_LONG_SCORES = "*10^";
     private final GameModel gameModel;
-    private final ViewContext viewContext;
+    private final MessageSource messageSource;
+    private final UserPreferences userPreferences;
+    private String scores;
 
-    public ScoreLabel(GameModel gameModel, ViewContext viewContext) {
+    public ScoreLabel(GameModel gameModel, MessageSource messageSource, UserPreferences userPreferences) {
         this.gameModel = gameModel;
-        this.viewContext = viewContext;
+        this.messageSource = messageSource;
+        this.userPreferences = userPreferences;
+        this.scores = messageSource.getMessage("gameFrame.scores", null, userPreferences.getLocale());
         updateValue();
         style();
     }
 
     private void style() {
-        Theme theme = viewContext.getCurrentTheme();
+        Theme theme = userPreferences.getTheme();
         setForeground(theme.getForeground());
         setFont(Fonts.STANDARD_FONT.getFont());
     }
 
     public final void updateValue() {
-        setText(SCORES.concat(representation()));
+        setText(scoresWithDelimiter().concat(representation()));
+    }
+
+    private String scoresWithDelimiter() {
+        return scores.concat(SCORES_DELIMITER);
     }
 
     private String representation() {
         StringBuilder scoreRepresentation = new StringBuilder(gameModel.getScores().toString());
         FontMetrics fm = Toolkit.getDefaultToolkit().getFontMetrics(Fonts.STANDARD_FONT.getFont());
-        int initialWidth = fm.stringWidth(SCORES);
+        int initialWidth = fm.stringWidth(scoresWithDelimiter());
         int endOfLineWidth = fm.stringWidth(END_OF_TOO_LONG_SCORES);
         int usedWidth = initialWidth + endOfLineWidth + 10;
         for (int i = 0; i < scoreRepresentation.length() - 1; i++) {
@@ -58,5 +67,6 @@ public final class ScoreLabel extends JLabel implements StyleVaryingComponent {
     @Override
     public void updateStyle() {
         style();
+        this.scores = messageSource.getMessage("gameFrame.scores", null, userPreferences.getLocale());
     }
 }

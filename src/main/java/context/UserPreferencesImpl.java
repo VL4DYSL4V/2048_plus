@@ -9,19 +9,19 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
 
-public final class ViewContextImpl implements ViewContext, Publisher {
+public final class UserPreferencesImpl implements UserPreferences, Publisher {
 
     private Locale locale;
     private Theme theme;
     private final Collection<Subscriber> subscribers = new HashSet<>();
 
-    public ViewContextImpl(Locale locale, Theme theme) {
+    public UserPreferencesImpl(Locale locale, Theme theme) {
         this.locale = locale;
         this.theme = theme;
     }
 
     @Override
-    public synchronized Locale getCurrentLocale() {
+    public synchronized Locale getLocale() {
         return locale;
     }
 
@@ -32,7 +32,7 @@ public final class ViewContextImpl implements ViewContext, Publisher {
     }
 
     @Override
-    public synchronized Theme getCurrentTheme() {
+    public synchronized Theme getTheme() {
         return theme;
     }
 

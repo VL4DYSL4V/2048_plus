@@ -1,7 +1,7 @@
 package view.component;
 
 import command.Command;
-import context.ViewContext;
+import context.UserPreferences;
 import view.enums.Fonts;
 import view.theme.Theme;
 
@@ -9,17 +9,17 @@ import javax.swing.*;
 
 public final class StandardButton extends JButton implements StyleVaryingComponent {
 
-    private final ViewContext viewContext;
+    private final UserPreferences userPreferences;
 
-    public StandardButton(ViewContext viewContext, Command command) {
-        this.viewContext = viewContext;
+    public StandardButton(UserPreferences userPreferences, Command command) {
+        this.userPreferences = userPreferences;
         setFocusable(false);
         addActionListener((e) -> command.execute());
         style();
     }
 
     private void style() {
-        Theme theme = viewContext.getCurrentTheme();
+        Theme theme = userPreferences.getTheme();
         setBackground(theme.getBackground());
         setForeground(theme.getForeground());
         setFont(Fonts.STANDARD_FONT.getFont());
