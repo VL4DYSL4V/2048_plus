@@ -40,8 +40,7 @@ public class ViewConfig {
 
     @Bean
     public EndOfGameDialog endOfGameDialog() {
-        GameFrame gameFrame = applicationContext.getBean("gameFrame", GameFrame.class);
         GameModel gameModel = applicationContext.getBean("gameModel", GameModel.class);
-        return new EndOfGameDialog(gameFrame, gameModel, userPreferences(), new Dimension(270, 180));
+        return new EndOfGameDialog(gameModel, userPreferences(), new Dimension(270, 180));
     }
 }

@@ -26,8 +26,10 @@ public final class TransitionCommand implements Command {
     @Override
     public void execute() {
         commandHandler.execute(() -> {
-            from.setVisible(false);
-            to.setVisible(true);
+            SwingUtilities.invokeLater(() -> {
+                from.setVisible(false);
+                to.setVisible(true);
+            });
             if (afterTransition != null) {
                 afterTransition.run();
             }

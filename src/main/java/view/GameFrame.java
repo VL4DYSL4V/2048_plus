@@ -67,6 +67,7 @@ public final class GameFrame extends JFrame {
                     return () -> {
                         scoreLabel.updateValue();
                         fieldCanvas.updateField();
+                        repaint();
                     };
                 case FIELD_DIMENSION_CHANGED:
                     return fieldCanvas::updateDimension;

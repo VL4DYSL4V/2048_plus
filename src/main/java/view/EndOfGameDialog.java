@@ -18,8 +18,7 @@ public final class EndOfGameDialog extends JDialog {
     private final JLabel iconLabel;
     private final UserPreferences userPreferences;
 
-    public EndOfGameDialog(JFrame owner, GameModel gameModel, UserPreferences userPreferences, Dimension dimension) {
-        super(owner);
+    public EndOfGameDialog(GameModel gameModel, UserPreferences userPreferences, Dimension dimension) {
         this.gameModel = gameModel;
         this.userPreferences = userPreferences;
         this.dimension = dimension;
@@ -36,7 +35,7 @@ public final class EndOfGameDialog extends JDialog {
             SwingUtilities.invokeLater(() -> {
                 if (gameModel.gameIsOver()) {
                     setVisible(true);
-                } else {
+                } else if(isVisible()){
                     setVisible(false);
                 }
             });

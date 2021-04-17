@@ -88,9 +88,13 @@ public class AppConfig implements ApplicationContextAware {
         GameFrame gameFrame = applicationContext.getBean("gameFrame", GameFrame.class);
         PeriodicalSavingService gameSaver = applicationContext.getBean("gameSaver", GameSaver.class);
         Runnable savingTask = applicationContext.getBean("savingTask", Runnable.class);
+        GameModel gameModel = gameModel();
         return new TransitionCommand(gameFrame, mainFrame, uiCommandHandler(), () -> {
+            savingTask.run();
             gameSaver.stop();
-//            savingTask.run();
+            if(gameModel.gameIsOver()) {
+                gameModel.setGameData(new GameData(gameModel.getFieldDimension()));
+            }
         });
     }
 
