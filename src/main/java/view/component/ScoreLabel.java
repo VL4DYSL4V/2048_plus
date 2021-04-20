@@ -1,6 +1,6 @@
 package view.component;
 
-import context.UserPreferences;
+import preferences.UserPreferences;
 import model.GameModel;
 import org.springframework.context.MessageSource;
 import view.enums.Fonts;

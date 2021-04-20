@@ -1,4 +1,4 @@
-package service.saver;
+package saver;
 
 public interface PeriodicalSavingService {
 

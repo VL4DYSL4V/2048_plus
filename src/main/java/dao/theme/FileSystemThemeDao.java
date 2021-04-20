@@ -1,9 +1,9 @@
 package dao.theme;
 
+import exception.FetchException;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ResourceUtils;
 import view.theme.Theme;
-import view.theme.ViewTheme;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -11,26 +11,52 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Repository("themeDao")
-public final class FileSystemThemeDao implements ThemeDao{
+public final class FileSystemThemeDao implements ThemeDao {
 
-    private static final Pattern POWER_PATTERN = Pattern.compile("[0-9]+");
+    private static final Pattern DIGIT = Pattern.compile("\\d+");
 
     @Override
-    public Theme loadTheme(String path) {
+    public Theme loadTheme(String path) throws FetchException {
         Properties properties = new Properties();
         try (BufferedReader bufferedReader = Files.newBufferedReader(
                 ResourceUtils.getFile(path).toPath())) {
             properties.load(bufferedReader);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FetchException(e);
         }
         return encodeIntoTheme(properties);
+    }
+
+    @Override
+    public Theme loadByName(String name) throws FetchException {
+        Properties properties = themeNameToFileNameProperties();
+        return loadTheme("classpath:" + properties.getProperty(name));
+    }
+
+    @Override
+    public Collection<Theme> loadAll() throws FetchException {
+        Collection<Theme> out = new ArrayList<>();
+        Properties properties = themeNameToFileNameProperties();
+        for (Object name: properties.keySet()) {
+            Theme t = loadByName((String) name);
+            out.add(t);
+        }
+        return out;
+    }
+
+    private Properties themeNameToFileNameProperties() throws FetchException {
+        Properties properties = new Properties();
+        try (BufferedReader bufferedReader = Files.newBufferedReader(
+                ResourceUtils.getFile("theme_name_to_file_name.properties").toPath())) {
+            properties.load(bufferedReader);
+        } catch (IOException e) {
+            throw new FetchException(e);
+        }
+        return properties;
     }
 
     private Theme encodeIntoTheme(Properties properties) {
@@ -44,12 +70,13 @@ public final class FileSystemThemeDao implements ThemeDao{
         Path powerFolder = Paths.get(properties.getProperty("power_folder"));
         Map<Integer, Image> powToImageMap = new HashMap<>();
         for (String key : properties.stringPropertyNames()) {
-            if (POWER_PATTERN.matcher(key).matches()) {
-                powToImageMap.put(Integer.valueOf(key), load(powerFolder.resolve((String) properties.get(key)).toString()));
+            if(DIGIT.matcher(key).matches()){
+                Path path = powerFolder.resolve((String) properties.get(key));
+                powToImageMap.put(Integer.valueOf(key), load(path.toString()));
             }
         }
         Image gameOverImage = load(properties.getProperty("game_over_image"));
-        return new ViewTheme(name, bgColor, fgColor, fieldBgImage, welcomeImage, powToImageMap, gameOverImage);
+        return new Theme(name, bgColor, fgColor, fieldBgImage, welcomeImage, powToImageMap, gameOverImage);
     }
 
     private Image load(String fileName) {

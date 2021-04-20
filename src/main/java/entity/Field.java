@@ -36,18 +36,18 @@ public final class Field implements Serializable {
     public void setElement(FieldElement fieldElement) {
         int y = fieldElement.getCoordinates2D().getY();
         int x = fieldElement.getCoordinates2D().getX();
-        if (fieldElements.get(y).get(x).getValue() == 0) {
+        if (fieldElements.get(y).get(x).isEmpty()) {
             fieldElements.get(y).set(x, fieldElement);
         } else {
             throw new IllegalArgumentException("Such element already exists");
         }
     }
 
-    public List<Coordinates2D> unavailableCoordinates() {
+    public List<Coordinates2D> getAvailableCoordinates(){
         List<Coordinates2D> out = new ArrayList<>();
         for (List<FieldElement> row : fieldElements) {
             for (FieldElement el : row) {
-                if (el.getValue() != 0) {
+                if (el.isEmpty()) {
                     out.add(el.getCoordinates2D());
                 }
             }

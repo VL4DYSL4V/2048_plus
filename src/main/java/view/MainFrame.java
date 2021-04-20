@@ -2,7 +2,7 @@ package view;
 
 import command.Command;
 import command.VolatileCommand;
-import context.UserPreferences;
+import preferences.UserPreferences;
 import enums.FieldDimension;
 import observer.Subscriber;
 import observer.event.UserPreferencesEvent;

@@ -1,7 +1,7 @@
 package view.component;
 
 import command.Command;
-import context.UserPreferences;
+import preferences.UserPreferences;
 import view.enums.Fonts;
 import view.theme.Theme;
 

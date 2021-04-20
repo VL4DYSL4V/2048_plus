@@ -1,7 +1,7 @@
 package view.component;
 
 import command.VolatileCommand;
-import context.UserPreferences;
+import preferences.UserPreferences;
 import enums.FieldDimension;
 import view.enums.Fonts;
 import view.theme.Theme;

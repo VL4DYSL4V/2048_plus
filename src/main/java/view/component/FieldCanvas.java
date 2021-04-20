@@ -1,6 +1,6 @@
 package view.component;
 
-import context.UserPreferences;
+import preferences.UserPreferences;
 import entity.Field;
 import entity.FieldElement;
 import enums.FieldDimension;

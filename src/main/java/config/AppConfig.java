@@ -8,7 +8,7 @@ import command.game.MoveBackCommand;
 import command.game.RestartCommand;
 import command.game.ShiftFieldCommand;
 import command.transition.TransitionCommand;
-import context.UserPreferences;
+import preferences.UserPreferences;
 import dao.game.GameDataDao;
 import enums.FieldDimension;
 import exception.FetchException;
@@ -23,8 +23,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.lang.NonNull;
-import service.saver.GameSaver;
-import service.saver.PeriodicalSavingService;
+import saver.GameSaver;
+import saver.PeriodicalSavingService;
 import task.SavingTask;
 import view.GameFrame;
 import view.MainFrame;
@@ -34,7 +34,7 @@ import java.awt.event.KeyListener;
 import java.util.Locale;
 
 @Configuration
-@ComponentScan({"dao", "view", "service"})
+@ComponentScan({"dao", "view", "saver"})
 @Import({RepositoryConfig.class, ViewConfig.class})
 public class AppConfig implements ApplicationContextAware {
 

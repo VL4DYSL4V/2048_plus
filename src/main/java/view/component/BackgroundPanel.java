@@ -1,6 +1,6 @@
 package view.component;
 
-import context.UserPreferences;
+import preferences.UserPreferences;
 import view.theme.Theme;
 
 import javax.swing.*;

@@ -1,6 +1,6 @@
 package command;
 
-import context.UserPreferences;
+import preferences.UserPreferences;
 import dao.game.GameDataDao;
 import enums.FieldDimension;
 import exception.FetchException;

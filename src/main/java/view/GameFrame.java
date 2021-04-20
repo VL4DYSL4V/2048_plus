@@ -1,7 +1,7 @@
 package view;
 
 import command.Command;
-import context.UserPreferences;
+import preferences.UserPreferences;
 import model.GameModel;
 import observer.Subscriber;
 import observer.event.ModelEvent;

@@ -1,16 +1,15 @@
 package main;
 
 import config.AppConfig;
-import context.UserPreferences;
-import context.UserPreferencesImpl;
+import preferences.UserPreferences;
 import model.GameModel;
 import observer.Subscriber;
 import observer.event.ModelEvent;
 import observer.event.UserPreferencesEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import service.saver.GameSaver;
-import service.saver.PeriodicalSavingService;
+import saver.GameSaver;
+import saver.PeriodicalSavingService;
 import view.EndOfGameDialog;
 import view.GameFrame;
 import view.MainFrame;
@@ -33,7 +32,7 @@ public class Main {
         Subscriber<ModelEvent> endOfGameModelEventSubscriber = endOfGameDialog.new ModelListener();
         gameModel.subscribe(endOfGameModelEventSubscriber);
         UserPreferences userPreferences = context.getBean("userPreferences", UserPreferences.class);
-        UserPreferencesImpl viewContextImpl = (UserPreferencesImpl) userPreferences;
+        UserPreferences viewContextImpl = (UserPreferences) userPreferences;
 
         Subscriber<UserPreferencesEvent> gameFramePreferencesEventSubscriber = gameFrame.new PreferencesListener();
         viewContextImpl.subscribe(gameFramePreferencesEventSubscriber);

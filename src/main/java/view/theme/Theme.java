@@ -3,20 +3,54 @@ package view.theme;
 import java.awt.*;
 import java.util.Map;
 
-public interface Theme {
+public final class Theme {
 
-    String getName();
+    private final String name;
+    private final Color background;
+    private final Color foreground;
+    private final Image fieldBackgroundImage;
+    private final Image welcomeImage;
+    private final Map<Integer, Image> powToImageMap;
+    private final Image gameOverImage;
 
-    Color getBackground();
+    public Theme(String name, Color background, Color foreground,
+                 Image fieldBackgroundImage, Image welcomeImage,
+                 Map<Integer, Image> powToImageMap, Image gameOverImage) {
+        this.name = name;
+        this.background = background;
+        this.foreground = foreground;
+        this.fieldBackgroundImage = fieldBackgroundImage;
+        this.welcomeImage = welcomeImage;
+        this.powToImageMap = powToImageMap;
+        this.gameOverImage = gameOverImage;
+    }
 
-    Color getForeground();
+    public String getName() {
+        return name;
+    }
 
-    Image fieldBackgroundImage();
+    public Color getBackground() {
+        return background;
+    }
 
-    Image welcomeImage();
+    public Color getForeground() {
+        return foreground;
+    }
 
-    Map<Integer, Image> powerToImageMap();
+    public Image fieldBackgroundImage() {
+        return fieldBackgroundImage;
+    }
 
-    Image gameOverImage();
+    public Image welcomeImage() {
+        return welcomeImage;
+    }
+
+    public Map<Integer, Image> powerToImageMap() {
+        return powToImageMap;
+    }
+
+    public Image gameOverImage() {
+        return gameOverImage;
+    }
 
 }
