@@ -1,6 +1,7 @@
-package view.component;
+package view.component.panel;
 
 import preferences.UserPreferences;
+import view.component.ThemeVaryingComponent;
 import view.theme.Theme;
 
 import javax.swing.*;

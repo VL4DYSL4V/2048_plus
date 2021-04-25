@@ -42,6 +42,16 @@ public class ViewConfig {
     }
 
     @Bean
+    public Theme brightTheme() {
+        ThemeDao themeDao = applicationContext.getBean("themeDao", FileSystemThemeDao.class);
+        try {
+            return themeDao.loadTheme("classpath:theme/bright.properties");
+        } catch (FetchException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Bean
     public EndOfGameDialog endOfGameDialog() {
         GameModel gameModel = applicationContext.getBean("gameModel", GameModel.class);
         return new EndOfGameDialog(gameModel, userPreferences(), new Dimension(270, 180));

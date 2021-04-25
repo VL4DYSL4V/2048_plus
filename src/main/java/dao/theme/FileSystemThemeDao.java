@@ -41,7 +41,7 @@ public final class FileSystemThemeDao implements ThemeDao {
     public Collection<Theme> loadAll() throws FetchException {
         Collection<Theme> out = new ArrayList<>();
         Properties properties = themeNameToFileNameProperties();
-        for (Object name: properties.keySet()) {
+        for (Object name : properties.keySet()) {
             Theme t = loadByName((String) name);
             out.add(t);
         }
@@ -61,22 +61,33 @@ public final class FileSystemThemeDao implements ThemeDao {
 
     private Theme encodeIntoTheme(Properties properties) {
         String name = properties.getProperty("name");
-        Color bgColor = new Color(Integer.parseInt(properties.getProperty("bg_red")),
-                Integer.parseInt(properties.getProperty("bg_green")), Integer.parseInt(properties.getProperty("bg_blue")));
-        Color fgColor = new Color(Integer.parseInt(properties.getProperty("fg_red")),
-                Integer.parseInt(properties.getProperty("fg_green")), Integer.parseInt(properties.getProperty("fg_blue")));
+        Color bgColor = parseColor(properties.getProperty("background-color"));
+        Color fgColor = parseColor(properties.getProperty("foreground-color"));
+        Font font = parseFont(properties);
         Image fieldBgImage = load(properties.getProperty("field_bg_img_path"));
         Image welcomeImage = load(properties.getProperty("welcome_image"));
         Path powerFolder = Paths.get(properties.getProperty("power_folder"));
         Map<Integer, Image> powToImageMap = new HashMap<>();
         for (String key : properties.stringPropertyNames()) {
-            if(DIGIT.matcher(key).matches()){
+            if (DIGIT.matcher(key).matches()) {
                 Path path = powerFolder.resolve((String) properties.get(key));
                 powToImageMap.put(Integer.valueOf(key), load(path.toString()));
             }
         }
         Image gameOverImage = load(properties.getProperty("game_over_image"));
-        return new Theme(name, bgColor, fgColor, fieldBgImage, welcomeImage, powToImageMap, gameOverImage);
+        return new Theme(name, bgColor, fgColor, font, fieldBgImage, welcomeImage, powToImageMap, gameOverImage);
+    }
+
+    private Font parseFont(Properties properties) {
+        String fontName = properties.getProperty("font-name");
+        String fontStyle = properties.getProperty("font-style");
+        String fontSize = properties.getProperty("font-size");
+        return new Font(fontName, Integer.parseInt(fontStyle), Integer.parseInt(fontSize));
+    }
+
+    private Color parseColor(String s) {
+        String[] rgb = s.split("-");
+        return new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
     }
 
     private Image load(String fileName) {

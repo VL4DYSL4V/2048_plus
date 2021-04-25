@@ -1,5 +1,6 @@
-package command;
+package command.menu;
 
+import command.Command;
 import handler.CommandHandler;
 
 public final class ExitCommand implements Command {

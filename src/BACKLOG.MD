@@ -4,3 +4,5 @@
 5) Maybe, game-specific logic should be moved to some game package
 6) Duplicates switch statement at MainFrame.computeReaction 
         and GameFrame.PreferencesListener.computeReaction;
+7) JComboBoxes must obtain Maps via constructor
+8) Create superclass for JComboBoxes

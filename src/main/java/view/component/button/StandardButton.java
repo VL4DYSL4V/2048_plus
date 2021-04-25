@@ -1,9 +1,9 @@
-package view.component;
+package view.component.button;
 
 import command.Command;
 import preferences.UserPreferences;
-import view.enums.Fonts;
-import view.theme.Theme;
+import view.component.ThemeVaryingComponent;
+import view.util.ThemeUtils;
 
 import javax.swing.*;
 
@@ -15,22 +15,11 @@ public final class StandardButton extends JButton implements ThemeVaryingCompone
         this.userPreferences = userPreferences;
         setFocusable(false);
         addActionListener((e) -> command.execute());
-        style();
-    }
-
-    private void style() {
-        updateTheme();
-        setFont(Fonts.STANDARD_FONT.getFont());
-    }
-
-    private void updateTheme(){
-        Theme theme = userPreferences.getTheme();
-        setBackground(theme.getBackground());
-        setForeground(theme.getForeground());
+        applyNewTheme();
     }
 
     @Override
     public void applyNewTheme() {
-        updateTheme();
+        ThemeUtils.style(this, userPreferences.getTheme());
     }
 }

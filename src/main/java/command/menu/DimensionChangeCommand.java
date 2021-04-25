@@ -1,5 +1,6 @@
-package command;
+package command.menu;
 
+import command.VolatileCommand;
 import preferences.UserPreferences;
 import dao.game.GameDataDao;
 import enums.FieldDimension;

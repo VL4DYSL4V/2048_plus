@@ -1,12 +1,14 @@
 package config;
 
 import command.Command;
-import command.DimensionChangeCommand;
-import command.ExitCommand;
+import command.menu.DimensionChangeCommand;
+import command.menu.ExitCommand;
 import command.VolatileCommand;
 import command.game.MoveBackCommand;
 import command.game.RestartCommand;
 import command.game.ShiftFieldCommand;
+import command.settings.LanguageChangeLocale;
+import command.settings.ThemeChangeCommand;
 import command.transition.TransitionCommand;
 import preferences.UserPreferences;
 import dao.game.GameDataDao;
@@ -28,10 +30,14 @@ import saver.PeriodicalSavingService;
 import task.SavingTask;
 import view.GameFrame;
 import view.MainFrame;
+import view.SettingsFrame;
 import view.listener.FieldMovementListener;
+import view.theme.Theme;
 
 import java.awt.event.KeyListener;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 @Configuration
 @ComponentScan({"dao", "view", "saver"})
@@ -107,6 +113,20 @@ public class AppConfig implements ApplicationContextAware {
     }
 
     @Bean
+    public Command menuToSettingsCommand(){
+        MainFrame mainFrame = applicationContext.getBean("mainFrame", MainFrame.class);
+        SettingsFrame settingsFrame = applicationContext.getBean("settingsFrame", SettingsFrame.class);
+        return new TransitionCommand(mainFrame, settingsFrame, uiCommandHandler());
+    }
+
+    @Bean
+    public Command settingsToMenuCommand(){
+        MainFrame mainFrame = applicationContext.getBean("mainFrame", MainFrame.class);
+        SettingsFrame settingsFrame = applicationContext.getBean("settingsFrame", SettingsFrame.class);
+        return new TransitionCommand(settingsFrame, mainFrame, uiCommandHandler());
+    }
+
+    @Bean
     public Command exitCommand() {
         return new ExitCommand(uiCommandHandler());
     }
@@ -121,6 +141,46 @@ public class AppConfig implements ApplicationContextAware {
         UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
         GameDataDao gameDataDao = applicationContext.getBean("gameDataDao", GameDataDao.class);
         return new DimensionChangeCommand(userPreferences, uiCommandHandler(), gameModel(), gameDataDao);
+    }
+
+    @Bean
+    public VolatileCommand<Locale> languageChangeCommand(){
+//        UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
+        return new LanguageChangeLocale();
+    }
+
+    @Bean
+    public  VolatileCommand<Theme> themeChangeCommand(){
+
+        return new ThemeChangeCommand();
+    }
+
+    @Bean
+    public Map<String, FieldDimension> supportedDimensions(){
+        Map<String, FieldDimension> dimensionMap = new LinkedHashMap<>();
+        dimensionMap.put("3 x 3", FieldDimension.THREE_AND_THREE);
+        dimensionMap.put("4 x 4", FieldDimension.FOUR_AND_FOUR);
+        dimensionMap.put("5 x 5", FieldDimension.FIVE_AND_FIVE);
+        dimensionMap.put("6 x 6", FieldDimension.SIX_AND_SIX);
+        return dimensionMap;
+    }
+
+    @Bean
+    public Map<String, Locale> supportedLocales(){
+        Map<String, Locale> localeMap = new LinkedHashMap<>();
+        localeMap.put("English", Locale.ENGLISH);
+        localeMap.put("Русский", Locale.forLanguageTag("ru"));
+        return localeMap;
+    }
+
+    @Bean
+    public Map<String, Theme> supportedThemes(){
+        Map<String, Theme> themeMap = new LinkedHashMap<>();
+        Theme darkTheme = applicationContext.getBean("darkTheme", Theme.class);
+        themeMap.put(darkTheme.getName(), darkTheme);
+        Theme brightTheme = applicationContext.getBean("brightTheme", Theme.class);
+        themeMap.put(brightTheme.getName(), brightTheme);
+        return themeMap;
     }
 
     @Bean

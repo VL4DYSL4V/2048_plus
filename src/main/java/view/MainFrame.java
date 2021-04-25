@@ -2,22 +2,24 @@ package view;
 
 import command.Command;
 import command.VolatileCommand;
-import preferences.UserPreferences;
 import enums.FieldDimension;
 import observer.Subscriber;
 import observer.event.UserPreferencesEvent;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import view.component.BackgroundPanel;
-import view.component.DimensionJComboBox;
-import view.component.StandardButton;
+import preferences.UserPreferences;
+import view.component.combo_box.StandardJComboBox;
+import view.component.panel.BackgroundPanel;
+import view.component.button.StandardButton;
 import view.enums.FrameSize;
 import view.util.ScreenUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Locale;
+import java.util.Map;
 
 @Component
 public final class MainFrame extends JFrame
@@ -28,7 +30,7 @@ public final class MainFrame extends JFrame
     private final StandardButton toGameButton;
     private final StandardButton exitButton;
     private final StandardButton settingsButton;
-    private final DimensionJComboBox dimensionJComboBox;
+    private final StandardJComboBox<FieldDimension> dimensionJComboBox;
 
     private final MessageSource messageSource;
     private final UserPreferences userPreferences;
@@ -36,16 +38,18 @@ public final class MainFrame extends JFrame
     public MainFrame(MessageSource messageSource, UserPreferences userPreferences,
                      Command exitCommand,
                      @Lazy Command menuToGameFrameCommand,
+                     @Lazy Command menuToSettingsCommand,
+                     @Qualifier("supportedDimensions") Map<String, FieldDimension> supportedDimensions,
                      VolatileCommand<FieldDimension> dimensionChangeCommand) {
         this.rootPanel = new BackgroundPanel(FrameSize.MAIN_FRAME.getDimension(), userPreferences);
         this.toGameButton = new StandardButton(userPreferences, menuToGameFrameCommand);
         this.exitButton = new StandardButton(userPreferences, exitCommand);
-        this.settingsButton = new StandardButton(userPreferences, null);
-        this.dimensionJComboBox = new DimensionJComboBox(userPreferences, dimensionChangeCommand);
+        this.settingsButton = new StandardButton(userPreferences, menuToSettingsCommand);
+        this.dimensionJComboBox = new StandardJComboBox<>(supportedDimensions, userPreferences, dimensionChangeCommand);
         this.controlPanel = new JPanel();
         this.messageSource = messageSource;
         this.userPreferences = userPreferences;
-        initialStyle();
+        styleFrame();
         styleComponents();
         configComponents();
         constructWindow();
@@ -85,24 +89,9 @@ public final class MainFrame extends JFrame
 
     private void updateLocale() {
         Locale locale = userPreferences.getLocale();
-        localeStyleToGameButton(locale);
-        localeStyleSettingsButton(locale);
-        localeStyleExitButton(locale);
-    }
-
-    private void localeStyleToGameButton(Locale locale) {
-        String text = messageSource.getMessage("mainFrame.toGame", null, locale);
-        toGameButton.setText(text);
-    }
-
-    private void localeStyleSettingsButton(Locale locale) {
-        String text = messageSource.getMessage("mainFrame.settings", null, locale);
-        settingsButton.setText(text);
-    }
-
-    private void localeStyleExitButton(Locale locale) {
-        String text = messageSource.getMessage("mainFrame.exit", null, locale);
-        exitButton.setText(text);
+        toGameButton.setText(messageSource.getMessage("mainFrame.toGame", null, locale));
+        settingsButton.setText(messageSource.getMessage("mainFrame.settings", null, locale));
+        exitButton.setText(messageSource.getMessage("mainFrame.exit", null, locale));
     }
 
     private void updateTheme() {
@@ -124,12 +113,12 @@ public final class MainFrame extends JFrame
         rootPanel.setLayout(new GridBagLayout());
     }
 
-    private void initialStyle() {
+    private void styleFrame() {
         Dimension dimension = FrameSize.MAIN_FRAME.getDimension();
         setSize(dimension);
         setLocation((ScreenUtils.getScreenWidth() - dimension.width) / 2,
                 (ScreenUtils.getScreenHeight() - dimension.height) / 2);
-        setTitle("2048+" );
+        setTitle("2048+");
     }
 
     private void config() {
@@ -144,7 +133,7 @@ public final class MainFrame extends JFrame
 
     @SuppressWarnings("Duplicates")
     private Runnable computeReaction(UserPreferencesEvent eventType) {
-        switch (eventType){
+        switch (eventType) {
             case THEME_CHANGED:
                 return () -> {
                     updateTheme();

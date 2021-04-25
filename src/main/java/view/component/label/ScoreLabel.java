@@ -1,47 +1,30 @@
-package view.component;
+package view.component.label;
 
-import preferences.UserPreferences;
 import model.GameModel;
 import org.springframework.context.MessageSource;
-import view.enums.Fonts;
+import preferences.UserPreferences;
 import view.enums.FrameSize;
-import view.theme.Theme;
 
-import javax.swing.*;
 import java.awt.*;
 
-public final class ScoreLabel extends JLabel
-        implements ThemeVaryingComponent, LocaleVaryingComponent{
+public final class ScoreLabel extends StandardLabel {
 
     private static final String SCORES_DELIMITER = ": ";
     private static final String END_OF_TOO_LONG_SCORES = "*10^";
     private final GameModel gameModel;
-    private final MessageSource messageSource;
-    private final UserPreferences userPreferences;
     private String scores;
 
-    public ScoreLabel(GameModel gameModel, MessageSource messageSource, UserPreferences userPreferences) {
+    public ScoreLabel(GameModel gameModel, MessageSource messageSource,
+                      UserPreferences userPreferences, String messageSourceKey) {
+        super(messageSource, userPreferences, messageSourceKey);
         this.gameModel = gameModel;
-        this.messageSource = messageSource;
-        this.userPreferences = userPreferences;
-        this.scores = messageSource.getMessage("gameFrame.scores", null, userPreferences.getLocale());
+        this.scores = messageSource.getMessage(messageSourceKey, null, userPreferences.getLocale());
         style();
     }
 
     private void style() {
-        setFont(Fonts.STANDARD_FONT.getFont());
-        updateTheme();
-        updateLocale();
-    }
-
-    private void updateTheme(){
-        Theme theme = userPreferences.getTheme();
-        setForeground(theme.getForeground());
-    }
-
-    private void updateLocale(){
-        this.scores = messageSource.getMessage("gameFrame.scores", null, userPreferences.getLocale());
-        updateValue();
+        applyNewTheme();
+        applyNewLocale();
     }
 
     public void updateValue() {
@@ -54,7 +37,7 @@ public final class ScoreLabel extends JLabel
 
     private String representation() {
         StringBuilder scoreRepresentation = new StringBuilder(gameModel.getScores().toString());
-        FontMetrics fm = Toolkit.getDefaultToolkit().getFontMetrics(Fonts.STANDARD_FONT.getFont());
+        FontMetrics fm = Toolkit.getDefaultToolkit().getFontMetrics(getFont());
         int initialWidth = fm.stringWidth(scoresWithDelimiter());
         int endOfLineWidth = fm.stringWidth(END_OF_TOO_LONG_SCORES);
         int usedWidth = initialWidth + endOfLineWidth + 10;
@@ -75,12 +58,8 @@ public final class ScoreLabel extends JLabel
     }
 
     @Override
-    public void applyNewTheme() {
-        updateTheme();
-    }
-
-    @Override
     public void applyNewLocale() {
-        updateLocale();
+        this.scores = messageSource.getMessage(messageSourceKey, null, userPreferences.getLocale());
+        updateValue();
     }
 }

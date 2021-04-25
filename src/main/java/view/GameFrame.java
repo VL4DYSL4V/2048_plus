@@ -10,12 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import view.component.FieldCanvas;
-import view.component.ScoreLabel;
-import view.component.StandardButton;
+import view.component.canvas.FieldCanvas;
+import view.component.label.ScoreLabel;
+import view.component.button.StandardButton;
 import view.enums.FrameSize;
 import view.theme.Theme;
 import view.util.ScreenUtils;
+import view.util.ThemeUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,7 +48,7 @@ public final class GameFrame extends JFrame {
         this.moveBackButton = new StandardButton(userPreferences, moveBackCommand);
         this.toMenuButton = new StandardButton(userPreferences, gameFrameToMenuCommand);
         this.restartButton = new StandardButton(userPreferences, restartCommand);
-        this.scoreLabel = new ScoreLabel(gameModel, messageSource, userPreferences);
+        this.scoreLabel = new ScoreLabel(gameModel, messageSource, userPreferences, "gameFrame.scores");
         this.fieldCanvas = new FieldCanvas(gameModel, userPreferences, canvasSize());
         configComponents(fieldMovementListener);
         styleComponents();
@@ -151,36 +152,16 @@ public final class GameFrame extends JFrame {
 
     private void updateLocale() {
         Locale locale = userPreferences.getLocale();
-        localeStyleToMenuButton(locale);
-        localeStyleMoveBackButton(locale);
-        localeStyleRestartButton(locale);
+        toMenuButton.setText(messageSource.getMessage("gameFrame.toMenu", null, locale));
+        restartButton.setText(messageSource.getMessage("gameFrame.restart", null, locale));
+        moveBackButton.setText(messageSource.getMessage("gameFrame.moveBack", null, locale));
         scoreLabel.applyNewLocale();
-    }
-
-    private void localeStyleToMenuButton(Locale locale) {
-        String text = messageSource.getMessage("gameFrame.toMenu", null, locale);
-        toMenuButton.setText(text);
-    }
-
-    private void localeStyleRestartButton(Locale locale) {
-        String text = messageSource.getMessage("gameFrame.restart", null, locale);
-        restartButton.setText(text);
-    }
-
-    private void localeStyleMoveBackButton(Locale locale) {
-        String text = messageSource.getMessage("gameFrame.moveBack", null, locale);
-        moveBackButton.setText(text);
     }
 
     private void updateTheme() {
         Theme theme = userPreferences.getTheme();
-        stylePanelWithTheme(rootPanel, theme);
-        stylePanelWithTheme(controlPanel, theme);
-    }
-
-    private void stylePanelWithTheme(JPanel jPanel, Theme theme) {
-        jPanel.setBackground(theme.getBackground());
-        jPanel.setForeground(theme.getForeground());
+        ThemeUtils.style(rootPanel, theme);
+        ThemeUtils.style(controlPanel, theme);
     }
 
     private void configFieldCanvas() {
@@ -215,11 +196,12 @@ public final class GameFrame extends JFrame {
         setSize(dimension);
         setLocation((ScreenUtils.getScreenWidth() - dimension.width) / 2,
                 (ScreenUtils.getScreenHeight() - dimension.height) / 2);
-        setUndecorated(true);
+        setTitle("2048+");
     }
 
     private void configFrame(KeyListener fieldMovementListener) {
         setResizable(false);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addKeyListener(fieldMovementListener);
     }
 
