@@ -2,6 +2,8 @@ package view;
 
 import command.Command;
 import command.VolatileCommand;
+import observer.Subscriber;
+import observer.event.UserPreferencesEvent;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
@@ -21,7 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 
 @Component
-public final class SettingsFrame extends JFrame {
+public final class SettingsFrame extends JFrame implements Subscriber<UserPreferencesEvent> {
 
     private final BackgroundPanel rootPanel;
     private final JPanel toMenuHolder = new JPanel();
@@ -115,6 +117,17 @@ public final class SettingsFrame extends JFrame {
     private void updateLocale() {
         Locale locale = userPreferences.getLocale();
         toMenuButton.setText(messageSource.getMessage("settings.toMenu", null, locale));
+        languageLabel.applyNewLocale();
+        themeLabel.applyNewLocale();
+    }
+
+    private void updateTheme() {
+        rootPanel.applyNewTheme();
+        toMenuButton.applyNewTheme();
+        languageLabel.applyNewTheme();
+        languageJComboBox.applyNewTheme();
+        themeLabel.applyNewTheme();
+        themeJComboBox.applyNewTheme();
     }
 
     private void configFrame() {
@@ -128,5 +141,27 @@ public final class SettingsFrame extends JFrame {
         setLocation((ScreenUtils.getScreenWidth() - dimension.width) / 2,
                 (ScreenUtils.getScreenHeight() - dimension.height) / 2);
         setTitle("2048+");
+    }
+
+    @Override
+    public void reactOnNotification(UserPreferencesEvent userPreferencesEvent) {
+        SwingUtilities.invokeLater(computeReaction(userPreferencesEvent));
+    }
+
+    private Runnable computeReaction(UserPreferencesEvent userPreferencesEvent) {
+        switch (userPreferencesEvent) {
+            case LOCALE_CHANGED:
+                return () -> {
+                    updateLocale();
+                    repaint();
+                };
+            case THEME_CHANGED:
+                return () -> {
+                    updateTheme();
+                    repaint();
+                };
+        }
+        return () -> {
+        };
     }
 }

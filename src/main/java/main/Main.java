@@ -13,6 +13,8 @@ import saver.PeriodicalSavingService;
 import view.EndOfGameDialog;
 import view.GameFrame;
 import view.MainFrame;
+import view.SettingsFrame;
+import view.theme.Theme;
 
 import javax.swing.*;
 import java.util.Locale;
@@ -26,19 +28,20 @@ public class Main {
         GameFrame gameFrame = context.getBean("gameFrame", GameFrame.class);
         EndOfGameDialog endOfGameDialog = context.getBean("endOfGameDialog", EndOfGameDialog.class);
         GameModel gameModel = context.getBean("gameModel", GameModel.class);
+        SettingsFrame settingsFrame = context.getBean("settingsFrame", SettingsFrame.class);
 
         Subscriber<ModelEvent> gameFrameModelEventSubscriber = gameFrame.new ModelListener();
         gameModel.subscribe(gameFrameModelEventSubscriber);
         Subscriber<ModelEvent> endOfGameModelEventSubscriber = endOfGameDialog.new ModelListener();
         gameModel.subscribe(endOfGameModelEventSubscriber);
         UserPreferences userPreferences = context.getBean("userPreferences", UserPreferences.class);
-        UserPreferences viewContextImpl = (UserPreferences) userPreferences;
 
         Subscriber<UserPreferencesEvent> gameFramePreferencesEventSubscriber = gameFrame.new PreferencesListener();
-        viewContextImpl.subscribe(gameFramePreferencesEventSubscriber);
+        userPreferences.subscribe(gameFramePreferencesEventSubscriber);
         Subscriber<UserPreferencesEvent> endOfGamePreferencesEventSubscriber = endOfGameDialog.new PreferencesListener();
-        viewContextImpl.subscribe(endOfGamePreferencesEventSubscriber);
-        viewContextImpl.subscribe(mainFrame);
+        userPreferences.subscribe(endOfGamePreferencesEventSubscriber);
+        userPreferences.subscribe(mainFrame);
+        userPreferences.subscribe(settingsFrame);
 
         SwingUtilities.invokeLater(() -> {
             mainFrame.setVisible(true);
@@ -46,14 +49,32 @@ public class Main {
         PeriodicalSavingService gameSaver = context.getBean("gameSaver", GameSaver.class);
         gameSaver.start();
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(5_000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            viewContextImpl.setLocale(new Locale("ru" ));
-        }).start();
+//        new Thread(() -> {
+//            try {
+//                Thread.sleep(5_000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            userPreferences.setLocale(new Locale("ru"));
+//            try {
+//                Thread.sleep(5_000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            userPreferences.setTheme(context.getBean("brightTheme", Theme.class));
+//            try {
+//                Thread.sleep(5_000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            userPreferences.setLocale(new Locale("en"));
+//            try {
+//                Thread.sleep(5_000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            userPreferences.setTheme(context.getBean("darkTheme", Theme.class));
+//        }).start();
     }
 
 }

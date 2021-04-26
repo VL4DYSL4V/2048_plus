@@ -3,24 +3,25 @@ package command.settings;
 import command.VolatileCommand;
 import handler.CommandHandler;
 import preferences.UserPreferences;
-import view.theme.Theme;
 
-public final class ThemeChangeCommand implements VolatileCommand<Theme> {
+import java.util.Locale;
 
-    private Theme neuTheme;
+public final class LocaleChangeCommand implements VolatileCommand<Locale> {
+
+    private Locale neuLocale;
     private final CommandHandler commandHandler;
     private final UserPreferences userPreferences;
     private final Object lock = new Object();
 
-    public ThemeChangeCommand(CommandHandler commandHandler, UserPreferences userPreferences) {
+    public LocaleChangeCommand(CommandHandler commandHandler, UserPreferences userPreferences) {
         this.commandHandler = commandHandler;
         this.userPreferences = userPreferences;
     }
 
     @Override
-    public void setParam(Theme param) {
-        synchronized (lock){
-            this.neuTheme = param;
+    public void setParam(Locale param) {
+        synchronized (lock) {
+            this.neuLocale = param;
         }
     }
 
@@ -28,8 +29,8 @@ public final class ThemeChangeCommand implements VolatileCommand<Theme> {
     public void execute() {
         commandHandler.execute(() -> {
             synchronized (lock) {
-                if (neuTheme != null) {
-                    userPreferences.setTheme(neuTheme);
+                if (neuLocale != null) {
+                    userPreferences.setLocale(neuLocale);
                 }
             }
         });

@@ -7,7 +7,7 @@ import command.VolatileCommand;
 import command.game.MoveBackCommand;
 import command.game.RestartCommand;
 import command.game.ShiftFieldCommand;
-import command.settings.LanguageChangeLocale;
+import command.settings.LocaleChangeCommand;
 import command.settings.ThemeChangeCommand;
 import command.transition.TransitionCommand;
 import preferences.UserPreferences;
@@ -145,14 +145,16 @@ public class AppConfig implements ApplicationContextAware {
 
     @Bean
     public VolatileCommand<Locale> languageChangeCommand(){
-//        UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
-        return new LanguageChangeLocale();
+        UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
+        CommandHandler commandHandler = applicationContext.getBean("uiCommandHandler", CommandHandler.class);
+        return new LocaleChangeCommand(commandHandler, userPreferences);
     }
 
     @Bean
     public  VolatileCommand<Theme> themeChangeCommand(){
-
-        return new ThemeChangeCommand();
+        UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
+        CommandHandler commandHandler = applicationContext.getBean("uiCommandHandler", CommandHandler.class);
+        return new ThemeChangeCommand(commandHandler, userPreferences);
     }
 
     @Bean

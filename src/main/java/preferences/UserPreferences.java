@@ -28,26 +28,22 @@ public final class UserPreferences implements Publisher<UserPreferencesEvent> {
         return locale;
     }
 
-    public synchronized boolean setLocale(Locale locale) {
+    public synchronized void setLocale(Locale locale) {
         if (!Objects.equals(locale, this.locale)) {
             this.locale = locale;
             notifySubscribers(UserPreferencesEvent.LOCALE_CHANGED);
-            return true;
         }
-        return false;
     }
 
     public synchronized Theme getTheme() {
         return theme;
     }
 
-    public synchronized boolean setTheme(Theme theme) {
+    public synchronized void setTheme(Theme theme) {
         if (!Objects.equals(theme, this.theme)) {
             this.theme = theme;
             notifySubscribers(UserPreferencesEvent.THEME_CHANGED);
-            return true;
         }
-        return false;
     }
 
     public synchronized FieldDimension getFieldDimension() {

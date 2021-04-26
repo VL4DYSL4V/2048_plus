@@ -99,6 +99,7 @@ public final class MainFrame extends JFrame
         exitButton.applyNewTheme();
         settingsButton.applyNewTheme();
         dimensionJComboBox.applyNewTheme();
+        rootPanel.applyNewTheme();
     }
 
     private void styleControlPanel() {

@@ -1,7 +1,6 @@
 package view;
 
 import command.Command;
-import preferences.UserPreferences;
 import model.GameModel;
 import observer.Subscriber;
 import observer.event.ModelEvent;
@@ -10,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import preferences.UserPreferences;
+import view.component.button.StandardButton;
 import view.component.canvas.FieldCanvas;
 import view.component.label.ScoreLabel;
-import view.component.button.StandardButton;
 import view.enums.FrameSize;
 import view.theme.Theme;
 import view.util.ScreenUtils;
@@ -162,6 +162,11 @@ public final class GameFrame extends JFrame {
         Theme theme = userPreferences.getTheme();
         ThemeUtils.style(rootPanel, theme);
         ThemeUtils.style(controlPanel, theme);
+        moveBackButton.applyNewTheme();
+        toMenuButton.applyNewTheme();
+        restartButton.applyNewTheme();
+        scoreLabel.applyNewTheme();
+        fieldCanvas.applyNewTheme();
     }
 
     private void configFieldCanvas() {
