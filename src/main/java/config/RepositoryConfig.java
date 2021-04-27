@@ -19,11 +19,11 @@ import java.util.Properties;
 public class RepositoryConfig {
 
     @Bean
-    public Map<FieldDimension, Path> repositories() {
+    public Map<FieldDimension, Path> fieldRepositories() {
         Map<FieldDimension, Path> out = new HashMap<>();
         Properties properties = new Properties();
         try (BufferedReader bufferedReader = Files.newBufferedReader(
-                ResourceUtils.getFile("classpath:repositories.properties").toPath(),
+                ResourceUtils.getFile("classpath:repository/game.properties").toPath(),
                 StandardCharsets.UTF_8)) {
             properties.load(bufferedReader);
         } catch (IOException e) {
@@ -33,6 +33,31 @@ public class RepositoryConfig {
             out.put(FieldDimension.valueOf(key.toUpperCase()), Paths.get(properties.getProperty(key)));
         }
         return out;
+    }
+
+    @Bean
+    public Path preferencesRepository() {
+        Properties properties = new Properties();
+        try (BufferedReader bufferedReader = Files.newBufferedReader(
+                ResourceUtils.getFile("classpath:repository/preferences.properties").toPath(),
+                StandardCharsets.UTF_8)) {
+            properties.load(bufferedReader);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return Paths.get(properties.getProperty("preferences"));
+    }
+
+    @Bean
+    public Properties themeNameToFileNameProperties() {
+        Properties properties = new Properties();
+        try (BufferedReader bufferedReader = Files.newBufferedReader(
+                ResourceUtils.getFile("classpath:theme_name_to_file_name.properties").toPath())) {
+            properties.load(bufferedReader);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return properties;
     }
 
 }

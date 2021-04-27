@@ -1,10 +1,10 @@
 package view.component.canvas;
 
-import preferences.UserPreferences;
 import entity.Field;
 import entity.FieldElement;
 import enums.FieldDimension;
 import model.GameModel;
+import preferences.UserPreferences;
 import view.component.ThemeVaryingComponent;
 import view.theme.Theme;
 

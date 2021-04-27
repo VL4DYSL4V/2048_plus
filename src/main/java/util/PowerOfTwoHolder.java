@@ -8,7 +8,8 @@ import java.util.Map;
 
 public final class PowerOfTwoHolder {
 
-    private PowerOfTwoHolder(){}
+    private PowerOfTwoHolder() {
+    }
 
     private static final Map<Integer, BigInteger> HOLDER = new HashMap<>();
 
@@ -16,23 +17,23 @@ public final class PowerOfTwoHolder {
         initialize();
     }
 
-    private static void initialize(){
+    private static void initialize() {
         int maxPowerNeeded = 0;
-        for(FieldDimension dimension : FieldDimension.values()){
+        for (FieldDimension dimension : FieldDimension.values()) {
             int product = dimension.getWidth() * dimension.getHeight();
-            if(product > maxPowerNeeded){
+            if (product > maxPowerNeeded) {
                 maxPowerNeeded = product;
             }
         }
-        maxPowerNeeded +=1;
+        maxPowerNeeded += 1;
         BigInteger last = BigInteger.ONE;
-        for(int i = 0; i <= maxPowerNeeded; i++){
+        for (int i = 0; i <= maxPowerNeeded; i++) {
             HOLDER.put(i, last);
             last = last.add(last);
         }
     }
 
-    public static BigInteger get(int power){
+    public static BigInteger get(int power) {
         return HOLDER.get(power);
     }
 

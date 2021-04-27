@@ -1,8 +1,3 @@
-1) Create view class: Settings
-2) ScoreLabel.representation() uses deprecated method Toolkit.getDefaultToolkit().getFontMetrics
-3) Circular dependency between frames and buttons, which perform transition between them
-5) Maybe, game-specific logic should be moved to some game package
-6) Duplicates switch statement at MainFrame.computeReaction 
+1) ScoreLabel.representation() uses deprecated method Toolkit.getDefaultToolkit().getFontMetrics
+2) Duplicates switch statement at MainFrame.computeReaction 
         and GameFrame.PreferencesListener.computeReaction;
-7) JComboBoxes must obtain Maps via constructor
-8) Create superclass for JComboBoxes

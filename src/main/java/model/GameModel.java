@@ -82,7 +82,7 @@ public final class GameModel implements Publisher<ModelEvent> {
     public synchronized void setGameData(GameData gameData) {
         GameData prev = this.gameData;
         this.gameData = gameData;
-        if(prev.getFieldDimension() != gameData.getFieldDimension()){
+        if (prev.getFieldDimension() != gameData.getFieldDimension()) {
             notifySubscribers(ModelEvent.FIELD_DIMENSION_CHANGED);
         }
         notifySubscribers(ModelEvent.GAME_DATA_CHANGED);

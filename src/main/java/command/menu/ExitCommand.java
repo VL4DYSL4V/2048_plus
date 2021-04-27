@@ -14,6 +14,7 @@ public final class ExitCommand implements Command {
     @Override
     public void execute() {
         commandHandler.execute(() -> System.exit(0));
+        commandHandler.shutdown();
     }
 
 }

@@ -11,13 +11,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 @Repository("themeDao")
 public final class FileSystemThemeDao implements ThemeDao {
 
     private static final Pattern DIGIT = Pattern.compile("\\d+");
+    private final Properties themeNameToFileNameProperties;
+
+    public FileSystemThemeDao(Properties themeNameToFileNameProperties) {
+        this.themeNameToFileNameProperties = themeNameToFileNameProperties;
+    }
 
     @Override
     public Theme loadTheme(String path) throws FetchException {
@@ -33,30 +40,7 @@ public final class FileSystemThemeDao implements ThemeDao {
 
     @Override
     public Theme loadByName(String name) throws FetchException {
-        Properties properties = themeNameToFileNameProperties();
-        return loadTheme("classpath:" + properties.getProperty(name));
-    }
-
-    @Override
-    public Collection<Theme> loadAll() throws FetchException {
-        Collection<Theme> out = new ArrayList<>();
-        Properties properties = themeNameToFileNameProperties();
-        for (Object name : properties.keySet()) {
-            Theme t = loadByName((String) name);
-            out.add(t);
-        }
-        return out;
-    }
-
-    private Properties themeNameToFileNameProperties() throws FetchException {
-        Properties properties = new Properties();
-        try (BufferedReader bufferedReader = Files.newBufferedReader(
-                ResourceUtils.getFile("theme_name_to_file_name.properties").toPath())) {
-            properties.load(bufferedReader);
-        } catch (IOException e) {
-            throw new FetchException(e);
-        }
-        return properties;
+        return loadTheme("classpath:" + themeNameToFileNameProperties.getProperty(name));
     }
 
     private Theme encodeIntoTheme(Properties properties) {

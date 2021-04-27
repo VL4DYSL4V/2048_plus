@@ -1,6 +1,6 @@
 package exception;
 
-public final class FetchException extends Exception{
+public final class FetchException extends Exception {
 
     public FetchException(String message) {
         super(message);

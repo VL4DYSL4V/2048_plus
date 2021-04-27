@@ -8,7 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Service("gameSaver")
-public final class GameSaver implements PeriodicalSavingService{
+public final class GameSaver implements PeriodicalSavingService {
 
     private final Runnable savingTask;
     private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
@@ -30,8 +30,8 @@ public final class GameSaver implements PeriodicalSavingService{
 
     @Override
     public void stop() {
-        synchronized (myLock){
-            if(savingHolder != null){
+        synchronized (myLock) {
+            if (savingHolder != null) {
                 savingHolder.cancel(false);
                 savingHolder = null;
             }

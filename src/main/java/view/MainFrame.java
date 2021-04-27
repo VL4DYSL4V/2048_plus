@@ -10,9 +10,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import preferences.UserPreferences;
+import view.component.button.StandardButton;
 import view.component.combo_box.StandardJComboBox;
 import view.component.panel.BackgroundPanel;
-import view.component.button.StandardButton;
 import view.enums.FrameSize;
 import view.util.ScreenUtils;
 
@@ -53,7 +53,7 @@ public final class MainFrame extends JFrame
         styleComponents();
         configComponents();
         constructWindow();
-        dimensionJComboBox.setSelectedIndex(1);
+
     }
 
     private void constructWindow() {
@@ -85,6 +85,11 @@ public final class MainFrame extends JFrame
         updateLocale();
         updateTheme();
         styleControlPanel();
+        styleDimensionJComboBox();
+    }
+
+    private void styleDimensionJComboBox() {
+        dimensionJComboBox.selectItem(userPreferences.getFieldDimension());
     }
 
     private void updateLocale() {

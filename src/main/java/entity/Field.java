@@ -43,7 +43,7 @@ public final class Field implements Serializable {
         }
     }
 
-    public List<Coordinates2D> getAvailableCoordinates(){
+    public List<Coordinates2D> getAvailableCoordinates() {
         List<Coordinates2D> out = new ArrayList<>();
         for (List<FieldElement> row : fieldElements) {
             for (FieldElement el : row) {

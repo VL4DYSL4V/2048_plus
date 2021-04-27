@@ -162,7 +162,7 @@ public final class ShiftFieldCommand implements VolatileCommand<Direction> {
     }
 
     private void removeZerosAndShiftCoordinates(List<FieldElement> columnOrRow, Direction direction, Field field) {
-        columnOrRow.removeIf(element -> element.isEmpty());
+        columnOrRow.removeIf(FieldElement::isEmpty);
         switch (direction) {
             case UP:
                 for (int y = 0; y < columnOrRow.size(); y++) {

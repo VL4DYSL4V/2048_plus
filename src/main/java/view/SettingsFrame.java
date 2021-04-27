@@ -100,6 +100,16 @@ public final class SettingsFrame extends JFrame implements Subscriber<UserPrefer
         updateLocale();
         styleToMenuHolder();
         styleSettingsHolder();
+        styleLanguageJComboBox();
+        styleThemeJComboBox();
+    }
+
+    private void styleLanguageJComboBox() {
+        languageJComboBox.selectItem(userPreferences.getLocale());
+    }
+
+    private void styleThemeJComboBox() {
+        themeJComboBox.selectItem(userPreferences.getTheme());
     }
 
     private void configSettingsHolder() {

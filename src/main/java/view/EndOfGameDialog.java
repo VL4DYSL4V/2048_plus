@@ -1,10 +1,10 @@
 package view;
 
-import preferences.UserPreferences;
 import model.GameModel;
 import observer.Subscriber;
 import observer.event.ModelEvent;
 import observer.event.UserPreferencesEvent;
+import preferences.UserPreferences;
 import view.theme.Theme;
 import view.util.ScreenUtils;
 
@@ -35,7 +35,7 @@ public final class EndOfGameDialog extends JDialog {
             SwingUtilities.invokeLater(() -> {
                 if (gameModel.gameIsOver()) {
                     setVisible(true);
-                } else if(isVisible()){
+                } else if (isVisible()) {
                     setVisible(false);
                 }
             });

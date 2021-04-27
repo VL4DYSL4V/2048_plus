@@ -1,23 +1,21 @@
 package main;
 
 import config.AppConfig;
-import preferences.UserPreferences;
 import model.GameModel;
 import observer.Subscriber;
 import observer.event.ModelEvent;
 import observer.event.UserPreferencesEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import preferences.UserPreferences;
 import saver.GameSaver;
 import saver.PeriodicalSavingService;
 import view.EndOfGameDialog;
 import view.GameFrame;
 import view.MainFrame;
 import view.SettingsFrame;
-import view.theme.Theme;
 
 import javax.swing.*;
-import java.util.Locale;
 
 public class Main {
 
@@ -43,38 +41,10 @@ public class Main {
         userPreferences.subscribe(mainFrame);
         userPreferences.subscribe(settingsFrame);
 
-        SwingUtilities.invokeLater(() -> {
-            mainFrame.setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> mainFrame.setVisible(true));
         PeriodicalSavingService gameSaver = context.getBean("gameSaver", GameSaver.class);
         gameSaver.start();
 
-//        new Thread(() -> {
-//            try {
-//                Thread.sleep(5_000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            userPreferences.setLocale(new Locale("ru"));
-//            try {
-//                Thread.sleep(5_000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            userPreferences.setTheme(context.getBean("brightTheme", Theme.class));
-//            try {
-//                Thread.sleep(5_000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            userPreferences.setLocale(new Locale("en"));
-//            try {
-//                Thread.sleep(5_000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            userPreferences.setTheme(context.getBean("darkTheme", Theme.class));
-//        }).start();
     }
 
 }

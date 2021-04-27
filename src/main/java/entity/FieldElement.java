@@ -21,7 +21,7 @@ public final class FieldElement implements Serializable {
         return new FieldElement(coordinates2D, 0);
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return value == 0;
     }
 

@@ -7,6 +7,7 @@ import view.util.ThemeUtils;
 
 import javax.swing.*;
 import java.util.Map;
+import java.util.Objects;
 
 public final class StandardJComboBox<T> extends JComboBox<String> implements ThemeVaryingComponent {
 
@@ -29,6 +30,15 @@ public final class StandardJComboBox<T> extends JComboBox<String> implements The
             themeChangeCommand.setParam(contentMap.get(selected));
             themeChangeCommand.execute();
         });
+    }
+
+    public void selectItem(T object) {
+        for (Map.Entry<String, T> entry : contentMap.entrySet()) {
+            if (Objects.equals(object, entry.getKey())) {
+                setSelectedItem(entry.getKey());
+                break;
+            }
+        }
     }
 
     @Override

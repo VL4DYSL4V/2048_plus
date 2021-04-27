@@ -6,6 +6,6 @@ public interface PreferencesDAO {
 
     void saveOrUpdate(UserPreferences userPreferences);
 
-    void updatePreferences(UserPreferences userPreferences);
+    UserPreferences getUserPreferences();
 
 }

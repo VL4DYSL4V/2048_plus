@@ -1,20 +1,19 @@
 package config;
 
-import exception.FetchException;
-import preferences.UserPreferences;
+import dao.preferences.PreferencesDAO;
 import dao.theme.FileSystemThemeDao;
 import dao.theme.ThemeDao;
-import enums.FieldDimension;
+import exception.FetchException;
 import model.GameModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import preferences.UserPreferences;
 import view.EndOfGameDialog;
 import view.theme.Theme;
 
 import java.awt.*;
-import java.util.Locale;
 
 @Configuration
 public class ViewConfig {
@@ -27,8 +26,9 @@ public class ViewConfig {
     }
 
     @Bean
-    public UserPreferences userPreferences(){
-        return new UserPreferences(Locale.ENGLISH, darkTheme(), FieldDimension.FOUR_AND_FOUR);
+    public UserPreferences userPreferences() {
+        PreferencesDAO preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDAO.class);
+        return preferencesDAO.getUserPreferences();
     }
 
     @Bean

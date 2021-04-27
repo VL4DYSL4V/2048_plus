@@ -6,9 +6,10 @@ import java.awt.*;
 
 public final class ThemeUtils {
 
-    private ThemeUtils(){}
+    private ThemeUtils() {
+    }
 
-    public static void style(Component component, Theme theme){
+    public static void style(Component component, Theme theme) {
         component.setForeground(theme.getForeground());
         component.setBackground(theme.getBackground());
         component.setFont(theme.getFont());

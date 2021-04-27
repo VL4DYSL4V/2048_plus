@@ -1,17 +1,17 @@
 package config;
 
 import command.Command;
-import command.menu.DimensionChangeCommand;
-import command.menu.ExitCommand;
 import command.VolatileCommand;
 import command.game.MoveBackCommand;
 import command.game.RestartCommand;
 import command.game.ShiftFieldCommand;
+import command.menu.DimensionChangeCommand;
+import command.menu.ExitCommand;
 import command.settings.LocaleChangeCommand;
 import command.settings.ThemeChangeCommand;
 import command.transition.TransitionCommand;
-import preferences.UserPreferences;
 import dao.game.GameDataDao;
+import dao.preferences.PreferencesDAO;
 import enums.FieldDimension;
 import exception.FetchException;
 import handler.CommandHandler;
@@ -22,9 +22,13 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.lang.NonNull;
+import preferences.UserPreferences;
 import saver.GameSaver;
 import saver.PeriodicalSavingService;
 import task.SavingTask;
@@ -55,9 +59,10 @@ public class AppConfig implements ApplicationContextAware {
     public GameModel gameModel() {
         GameModel gameModel = new GameModel();
         GameDataDao gameDataDao = applicationContext.getBean("gameDataDao", GameDataDao.class);
+        UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
         GameData gameData;
         try {
-            gameData = gameDataDao.getByDimension(FieldDimension.FOUR_AND_FOUR);
+            gameData = gameDataDao.getByDimension(userPreferences.getFieldDimension());
         } catch (FetchException e) {
             throw new RuntimeException(e);
         }
@@ -98,7 +103,7 @@ public class AppConfig implements ApplicationContextAware {
         return new TransitionCommand(gameFrame, mainFrame, uiCommandHandler(), () -> {
             savingTask.run();
             gameSaver.stop();
-            if(gameModel.gameIsOver()) {
+            if (gameModel.gameIsOver()) {
                 gameModel.setGameData(new GameData(gameModel.getFieldDimension()));
             }
         });
@@ -113,14 +118,14 @@ public class AppConfig implements ApplicationContextAware {
     }
 
     @Bean
-    public Command menuToSettingsCommand(){
+    public Command menuToSettingsCommand() {
         MainFrame mainFrame = applicationContext.getBean("mainFrame", MainFrame.class);
         SettingsFrame settingsFrame = applicationContext.getBean("settingsFrame", SettingsFrame.class);
         return new TransitionCommand(mainFrame, settingsFrame, uiCommandHandler());
     }
 
     @Bean
-    public Command settingsToMenuCommand(){
+    public Command settingsToMenuCommand() {
         MainFrame mainFrame = applicationContext.getBean("mainFrame", MainFrame.class);
         SettingsFrame settingsFrame = applicationContext.getBean("settingsFrame", SettingsFrame.class);
         return new TransitionCommand(settingsFrame, mainFrame, uiCommandHandler());
@@ -140,25 +145,28 @@ public class AppConfig implements ApplicationContextAware {
     public VolatileCommand<FieldDimension> dimensionChangeCommand() {
         UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
         GameDataDao gameDataDao = applicationContext.getBean("gameDataDao", GameDataDao.class);
-        return new DimensionChangeCommand(userPreferences, uiCommandHandler(), gameModel(), gameDataDao);
+        PreferencesDAO preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDAO.class);
+        return new DimensionChangeCommand(userPreferences, preferencesDAO, uiCommandHandler(), gameModel(), gameDataDao);
     }
 
     @Bean
-    public VolatileCommand<Locale> languageChangeCommand(){
+    public VolatileCommand<Locale> languageChangeCommand() {
         UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
         CommandHandler commandHandler = applicationContext.getBean("uiCommandHandler", CommandHandler.class);
-        return new LocaleChangeCommand(commandHandler, userPreferences);
+        PreferencesDAO preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDAO.class);
+        return new LocaleChangeCommand(commandHandler, userPreferences, preferencesDAO);
     }
 
     @Bean
-    public  VolatileCommand<Theme> themeChangeCommand(){
+    public VolatileCommand<Theme> themeChangeCommand() {
         UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
         CommandHandler commandHandler = applicationContext.getBean("uiCommandHandler", CommandHandler.class);
-        return new ThemeChangeCommand(commandHandler, userPreferences);
+        PreferencesDAO preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDAO.class);
+        return new ThemeChangeCommand(commandHandler, userPreferences, preferencesDAO);
     }
 
     @Bean
-    public Map<String, FieldDimension> supportedDimensions(){
+    public Map<String, FieldDimension> supportedDimensions() {
         Map<String, FieldDimension> dimensionMap = new LinkedHashMap<>();
         dimensionMap.put("3 x 3", FieldDimension.THREE_AND_THREE);
         dimensionMap.put("4 x 4", FieldDimension.FOUR_AND_FOUR);
@@ -168,15 +176,16 @@ public class AppConfig implements ApplicationContextAware {
     }
 
     @Bean
-    public Map<String, Locale> supportedLocales(){
+    public Map<String, Locale> supportedLocales() {
         Map<String, Locale> localeMap = new LinkedHashMap<>();
         localeMap.put("English", Locale.ENGLISH);
         localeMap.put("Русский", Locale.forLanguageTag("ru"));
+        localeMap.put("Українська", Locale.forLanguageTag("ua"));
         return localeMap;
     }
 
     @Bean
-    public Map<String, Theme> supportedThemes(){
+    public Map<String, Theme> supportedThemes() {
         Map<String, Theme> themeMap = new LinkedHashMap<>();
         Theme darkTheme = applicationContext.getBean("darkTheme", Theme.class);
         themeMap.put(darkTheme.getName(), darkTheme);
@@ -188,9 +197,9 @@ public class AppConfig implements ApplicationContextAware {
     @Bean
     public MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename("messages" );
-        messageSource.setDefaultEncoding("UTF-8" );
-        messageSource.setDefaultLocale(Locale.forLanguageTag("en" ));
+        messageSource.setBasename("messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setDefaultLocale(Locale.forLanguageTag("en"));
         return messageSource;
     }
 

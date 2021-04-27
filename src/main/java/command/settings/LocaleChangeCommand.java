@@ -1,6 +1,7 @@
 package command.settings;
 
 import command.VolatileCommand;
+import dao.preferences.PreferencesDAO;
 import handler.CommandHandler;
 import preferences.UserPreferences;
 
@@ -11,11 +12,13 @@ public final class LocaleChangeCommand implements VolatileCommand<Locale> {
     private Locale neuLocale;
     private final CommandHandler commandHandler;
     private final UserPreferences userPreferences;
+    private final PreferencesDAO preferencesDAO;
     private final Object lock = new Object();
 
-    public LocaleChangeCommand(CommandHandler commandHandler, UserPreferences userPreferences) {
+    public LocaleChangeCommand(CommandHandler commandHandler, UserPreferences userPreferences, PreferencesDAO preferencesDAO) {
         this.commandHandler = commandHandler;
         this.userPreferences = userPreferences;
+        this.preferencesDAO = preferencesDAO;
     }
 
     @Override
@@ -30,7 +33,9 @@ public final class LocaleChangeCommand implements VolatileCommand<Locale> {
         commandHandler.execute(() -> {
             synchronized (lock) {
                 if (neuLocale != null) {
-                    userPreferences.setLocale(neuLocale);
+                    if(userPreferences.setLocale(neuLocale)) {
+                        preferencesDAO.saveOrUpdate(userPreferences);
+                    }
                 }
             }
         });

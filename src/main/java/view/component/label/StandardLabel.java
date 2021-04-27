@@ -22,11 +22,11 @@ public class StandardLabel extends JLabel implements ThemeVaryingComponent, Loca
         updateLocale();
     }
 
-    private void updateLocale(){
+    private void updateLocale() {
         setText(messageSource.getMessage(messageSourceKey, null, userPreferences.getLocale()));
     }
 
-    private void updateTheme(){
+    private void updateTheme() {
         Theme theme = userPreferences.getTheme();
         setForeground(theme.getForeground());
         setFont(theme.getFont());
@@ -39,6 +39,6 @@ public class StandardLabel extends JLabel implements ThemeVaryingComponent, Loca
 
     @Override
     public void applyNewTheme() {
-       updateTheme();
+        updateTheme();
     }
 }

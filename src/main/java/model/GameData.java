@@ -21,7 +21,7 @@ public final class GameData implements Externalizable {
     private List<Memento> history = new LinkedList<>();
     private boolean gameIsOver;
 
-    GameData(GameData gameData){
+    GameData(GameData gameData) {
         this.field = gameData.field.copy();
         this.scores = gameData.scores;
         this.gameIsOver = gameData.gameIsOver;

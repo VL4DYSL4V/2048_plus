@@ -1,9 +1,9 @@
 package dao.game;
 
-import model.GameData;
 import enums.FieldDimension;
 import exception.FetchException;
 import exception.StoreException;
+import model.GameData;
 
 public interface GameDataDao {
 
