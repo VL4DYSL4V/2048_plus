@@ -111,12 +111,12 @@ public final class FieldCanvas extends Canvas implements ThemeVaryingComponent {
             }
         }
 
-        private int getRectangleX(int coordX) {
-            return indexToRectangleX.get(coordX);
+        private int getRectangleX(int x) {
+            return indexToRectangleX.get(x);
         }
 
-        private int getRectangleY(int coordY) {
-            return indexToRectangleY.get(coordY);
+        private int getRectangleY(int y) {
+            return indexToRectangleY.get(y);
         }
 
         private Image getImage(Integer power) {

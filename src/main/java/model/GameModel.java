@@ -15,7 +15,7 @@ import java.util.HashSet;
 public final class GameModel implements Publisher<ModelEvent> {
 
     private GameData gameData;
-    private Collection<Subscriber<ModelEvent>> subscribers = new HashSet<>();
+    private final Collection<Subscriber<ModelEvent>> subscribers = new HashSet<>();
 
     public GameModel() {
         this(FieldDimension.FOUR_AND_FOUR);
