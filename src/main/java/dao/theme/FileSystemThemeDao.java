@@ -58,23 +58,23 @@ public final class FileSystemThemeDao implements ThemeDao {
     }
 
     private Image loadGameOverImage(Properties properties) {
-        Path gameOverImagePath = getPathFromResourceLocation("/" + properties.getProperty("game_over_image"));
+        Path gameOverImagePath = getPathFromResourceLocation("/" + properties.getProperty("game-over-image"));
         return load(gameOverImagePath.toString());
     }
 
     private Image loadWelcomeImage(Properties properties) {
-        Path welcomeImagePath = getPathFromResourceLocation("/" + properties.getProperty("welcome_image"));
+        Path welcomeImagePath = getPathFromResourceLocation("/" + properties.getProperty("welcome-image"));
         return load(welcomeImagePath.toString());
     }
 
     private Image loadFieldBgImage(Properties properties) {
-        Path fieldBgPath = getPathFromResourceLocation("/" + properties.getProperty("field_bg_img_path"));
+        Path fieldBgPath = getPathFromResourceLocation("/" + properties.getProperty("field-bg-img-path"));
         return load(fieldBgPath.toString());
     }
 
     private Map<Integer, Image> loadPowerToImageMap(Properties properties) {
         Map<Integer, Image> powToImageMap = new HashMap<>();
-        String powerFolderPath = "/" + properties.getProperty("power_folder") + "/";
+        String powerFolderPath = "/" + properties.getProperty("power-folder") + "/";
         for (String key : properties.stringPropertyNames()) {
             if (DIGIT.matcher(key).matches()) {
                 String resourceLocation = powerFolderPath + properties.getProperty(key);
