@@ -1,6 +1,5 @@
 package config;
 
-import enums.FieldDimension;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
@@ -9,24 +8,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 @Configuration
 public class RepositoryConfig {
 
     @Bean
-    public Map<FieldDimension, Path> fieldRepositories() {
-        Map<FieldDimension, Path> out = new HashMap<>();
-        Properties properties = loadByLocation("repository/game.properties");
-        for (String key : properties.stringPropertyNames()) {
-            String enumName = key.replaceAll("-", "_");
-            out.put(FieldDimension.valueOf(enumName.toUpperCase()), Paths.get(properties.getProperty(key)));
-        }
-        return out;
+    public Properties savedGamesProperties() {
+        return loadByLocation("repository/saved_games.properties");
     }
 
     @Bean
