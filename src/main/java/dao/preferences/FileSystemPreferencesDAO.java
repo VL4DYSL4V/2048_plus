@@ -3,6 +3,7 @@ package dao.preferences;
 import dao.theme.ThemeDao;
 import enums.FieldDimension;
 import exception.FetchException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import preferences.UserPreferences;
@@ -17,6 +18,7 @@ public final class FileSystemPreferencesDAO implements PreferencesDAO {
     private final ThemeDao themeDao;
     private final Path preferencesRepository;
 
+    @Autowired
     public FileSystemPreferencesDAO(ThemeDao themeDao,
                                     @Qualifier("preferencesRepository") Path preferencesRepository) {
         this.themeDao = themeDao;

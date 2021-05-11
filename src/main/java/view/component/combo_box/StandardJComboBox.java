@@ -34,7 +34,7 @@ public final class StandardJComboBox<T> extends JComboBox<String> implements The
 
     public void selectItem(T object) {
         for (Map.Entry<String, T> entry : contentMap.entrySet()) {
-            if (Objects.equals(object, entry.getKey())) {
+            if (Objects.equals(object, entry.getValue())) {
                 setSelectedItem(entry.getKey());
                 break;
             }
