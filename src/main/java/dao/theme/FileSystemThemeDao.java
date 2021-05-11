@@ -2,17 +2,13 @@ package dao.theme;
 
 import exception.FetchException;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.ResourceUtils;
 import view.theme.Theme;
 
+import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -29,11 +25,10 @@ public final class FileSystemThemeDao implements ThemeDao {
     }
 
     @Override
-    public Theme loadTheme(String path) throws FetchException {
+    public Theme loadTheme(String location) throws FetchException {
         Properties properties = new Properties();
-        try (BufferedReader bufferedReader = Files.newBufferedReader(
-                ResourceUtils.getFile(path).toPath())) {
-            properties.load(bufferedReader);
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(location)) {
+            properties.load(inputStream);
         } catch (IOException e) {
             throw new FetchException(e);
         }
@@ -42,7 +37,7 @@ public final class FileSystemThemeDao implements ThemeDao {
 
     @Override
     public Theme loadByName(String name) throws FetchException {
-        return loadTheme("classpath:" + themeNameToFileNameProperties.getProperty(name));
+        return loadTheme(themeNameToFileNameProperties.getProperty(name));
     }
 
     private Theme decodeTheme(Properties properties) {
@@ -58,18 +53,18 @@ public final class FileSystemThemeDao implements ThemeDao {
     }
 
     private Image loadGameOverImage(Properties properties) {
-        Path gameOverImagePath = getPathFromResourceLocation("/" + properties.getProperty("game-over-image"));
-        return load(gameOverImagePath.toString());
+        URL url = getClass().getResource("/" + properties.getProperty("game-over-image"));
+        return load(url);
     }
 
     private Image loadWelcomeImage(Properties properties) {
-        Path welcomeImagePath = getPathFromResourceLocation("/" + properties.getProperty("welcome-image"));
-        return load(welcomeImagePath.toString());
+        URL url = getClass().getResource("/" + properties.getProperty("welcome-image"));
+        return load(url);
     }
 
     private Image loadFieldBgImage(Properties properties) {
-        Path fieldBgPath = getPathFromResourceLocation("/" + properties.getProperty("field-bg-img-path"));
-        return load(fieldBgPath.toString());
+        URL url = getClass().getResource("/" + properties.getProperty("field-bg-img-path"));
+        return load(url);
     }
 
     private Map<Integer, Image> loadPowerToImageMap(Properties properties) {
@@ -78,23 +73,11 @@ public final class FileSystemThemeDao implements ThemeDao {
         for (String key : properties.stringPropertyNames()) {
             if (DIGIT.matcher(key).matches()) {
                 String resourceLocation = powerFolderPath + properties.getProperty(key);
-                Path path = getPathFromResourceLocation(resourceLocation);
-                powToImageMap.put(Integer.valueOf(key), load(path.toString()));
+                URL url = getClass().getResource(resourceLocation);
+                powToImageMap.put(Integer.valueOf(key), load(url));
             }
         }
         return powToImageMap;
-    }
-
-    private Path getPathFromResourceLocation(String resourceLocation) {
-        URL url = getClass().getResource(resourceLocation);
-        try {
-            if (url == null) {
-                throw new RuntimeException();
-            }
-            return new File(url.toURI()).toPath();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private Font parseFont(Properties properties) {
@@ -109,7 +92,7 @@ public final class FileSystemThemeDao implements ThemeDao {
         return new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
     }
 
-    private Image load(String fileName) {
-        return Toolkit.getDefaultToolkit().getImage(fileName);
+    private Image load(URL url) {
+        return new ImageIcon(url).getImage();
     }
 }

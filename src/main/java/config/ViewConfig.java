@@ -35,7 +35,7 @@ public class ViewConfig {
     public Theme darkTheme() {
         ThemeDao themeDao = applicationContext.getBean("themeDao", FileSystemThemeDao.class);
         try {
-            return themeDao.loadTheme("classpath:theme/dark.properties");
+            return themeDao.loadTheme("theme/dark.properties");
         } catch (FetchException e) {
             throw new RuntimeException(e);
         }
@@ -45,7 +45,7 @@ public class ViewConfig {
     public Theme brightTheme() {
         ThemeDao themeDao = applicationContext.getBean("themeDao", FileSystemThemeDao.class);
         try {
-            return themeDao.loadTheme("classpath:theme/bright.properties");
+            return themeDao.loadTheme("theme/bright.properties");
         } catch (FetchException e) {
             throw new RuntimeException(e);
         }

@@ -2,12 +2,9 @@ package config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.ResourceUtils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.util.Properties;
 
 @Configuration
@@ -35,10 +32,8 @@ public class RepositoryConfig {
 
     private Properties loadByLocation(String location) {
         Properties properties = new Properties();
-        try (BufferedReader bufferedReader = Files.newBufferedReader(
-                ResourceUtils.getFile("classpath:" + location).toPath(),
-                StandardCharsets.UTF_8)) {
-            properties.load(bufferedReader);
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(location)) {
+            properties.load(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
