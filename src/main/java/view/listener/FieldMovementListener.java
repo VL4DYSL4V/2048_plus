@@ -20,18 +20,21 @@ public final class FieldMovementListener extends KeyAdapter {
         switch (code) {
             case KeyEvent.VK_UP:
                 shiftFieldCommand.setParam(Direction.UP);
+                shiftFieldCommand.execute();
                 break;
             case KeyEvent.VK_DOWN:
                 shiftFieldCommand.setParam(Direction.DOWN);
+                shiftFieldCommand.execute();
                 break;
             case KeyEvent.VK_LEFT:
                 shiftFieldCommand.setParam(Direction.LEFT);
+                shiftFieldCommand.execute();
                 break;
             case KeyEvent.VK_RIGHT:
                 shiftFieldCommand.setParam(Direction.RIGHT);
+                shiftFieldCommand.execute();
                 break;
         }
-        shiftFieldCommand.execute();
     }
 
 }
