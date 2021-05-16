@@ -175,8 +175,8 @@ public final class FieldCanvas extends Canvas implements ThemeVaryingComponent {
         FieldDimension dimension = field.getFieldDimension();
         for (int i = 0; i < dimension.getHeight(); i++) {
             for (FieldElement element : field.getRow(i)) {
-                int x = fieldRenderingContext.getRectangleX(element.getCoordinates2D().getX());
-                int y = fieldRenderingContext.getRectangleY(element.getCoordinates2D().getY());
+                int x = fieldRenderingContext.getRectangleX(element.getX());
+                int y = fieldRenderingContext.getRectangleY(element.getY());
                 Image image = fieldRenderingContext.getImage(element.getValue());
                 g.drawImage(image, x, y, this);
             }

@@ -17,6 +17,7 @@ public final class Field implements Serializable {
     private static final long serialVersionUID = 1726351751L;
 
     public Field(FieldDimension fieldDimension) {
+        Objects.requireNonNull(fieldDimension);
         this.fieldDimension = fieldDimension;
         reset();
     }
@@ -34,13 +35,20 @@ public final class Field implements Serializable {
     }
 
     public void setElement(FieldElement fieldElement) {
-        int y = fieldElement.getCoordinates2D().getY();
-        int x = fieldElement.getCoordinates2D().getX();
+        Objects.requireNonNull(fieldElement);
+        requireCoordinatesWithinBounds(fieldElement.getCoordinates2D());
+        int y = fieldElement.getY();
+        int x = fieldElement.getX();
         if (fieldElements.get(y).get(x).isEmpty()) {
             fieldElements.get(y).set(x, fieldElement);
         } else {
             throw new IllegalArgumentException("Such element already exists");
         }
+    }
+
+    private void requireCoordinatesWithinBounds(Coordinates2D coordinates2D){
+        requireRowIndexWithinBounds(coordinates2D.getY());
+        requireColumnIndexWithinBounds(coordinates2D.getX());
     }
 
     public List<Coordinates2D> getAvailableCoordinates() {
@@ -56,10 +64,13 @@ public final class Field implements Serializable {
     }
 
     public List<FieldElement> getRow(int index) {
+        requireRowIndexWithinBounds(index);
         return new ArrayList<>(fieldElements.get(index));
     }
 
     public void setRow(List<FieldElement> neuRow, int index) {
+        Objects.requireNonNull(neuRow);
+        requireRowIndexWithinBounds(index);
         List<FieldElement> row = fieldElements.get(index);
         for (int x = 0; x < row.size(); x++) {
             row.set(x, neuRow.get(x));
@@ -67,6 +78,7 @@ public final class Field implements Serializable {
     }
 
     public List<FieldElement> getColumn(int index) {
+        requireColumnIndexWithinBounds(index);
         List<FieldElement> out = new ArrayList<>();
         for (List<FieldElement> fieldElement : fieldElements) {
             out.add(fieldElement.get(index));
@@ -75,9 +87,23 @@ public final class Field implements Serializable {
     }
 
     public void setColumn(List<FieldElement> neuColumn, int index) {
+        Objects.requireNonNull(neuColumn);
+        requireColumnIndexWithinBounds(index);
         for (int y = 0; y < fieldElements.size(); y++) {
             List<FieldElement> row = fieldElements.get(y);
             row.set(index, neuColumn.get(y));
+        }
+    }
+
+    private void requireRowIndexWithinBounds(int index){
+        if(! (index >= fieldDimension.getMinY() && index <= fieldDimension.getMaxY())){
+            throw new IllegalArgumentException("Invalid index: " + index);
+        }
+    }
+
+    private void requireColumnIndexWithinBounds(int index){
+        if(! (index >= fieldDimension.getMinX() && index <= fieldDimension.getMaxX())){
+            throw new IllegalArgumentException("Invalid index: " + index);
         }
     }
 

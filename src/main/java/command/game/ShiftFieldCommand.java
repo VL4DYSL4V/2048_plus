@@ -167,8 +167,8 @@ public final class ShiftFieldCommand implements VolatileCommand<Direction> {
             case UP:
                 for (int y = 0; y < columnOrRow.size(); y++) {
                     FieldElement e = columnOrRow.get(y);
-                    if (e.getCoordinates2D().getY() != y) {
-                        columnOrRow.set(y, new FieldElement(new Coordinates2D(e.getCoordinates2D().getX(), y), e.getValue()));
+                    if (e.getY() != y) {
+                        columnOrRow.set(y, new FieldElement(new Coordinates2D(e.getX(), y), e.getValue()));
                     }
                 }
                 break;
@@ -176,16 +176,16 @@ public final class ShiftFieldCommand implements VolatileCommand<Direction> {
                 for (int y = 0; y < columnOrRow.size(); y++) {
                     FieldElement e = columnOrRow.get(y);
                     int expectedY = field.getFieldDimension().getMaxY() - (columnOrRow.size() - (y + 1));
-                    if (e.getCoordinates2D().getY() != expectedY) {
-                        columnOrRow.set(y, new FieldElement(new Coordinates2D(e.getCoordinates2D().getX(), expectedY), e.getValue()));
+                    if (e.getY() != expectedY) {
+                        columnOrRow.set(y, new FieldElement(new Coordinates2D(e.getX(), expectedY), e.getValue()));
                     }
                 }
                 break;
             case LEFT:
                 for (int x = 0; x < columnOrRow.size(); x++) {
                     FieldElement e = columnOrRow.get(x);
-                    if (e.getCoordinates2D().getX() != x) {
-                        columnOrRow.set(x, new FieldElement(new Coordinates2D(x, e.getCoordinates2D().getY()), e.getValue()));
+                    if (e.getX() != x) {
+                        columnOrRow.set(x, new FieldElement(new Coordinates2D(x, e.getY()), e.getValue()));
                     }
                 }
                 break;
@@ -193,8 +193,8 @@ public final class ShiftFieldCommand implements VolatileCommand<Direction> {
                 for (int x = 0; x < columnOrRow.size(); x++) {
                     FieldElement e = columnOrRow.get(x);
                     int expectedX = field.getFieldDimension().getMaxX() - (columnOrRow.size() - (x + 1));
-                    if (e.getCoordinates2D().getX() != expectedX) {
-                        columnOrRow.set(x, new FieldElement(new Coordinates2D(expectedX, e.getCoordinates2D().getY()), e.getValue()));
+                    if (e.getX() != expectedX) {
+                        columnOrRow.set(x, new FieldElement(new Coordinates2D(expectedX, e.getY()), e.getValue()));
                     }
                 }
                 break;

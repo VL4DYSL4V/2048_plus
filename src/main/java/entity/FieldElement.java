@@ -13,6 +13,7 @@ public final class FieldElement implements Serializable {
     private static final long serialVersionUID = 3986465429742953863L;
 
     public FieldElement(Coordinates2D coordinates2D, int value) {
+        Objects.requireNonNull(coordinates2D);
         this.coordinates2D = coordinates2D;
         this.value = value;
     }
@@ -23,6 +24,14 @@ public final class FieldElement implements Serializable {
 
     public boolean isEmpty() {
         return value == 0;
+    }
+
+    public int getX(){
+        return coordinates2D.getX();
+    }
+
+    public int getY(){
+        return coordinates2D.getY();
     }
 
     public Coordinates2D getCoordinates2D() {
