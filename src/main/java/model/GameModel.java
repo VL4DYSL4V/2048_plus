@@ -10,6 +10,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 @ThreadSafe
 public final class GameModel implements Publisher<ModelEvent> {
@@ -27,6 +28,7 @@ public final class GameModel implements Publisher<ModelEvent> {
 
     @Override
     public synchronized void subscribe(Subscriber<ModelEvent> subscriber) {
+        Objects.requireNonNull(subscriber);
         subscribers.add(subscriber);
     }
 
@@ -79,13 +81,16 @@ public final class GameModel implements Publisher<ModelEvent> {
         notifySubscribers(ModelEvent.GAME_DATA_CHANGED);
     }
 
-    public synchronized void setGameData(GameData gameData) {
-        GameData prev = this.gameData;
-        this.gameData = gameData;
-        if (prev.getFieldDimension() != gameData.getFieldDimension()) {
-            notifySubscribers(ModelEvent.FIELD_DIMENSION_CHANGED);
+    public void setGameData(GameData gameData) {
+        Objects.requireNonNull(gameData);
+        synchronized(this) {
+            GameData prev = this.gameData;
+            this.gameData = gameData;
+            if (prev.getFieldDimension() != gameData.getFieldDimension()) {
+                notifySubscribers(ModelEvent.FIELD_DIMENSION_CHANGED);
+            }
+            notifySubscribers(ModelEvent.GAME_DATA_CHANGED);
         }
-        notifySubscribers(ModelEvent.GAME_DATA_CHANGED);
     }
 
     public synchronized GameData getGameData() {
