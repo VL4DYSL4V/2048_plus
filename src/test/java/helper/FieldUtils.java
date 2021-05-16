@@ -1,12 +1,15 @@
-package entity;
+package helper;
 
+import entity.Coordinates2D;
+import entity.Field;
+import entity.FieldElement;
 import enums.FieldDimension;
 
-class FieldUtils {
+public class FieldUtils {
 
     private static final FieldDimension FIELD_DIMENSION = FieldDimension.FOUR_AND_FOUR;
 
-    static Field getEmptyField(){
+    public static Field getEmptyField(){
         return new Field(FIELD_DIMENSION);
     }
 
@@ -14,7 +17,7 @@ class FieldUtils {
     // 2 0 0 0
     // 0 0 1 0
     // 0 0 3 2
-    static Field getFieldWithData(){
+    public static Field getFieldWithData(){
         Field field = getEmptyField();
         FieldElement fieldElement = new FieldElement(new Coordinates2D(0, 0), 1);
         field.setElement(fieldElement);
