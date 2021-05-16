@@ -4,6 +4,7 @@ import entity.Field;
 import enums.FieldDimension;
 import util.CellGenerator;
 
+import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.*;
 import java.math.BigInteger;
@@ -37,6 +38,7 @@ public final class GameData implements Externalizable {
         CellGenerator.setRandomFieldElements(field, 2);
     }
 
+    @Immutable
     private static final class Memento implements Serializable {
 
         private final BigInteger scores;
@@ -89,6 +91,8 @@ public final class GameData implements Externalizable {
      * This method is designed to update state of this object and change
      */
     void updateAndSaveHistory(Field field, BigInteger scoresToAdd) {
+        Objects.requireNonNull(field);
+        Objects.requireNonNull(scoresToAdd);
         if (this.field.getFieldDimension() == field.getFieldDimension()) {
             Memento memento = save();
             saveHistory(memento);
@@ -143,4 +147,27 @@ public final class GameData implements Externalizable {
         this.gameIsOver = gameIsOver;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameData gameData = (GameData) o;
+        return gameIsOver == gameData.gameIsOver && Objects.equals(field, gameData.field)
+                && Objects.equals(scores, gameData.scores) && Objects.equals(history, gameData.history);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(field, scores, history, gameIsOver);
+    }
+
+    @Override
+    public String toString() {
+        return "GameData{" +
+                "field=" + field +
+                ", scores=" + scores +
+                ", history=" + history +
+                ", gameIsOver=" + gameIsOver +
+                '}';
+    }
 }

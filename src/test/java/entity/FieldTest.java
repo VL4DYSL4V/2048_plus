@@ -1,6 +1,7 @@
 package entity;
 
 import enums.FieldDimension;
+import helper.FieldUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
