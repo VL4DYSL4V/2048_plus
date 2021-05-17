@@ -78,10 +78,13 @@ class RepositoryDirectoryManagerTest {
     @Nested
     @EnabledOnOs(OS.MAC)
     class MacOsTest extends OperationSystemTest{
-
+// /Users/runner/Library/Application Support/2048
+//
         @Override
         protected Path getRepositoryRoot() {
             System.out.println(repositoryDirectoryManager.getRepositoryDirectory());
+            System.out.println("User Name: " + userHome);
+//            String expectedStringPath = String.format("/Users/%s/Library/Application Support/%s", );
             return null;
         }
 
