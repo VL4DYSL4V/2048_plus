@@ -78,7 +78,7 @@ class RepositoryDirectoryManagerTest {
     @Nested
     @EnabledOnOs(OS.MAC)
     class MacOsTest extends OperationSystemTest{
-        
+
         @Override
         protected Path getRepositoryRoot() {
             String expectedStringPath = String.format("%s/Library/Application Support/%s", userHome, directoryName);
@@ -86,4 +86,17 @@ class RepositoryDirectoryManagerTest {
         }
 
     }
+
+    @Nested
+    @EnabledOnOs(OS.LINUX)
+    class LinuxTest extends OperationSystemTest{
+        
+        @Override
+        protected Path getRepositoryRoot() {
+            String expectedStringPath = String.format("%s/.local/share/%s", userHome, directoryName);
+            return Paths.get(expectedStringPath);
+        }
+
+    }
+
 }
