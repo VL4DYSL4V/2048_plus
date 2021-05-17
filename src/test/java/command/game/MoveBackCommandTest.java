@@ -49,21 +49,4 @@ class MoveBackCommandTest {
         assertEquals(BigInteger.ZERO, gameModel.getScores());
 
     }
-
-    private static class ThisThreadCommandHandler implements CommandHandler {
-
-        private boolean isShutdown = false;
-
-        @Override
-        public void execute(Runnable runnable) {
-            if (!isShutdown) {
-                runnable.run();
-            }
-        }
-
-        @Override
-        public void shutdown() {
-            isShutdown = true;
-        }
-    }
 }
