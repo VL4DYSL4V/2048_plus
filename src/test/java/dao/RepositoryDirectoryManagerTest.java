@@ -90,14 +90,11 @@ class RepositoryDirectoryManagerTest {
     @Nested
     @EnabledOnOs(OS.LINUX)
     class LinuxTest extends OperationSystemTest{
-//      /home/user/.<application>/profiles/
+        
         @Override
         protected Path getRepositoryRoot() {
-//            String expectedStringPath = String.format("%s/Library/Application Support/%s", userHome, directoryName);
-//            return Paths.get(expectedStringPath);
-            System.out.println("User home: " + userHome);
-            System.out.println("Repository directory: " + repositoryDirectoryManager.getRepositoryDirectory());
-            return null;
+            String expectedStringPath = String.format("%s/.local/share/%s", userHome, directoryName);
+            return Paths.get(expectedStringPath);
         }
 
     }
