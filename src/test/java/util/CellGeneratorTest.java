@@ -1,7 +1,7 @@
 package util;
 
 import entity.Field;
-import helper.FieldUtils;
+import testUtils.FieldUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
