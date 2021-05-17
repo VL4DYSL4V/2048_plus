@@ -1,4 +1,4 @@
-package helper;
+package testUtils;
 
 import entity.Coordinates2D;
 import entity.Field;
@@ -10,6 +10,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class FieldUtils {
 
     private static final FieldDimension FIELD_DIMENSION = FieldDimension.FOUR_AND_FOUR;
+
+    private FieldUtils(){}
 
     public static Field getEmptyField() {
         return new Field(FIELD_DIMENSION);
