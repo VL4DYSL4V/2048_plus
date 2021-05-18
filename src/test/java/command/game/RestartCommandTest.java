@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 
 class RestartCommandTest {
 
-    private static final CommandHandler commandHandler = new ThisThreadCommandHandler();
+    private static final CommandHandler commandHandler = spy(new ThisThreadCommandHandler());
     private final Runnable savingTask = Mockito.mock(Runnable.class);
     private GameModel gameModel;
     private RestartCommand restartCommand;
@@ -42,6 +42,9 @@ class RestartCommandTest {
         gameModel.updateAndSaveHistory(field, scores);
         gameModel.setGameIsOver(true);
         restartCommand.execute();
+
+        verify(commandHandler).execute(any());
+
         field = gameModel.getField();
 
         assertEquals(BigInteger.ZERO, gameModel.getScores());

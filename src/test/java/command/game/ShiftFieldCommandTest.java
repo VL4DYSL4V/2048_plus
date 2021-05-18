@@ -7,30 +7,29 @@ import enums.Direction;
 import enums.FieldDimension;
 import handler.CommandHandler;
 import model.GameModel;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import testUtils.FieldUtils;
 
 import java.math.BigInteger;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class ShiftFieldCommandTest {
 
-    private static final CommandHandler commandHandler = new ThisThreadCommandHandler();
+    private CommandHandler commandHandler;
     private GameModel gameModel;
     private ShiftFieldCommand shiftFieldCommand;
 
-    @AfterAll
-    static void tearDown() {
+    @AfterEach
+    void tearDown() {
         commandHandler.shutdown();
     }
 
     @BeforeEach
     void setup() {
+        commandHandler = spy(new ThisThreadCommandHandler());
         gameModel = new GameModel();
         shiftFieldCommand = new ShiftFieldCommand(commandHandler, gameModel);
     }
@@ -43,11 +42,13 @@ class ShiftFieldCommandTest {
         for (Direction direction : Direction.values()) {
             shiftFieldCommand.setParam(direction);
             shiftFieldCommand.execute();
+
             assertEquals(beforeShift, gameModel.getField());
             assertEquals(BigInteger.ZERO, gameModel.getScores());
             assertTrue(gameModel.gameIsOver());
             gameModel.setGameIsOver(false);
         }
+        verify(commandHandler, times(Direction.values().length)).execute(any());
     }
 
     private void conductTest(Field expected, Field field, BigInteger expectedScores) {
@@ -63,6 +64,7 @@ class ShiftFieldCommandTest {
         gameModel.updateAndSaveHistory(field, BigInteger.ZERO);
         shiftFieldCommand.setParam(direction);
         shiftFieldCommand.execute();
+        verify(commandHandler).execute(any());
     }
 
     @Nested
