@@ -4,7 +4,7 @@ import entity.Field;
 import enums.Direction;
 import handler.CommandHandler;
 import model.GameModel;
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import testUtils.FieldUtils;
@@ -12,22 +12,24 @@ import testUtils.FieldUtils;
 import java.math.BigInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class MoveBackCommandTest {
 
-    private static final CommandHandler commandHandler = spy(new ThisThreadCommandHandler());
+    private CommandHandler commandHandler;
     private GameModel gameModel;
     private ShiftFieldCommand shiftFieldCommand;
     private MoveBackCommand moveBackCommand;
 
-    @AfterAll
-    static void tearDown() {
+    @AfterEach
+    void tearDown() {
         commandHandler.shutdown();
     }
 
     @BeforeEach
     void setup() {
+        commandHandler = spy(new ThisThreadCommandHandler());
         gameModel = new GameModel();
         shiftFieldCommand = new ShiftFieldCommand(commandHandler, gameModel);
         moveBackCommand = new MoveBackCommand(gameModel, commandHandler);
@@ -49,6 +51,11 @@ class MoveBackCommandTest {
 
         assertEquals(copy, gameModel.getField());
         assertEquals(BigInteger.ZERO, gameModel.getScores());
+    }
 
+    @Test
+    void nullConstructorArgTest(){
+        assertThrows(NullPointerException.class, () -> new MoveBackCommand(null, commandHandler));
+        assertThrows(NullPointerException.class, () -> new MoveBackCommand(gameModel, null));
     }
 }

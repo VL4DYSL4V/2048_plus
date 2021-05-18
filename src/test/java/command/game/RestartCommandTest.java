@@ -5,7 +5,7 @@ import entity.Field;
 import entity.FieldElement;
 import handler.CommandHandler;
 import model.GameModel;
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -19,18 +19,19 @@ import static org.mockito.Mockito.*;
 
 class RestartCommandTest {
 
-    private static final CommandHandler commandHandler = spy(new ThisThreadCommandHandler());
     private final Runnable savingTask = Mockito.mock(Runnable.class);
+    private CommandHandler commandHandler;
     private GameModel gameModel;
     private RestartCommand restartCommand;
 
-    @AfterAll
-    static void tearDown() {
+    @AfterEach
+    void tearDown() {
         commandHandler.shutdown();
     }
 
     @BeforeEach
     void setup() {
+        commandHandler = spy(new ThisThreadCommandHandler());
         gameModel = new GameModel();
         restartCommand = new RestartCommand(gameModel, savingTask, commandHandler);
     }
@@ -59,5 +60,12 @@ class RestartCommandTest {
         }
 
         verify(savingTask, times(1)).run();
+    }
+
+    @Test
+    void nullConstructorArgTest() {
+        assertThrows(NullPointerException.class, () -> new RestartCommand(null, savingTask, commandHandler));
+        assertThrows(NullPointerException.class, () -> new RestartCommand(gameModel, null, commandHandler));
+        assertThrows(NullPointerException.class, () -> new RestartCommand(gameModel, savingTask, null));
     }
 }

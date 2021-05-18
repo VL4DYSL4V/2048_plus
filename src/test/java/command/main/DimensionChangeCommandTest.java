@@ -1,5 +1,6 @@
 package command.main;
 
+import command.game.RestartCommand;
 import command.game.ThisThreadCommandHandler;
 import command.menu.DimensionChangeCommand;
 import dao.game.GameDataDao;
@@ -71,6 +72,20 @@ class DimensionChangeCommandTest {
     @Test
     void testWithNullDimension() {
         assertThrows(NullPointerException.class, () -> dimensionChangeCommand.setParam(null));
+    }
+
+    @Test
+    void nullConstructorArgTest() {
+        assertThrows(NullPointerException.class, () ->  new DimensionChangeCommand(null,
+                preferencesDAO, commandHandler, gameModel, gameDataDao));
+        assertThrows(NullPointerException.class, () ->  new DimensionChangeCommand(userPreferences,
+                null, commandHandler, gameModel, gameDataDao));
+        assertThrows(NullPointerException.class, () ->  new DimensionChangeCommand(userPreferences,
+                preferencesDAO, null, gameModel, gameDataDao));
+        assertThrows(NullPointerException.class, () ->  new DimensionChangeCommand(userPreferences,
+                preferencesDAO, commandHandler, null, gameDataDao));
+        assertThrows(NullPointerException.class, () ->  new DimensionChangeCommand(userPreferences,
+                preferencesDAO, commandHandler, gameModel, null));
     }
 
     private static class GameDataImpl implements GameDataDao {
