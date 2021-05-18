@@ -6,13 +6,14 @@ import handler.CommandHandler;
 import preferences.UserPreferences;
 import view.theme.Theme;
 
+import java.util.Objects;
+
 public final class ThemeChangeCommand implements VolatileCommand<Theme> {
 
-    private Theme neuTheme;
     private final CommandHandler commandHandler;
     private final UserPreferences userPreferences;
     private final PreferencesDAO preferencesDAO;
-    private final Object lock = new Object();
+    private Theme neuTheme;
 
     public ThemeChangeCommand(CommandHandler commandHandler, UserPreferences userPreferences, PreferencesDAO preferencesDAO) {
         this.commandHandler = commandHandler;
@@ -22,20 +23,15 @@ public final class ThemeChangeCommand implements VolatileCommand<Theme> {
 
     @Override
     public void setParam(Theme param) {
-        synchronized (lock){
-            this.neuTheme = param;
-        }
+        Objects.requireNonNull(param);
+        this.neuTheme = param;
     }
 
     @Override
     public void execute() {
         commandHandler.execute(() -> {
-            synchronized (lock) {
-                if (neuTheme != null) {
-                    if(userPreferences.setTheme(neuTheme)){
-                        preferencesDAO.saveOrUpdate(userPreferences);
-                    }
-                }
+            if (userPreferences.setTheme(neuTheme)) {
+                preferencesDAO.saveOrUpdate(userPreferences);
             }
         });
     }

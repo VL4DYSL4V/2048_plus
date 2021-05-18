@@ -47,6 +47,7 @@ public final class ShiftFieldCommand implements VolatileCommand<Direction> {
 
     @Override
     public void setParam(Direction param) {
+        Objects.requireNonNull(param);
         this.direction = param;
     }
 
