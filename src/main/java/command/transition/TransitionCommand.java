@@ -4,6 +4,7 @@ import command.Command;
 import handler.CommandHandler;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public final class TransitionCommand implements Command {
 
@@ -17,6 +18,9 @@ public final class TransitionCommand implements Command {
     }
 
     public TransitionCommand(JFrame from, JFrame to, CommandHandler commandHandler, Runnable afterTransition) {
+        Objects.requireNonNull(from);
+        Objects.requireNonNull(to);
+        Objects.requireNonNull(commandHandler);
         this.from = from;
         this.to = to;
         this.commandHandler = commandHandler;

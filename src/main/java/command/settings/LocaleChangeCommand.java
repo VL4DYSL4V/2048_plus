@@ -16,6 +16,9 @@ public final class LocaleChangeCommand implements VolatileCommand<Locale> {
     private volatile Locale neuLocale;
 
     public LocaleChangeCommand(CommandHandler commandHandler, UserPreferences userPreferences, PreferencesDAO preferencesDAO) {
+        Objects.requireNonNull(commandHandler);
+        Objects.requireNonNull(userPreferences);
+        Objects.requireNonNull(preferencesDAO);
         this.commandHandler = commandHandler;
         this.userPreferences = userPreferences;
         this.preferencesDAO = preferencesDAO;

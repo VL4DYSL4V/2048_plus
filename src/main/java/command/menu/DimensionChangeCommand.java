@@ -26,6 +26,11 @@ public final class DimensionChangeCommand implements VolatileCommand<FieldDimens
                                   CommandHandler commandHandler,
                                   GameModel gameModel,
                                   GameDataDao gameDataDao) {
+        Objects.requireNonNull(userPreferences);
+        Objects.requireNonNull(preferencesDAO);
+        Objects.requireNonNull(commandHandler);
+        Objects.requireNonNull(gameModel);
+        Objects.requireNonNull(gameDataDao);
         this.userPreferences = userPreferences;
         this.preferencesDAO = preferencesDAO;
         this.commandHandler = commandHandler;
