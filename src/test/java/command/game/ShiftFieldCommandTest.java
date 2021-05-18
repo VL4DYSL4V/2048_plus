@@ -7,7 +7,10 @@ import enums.Direction;
 import enums.FieldDimension;
 import handler.CommandHandler;
 import model.GameModel;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import testUtils.FieldUtils;
 
 import java.math.BigInteger;
@@ -49,6 +52,12 @@ class ShiftFieldCommandTest {
             gameModel.setGameIsOver(false);
         }
         verify(commandHandler, times(Direction.values().length)).execute(any());
+    }
+
+    @Test
+    void nullConstructorArgTest() {
+        assertThrows(NullPointerException.class, () -> new ShiftFieldCommand(null, gameModel));
+        assertThrows(NullPointerException.class, () -> new ShiftFieldCommand(commandHandler, null));
     }
 
     private void conductTest(Field expected, Field field, BigInteger expectedScores) {
