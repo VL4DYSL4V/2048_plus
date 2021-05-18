@@ -12,10 +12,11 @@ import testUtils.FieldUtils;
 import java.math.BigInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 class MoveBackCommandTest {
 
-    private static final CommandHandler commandHandler = new ThisThreadCommandHandler();
+    private static final CommandHandler commandHandler = spy(new ThisThreadCommandHandler());
     private GameModel gameModel;
     private ShiftFieldCommand shiftFieldCommand;
     private MoveBackCommand moveBackCommand;
@@ -41,6 +42,7 @@ class MoveBackCommandTest {
         shiftFieldCommand.setParam(Direction.DOWN);
         shiftFieldCommand.execute();
 
+        verify(commandHandler).execute(any());
         assertEquals(new BigInteger("16"), gameModel.getScores());
 
         moveBackCommand.execute();
