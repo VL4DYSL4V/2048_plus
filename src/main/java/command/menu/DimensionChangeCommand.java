@@ -10,6 +10,8 @@ import handler.CommandHandler;
 import model.GameData;
 import model.GameModel;
 
+import java.util.Objects;
+
 public final class DimensionChangeCommand implements VolatileCommand<FieldDimension> {
 
     private final UserPreferences userPreferences;
@@ -48,6 +50,7 @@ public final class DimensionChangeCommand implements VolatileCommand<FieldDimens
 
     @Override
     public void setParam(FieldDimension param) {
+        Objects.requireNonNull(param);
         this.fieldDimension = param;
     }
 }
