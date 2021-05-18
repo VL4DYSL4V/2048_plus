@@ -1,6 +1,5 @@
 package command.main;
 
-import command.game.RestartCommand;
 import command.game.ThisThreadCommandHandler;
 import command.menu.DimensionChangeCommand;
 import dao.game.GameDataDao;
@@ -13,6 +12,8 @@ import model.GameModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import preferences.UserPreferences;
+import testUtils.LocaleUtils;
+import testUtils.ThemeUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,7 +32,9 @@ class DimensionChangeCommandTest {
     @BeforeEach
     void setup() {
         gameModel = spy(new GameModel(fieldDimension));
-        userPreferences = spy(new UserPreferences(null, null, fieldDimension));
+        userPreferences = spy(
+                new UserPreferences(LocaleUtils.getDefaultLocale(),
+                        ThemeUtils.getDefaultTheme(), fieldDimension));
         preferencesDAO = spy(PreferencesDAO.class);
         commandHandler = spy(ThisThreadCommandHandler.class);
         gameDataDao = spy(new GameDataImpl());
@@ -76,15 +79,15 @@ class DimensionChangeCommandTest {
 
     @Test
     void nullConstructorArgTest() {
-        assertThrows(NullPointerException.class, () ->  new DimensionChangeCommand(null,
+        assertThrows(NullPointerException.class, () -> new DimensionChangeCommand(null,
                 preferencesDAO, commandHandler, gameModel, gameDataDao));
-        assertThrows(NullPointerException.class, () ->  new DimensionChangeCommand(userPreferences,
+        assertThrows(NullPointerException.class, () -> new DimensionChangeCommand(userPreferences,
                 null, commandHandler, gameModel, gameDataDao));
-        assertThrows(NullPointerException.class, () ->  new DimensionChangeCommand(userPreferences,
+        assertThrows(NullPointerException.class, () -> new DimensionChangeCommand(userPreferences,
                 preferencesDAO, null, gameModel, gameDataDao));
-        assertThrows(NullPointerException.class, () ->  new DimensionChangeCommand(userPreferences,
+        assertThrows(NullPointerException.class, () -> new DimensionChangeCommand(userPreferences,
                 preferencesDAO, commandHandler, null, gameDataDao));
-        assertThrows(NullPointerException.class, () ->  new DimensionChangeCommand(userPreferences,
+        assertThrows(NullPointerException.class, () -> new DimensionChangeCommand(userPreferences,
                 preferencesDAO, commandHandler, gameModel, null));
     }
 

@@ -19,6 +19,9 @@ public final class UserPreferences implements Publisher<UserPreferencesEvent> {
     private final Collection<Subscriber<UserPreferencesEvent>> subscribers = new HashSet<>();
 
     public UserPreferences(Locale locale, Theme theme, FieldDimension fieldDimension) {
+        Objects.requireNonNull(locale);
+        Objects.requireNonNull(theme);
+        Objects.requireNonNull(fieldDimension);
         this.locale = locale;
         this.theme = theme;
         this.fieldDimension = fieldDimension;
@@ -29,7 +32,7 @@ public final class UserPreferences implements Publisher<UserPreferencesEvent> {
     }
 
     public boolean setLocale(Locale locale) {
-        if (!Objects.equals(locale, this.locale)) {
+        if ( ! (locale == null || Objects.equals(locale, this.locale))) {
             this.locale = locale;
             notifySubscribers(UserPreferencesEvent.LOCALE_CHANGED);
             return true;
@@ -42,7 +45,7 @@ public final class UserPreferences implements Publisher<UserPreferencesEvent> {
     }
 
     public boolean setTheme(Theme theme) {
-        if (!Objects.equals(theme, this.theme)) {
+        if ( ! (theme == null || Objects.equals(theme, this.theme))) {
             this.theme = theme;
             notifySubscribers(UserPreferencesEvent.THEME_CHANGED);
             return true;
@@ -55,7 +58,7 @@ public final class UserPreferences implements Publisher<UserPreferencesEvent> {
     }
 
     public synchronized boolean setFieldDimension(FieldDimension fieldDimension) {
-        if (!Objects.equals(fieldDimension, this.fieldDimension)) {
+        if ( ! (fieldDimension == null || Objects.equals(fieldDimension, this.fieldDimension))) {
             this.fieldDimension = fieldDimension;
             return true;
         }
@@ -63,6 +66,7 @@ public final class UserPreferences implements Publisher<UserPreferencesEvent> {
     }
 
     public synchronized void subscribe(Subscriber<UserPreferencesEvent> subscriber) {
+        Objects.requireNonNull(subscriber);
         subscribers.add(subscriber);
     }
 
