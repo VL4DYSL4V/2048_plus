@@ -10,9 +10,7 @@ import testUtils.ThemeUtils;
 import testUtils.UserPreferencesUtils;
 import view.theme.Theme;
 
-import java.util.Locale;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -24,7 +22,7 @@ class ThemeChangeCommandTest {
     private ThemeChangeCommand themeChangeCommand;
 
     @BeforeEach
-    void init(){
+    void init() {
         userPreferences = spy(UserPreferencesUtils.getDefaultUserPreferences());
         commandHandler = spy(new ThisThreadCommandHandler());
         preferencesDAO = mock(PreferencesDAO.class);
@@ -37,13 +35,23 @@ class ThemeChangeCommandTest {
     }
 
     @Test
+    void nullConstructorArgTest() {
+        assertThrows(NullPointerException.class,
+                () -> new ThemeChangeCommand(null, userPreferences, preferencesDAO));
+        assertThrows(NullPointerException.class,
+                () -> new ThemeChangeCommand(commandHandler, null, preferencesDAO));
+        assertThrows(NullPointerException.class,
+                () -> new ThemeChangeCommand(commandHandler, userPreferences, null));
+    }
+
+    @Test
     void executeInCommandHandler() {
         themeChangeCommand.execute();
         verify(commandHandler).execute(any());
     }
 
     @Test
-    void setNewTheme(){
+    void setNewTheme() {
         Theme theme = ThemeUtils.getRandomTheme();
         themeChangeCommand.setParam(theme);
         themeChangeCommand.execute();
@@ -52,7 +60,7 @@ class ThemeChangeCommandTest {
     }
 
     @Test
-    void setSameTheme(){
+    void setSameTheme() {
         Theme theme = userPreferences.getTheme();
         themeChangeCommand.setParam(theme);
         themeChangeCommand.execute();

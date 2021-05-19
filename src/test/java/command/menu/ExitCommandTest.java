@@ -1,10 +1,11 @@
 package command.menu;
 
-import mock.ThisThreadCommandHandler;
 import handler.CommandHandler;
+import mock.ThisThreadCommandHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class ExitCommandTest {
@@ -16,6 +17,11 @@ class ExitCommandTest {
     void setup() {
         commandHandler = mock(ThisThreadCommandHandler.class);
         exitCommand = new ExitCommand(commandHandler);
+    }
+
+    @Test
+    void nullConstructorArgTest() {
+        assertThrows(NullPointerException.class, () -> new ExitCommand(null));
     }
 
     @Test
