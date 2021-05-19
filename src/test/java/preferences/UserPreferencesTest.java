@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import testUtils.LocaleUtils;
 import testUtils.ThemeUtils;
+import testUtils.UserPreferencesUtils;
 import view.theme.Theme;
 
 import java.util.Locale;
@@ -25,10 +26,7 @@ class UserPreferencesTest {
     @BeforeEach
     @SuppressWarnings("unchecked")
     void setup() {
-        userPreferences = spy(new UserPreferences(
-                LocaleUtils.getDefaultLocale(),
-                ThemeUtils.getDefaultTheme(),
-                FIELD_DIMENSION));
+        userPreferences = spy(UserPreferencesUtils.getDefaultUserPreferences());
         subscriber1 = (Subscriber<UserPreferencesEvent>) mock(Subscriber.class);
         subscriber2 = (Subscriber<UserPreferencesEvent>) mock(Subscriber.class);
     }
@@ -84,10 +82,9 @@ class UserPreferencesTest {
         userPreferences.subscribe(subscriber1);
         userPreferences.subscribe(subscriber2);
 
-        UserPreferencesEvent event = null;
-        userPreferences.notifySubscribers(event);
-        verify(subscriber1).reactOnNotification(event);
-        verify(subscriber2).reactOnNotification(event);
+        userPreferences.notifySubscribers(null);
+        verify(subscriber1).reactOnNotification(null);
+        verify(subscriber2).reactOnNotification(null);
     }
 
     @Nested

@@ -3,6 +3,7 @@ package command.game;
 import entity.Field;
 import enums.Direction;
 import handler.CommandHandler;
+import mock.ThisThreadCommandHandler;
 import model.GameModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
