@@ -1,6 +1,6 @@
 package command.main;
 
-import command.game.ThisThreadCommandHandler;
+import mock.ThisThreadCommandHandler;
 import command.menu.DimensionChangeCommand;
 import dao.game.GameDataDao;
 import dao.preferences.PreferencesDAO;

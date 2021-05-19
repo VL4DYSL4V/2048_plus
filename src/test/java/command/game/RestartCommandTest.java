@@ -4,6 +4,7 @@ import entity.Coordinates2D;
 import entity.Field;
 import entity.FieldElement;
 import handler.CommandHandler;
+import mock.ThisThreadCommandHandler;
 import model.GameModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

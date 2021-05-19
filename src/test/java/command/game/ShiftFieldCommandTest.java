@@ -6,6 +6,7 @@ import entity.FieldElement;
 import enums.Direction;
 import enums.FieldDimension;
 import handler.CommandHandler;
+import mock.ThisThreadCommandHandler;
 import model.GameModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,11 @@ class ShiftFieldCommandTest {
         commandHandler = spy(new ThisThreadCommandHandler());
         gameModel = new GameModel();
         shiftFieldCommand = new ShiftFieldCommand(commandHandler, gameModel);
+    }
+
+    @Test
+    void testSetNullAsParam(){
+        assertThrows(NullPointerException.class, () -> shiftFieldCommand.setParam(null));
     }
 
     @Test

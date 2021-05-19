@@ -1,4 +1,4 @@
-package command.game;
+package mock;
 
 import handler.CommandHandler;
 

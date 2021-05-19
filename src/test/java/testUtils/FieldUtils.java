@@ -7,7 +7,7 @@ import enums.FieldDimension;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class FieldUtils {
+public final class FieldUtils {
 
     private static final FieldDimension FIELD_DIMENSION = FieldDimension.FOUR_AND_FOUR;
 
