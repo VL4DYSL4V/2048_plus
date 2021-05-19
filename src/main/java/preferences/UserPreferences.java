@@ -65,15 +65,18 @@ public final class UserPreferences implements Publisher<UserPreferencesEvent> {
         return false;
     }
 
+    @Override
     public synchronized void subscribe(Subscriber<UserPreferencesEvent> subscriber) {
         Objects.requireNonNull(subscriber);
         subscribers.add(subscriber);
     }
 
+    @Override
     public synchronized void unsubscribe(Subscriber<UserPreferencesEvent> subscriber) {
         subscribers.remove(subscriber);
     }
 
+    @Override
     public synchronized void notifySubscribers(UserPreferencesEvent eventType) {
         for (Subscriber<UserPreferencesEvent> subscriber : subscribers) {
             subscriber.reactOnNotification(eventType);
