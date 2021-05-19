@@ -1,8 +1,8 @@
 package command.settings;
 
-import mock.ThisThreadCommandHandler;
 import dao.preferences.PreferencesDAO;
 import handler.CommandHandler;
+import mock.ThisThreadCommandHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import preferences.UserPreferences;
@@ -10,7 +10,7 @@ import testUtils.UserPreferencesUtils;
 
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class LocaleChangeCommandTest {
@@ -21,11 +21,21 @@ class LocaleChangeCommandTest {
     private LocaleChangeCommand localeChangeCommand;
 
     @BeforeEach
-    void init(){
+    void init() {
         userPreferences = spy(UserPreferencesUtils.getDefaultUserPreferences());
         commandHandler = spy(new ThisThreadCommandHandler());
         preferencesDAO = mock(PreferencesDAO.class);
         localeChangeCommand = new LocaleChangeCommand(commandHandler, userPreferences, preferencesDAO);
+    }
+
+    @Test
+    void nullConstructorArgTest() {
+        assertThrows(NullPointerException.class,
+                () -> new LocaleChangeCommand(null, userPreferences, preferencesDAO));
+        assertThrows(NullPointerException.class,
+                () -> new LocaleChangeCommand(commandHandler, null, preferencesDAO));
+        assertThrows(NullPointerException.class,
+                () -> new LocaleChangeCommand(commandHandler, userPreferences, null));
     }
 
     @Test
@@ -40,7 +50,7 @@ class LocaleChangeCommandTest {
     }
 
     @Test
-    void setNewLocale(){
+    void setNewLocale() {
         Locale locale = Locale.GERMAN;
         localeChangeCommand.setParam(locale);
         localeChangeCommand.execute();
@@ -49,7 +59,7 @@ class LocaleChangeCommandTest {
     }
 
     @Test
-    void setSameLocale(){
+    void setSameLocale() {
         Locale locale = userPreferences.getLocale();
         localeChangeCommand.setParam(locale);
         localeChangeCommand.execute();
