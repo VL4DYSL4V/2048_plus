@@ -12,6 +12,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 @Repository("gameDataDao")
@@ -24,6 +25,8 @@ public final class FileSystemGameDataDao implements GameDataDao {
     @Autowired
     public FileSystemGameDataDao(Properties savedGamesProperties,
                                  RepositoryDirectoryManager repositoryDirectoryManager) {
+        Objects.requireNonNull(savedGamesProperties);
+        Objects.requireNonNull(repositoryDirectoryManager);
         this.savedGamesProperties = savedGamesProperties;
         this.repositoryDirectoryManager = repositoryDirectoryManager;
         createRepositoriesAndSetupDimensionMap();
@@ -31,6 +34,8 @@ public final class FileSystemGameDataDao implements GameDataDao {
 
     @Override
     public void save(GameData gameData, FieldDimension fieldDimension) throws StoreException {
+        Objects.requireNonNull(gameData);
+        Objects.requireNonNull(fieldDimension);
         Path path = fieldDimensionToPathMap.get(fieldDimension);
         if (path == null) {
             throw new StoreException("No such path");
@@ -46,6 +51,7 @@ public final class FileSystemGameDataDao implements GameDataDao {
 
     @Override
     public GameData getByDimension(FieldDimension fieldDimension) throws FetchException {
+        Objects.requireNonNull(fieldDimension);
         Path path = fieldDimensionToPathMap.get(fieldDimension);
         if (path == null) {
             throw new FetchException("No such path");
