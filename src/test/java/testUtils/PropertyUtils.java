@@ -18,7 +18,7 @@ public final class PropertyUtils {
         return properties;
     }
 
-    public static Properties repositoryDirectoryProperties(){
+    public static Properties getRepositoryDirectoryProperties(){
         return PropertyUtils.loadByLocation("repository/repository_directory.properties");
     }
 

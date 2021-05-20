@@ -14,17 +14,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RepositoryDirectoryManagerTest {
 
-    private static final Properties SAVED_GAMES_PROPERTIES = PropertyUtils.getTestSavedGamesProperties();
+    private static final Properties REPOSITORY_DIRECTORY_PROPERTIES = PropertyUtils.getRepositoryDirectoryProperties();
     private RepositoryDirectoryManager repositoryDirectoryManager;
 
     @BeforeEach
     void initManager() {
-        this.repositoryDirectoryManager = new RepositoryDirectoryManager(SAVED_GAMES_PROPERTIES);
+        this.repositoryDirectoryManager = new RepositoryDirectoryManager(REPOSITORY_DIRECTORY_PROPERTIES);
     }
 
     abstract class OperationSystemTest{
 
-        protected final String directoryName = SAVED_GAMES_PROPERTIES.getProperty("repository-directory-name");
+        protected final String directoryName = REPOSITORY_DIRECTORY_PROPERTIES.getProperty("repository-directory-name");
         protected final String userHome = System.getProperty("user.home");
 
         @Test

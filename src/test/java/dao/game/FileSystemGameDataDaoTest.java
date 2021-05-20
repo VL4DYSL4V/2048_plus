@@ -27,7 +27,7 @@ class FileSystemGameDataDaoTest {
     @BeforeEach
     void init() {
         savedGamesProperties = PropertyUtils.getTestSavedGamesProperties();
-        Properties repositoryDirectoryProperties = PropertyUtils.repositoryDirectoryProperties();
+        Properties repositoryDirectoryProperties = PropertyUtils.getRepositoryDirectoryProperties();
         repositoryDirectoryManager = new RepositoryDirectoryManager(repositoryDirectoryProperties);
         fileSystemGameDataDao = new FileSystemGameDataDao(savedGamesProperties, repositoryDirectoryManager);
     }
