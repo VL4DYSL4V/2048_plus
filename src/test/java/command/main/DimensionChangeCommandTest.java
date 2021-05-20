@@ -3,7 +3,7 @@ package command.main;
 import mock.ThisThreadCommandHandler;
 import command.menu.DimensionChangeCommand;
 import dao.game.GameDataDao;
-import dao.preferences.PreferencesDAO;
+import dao.preferences.PreferencesDao;
 import enums.FieldDimension;
 import exception.FetchException;
 import handler.CommandHandler;
@@ -23,7 +23,7 @@ class DimensionChangeCommandTest {
 
     private static final FieldDimension fieldDimension = FieldDimension.FOUR_AND_FOUR;
     private UserPreferences userPreferences;
-    private PreferencesDAO preferencesDAO;
+    private PreferencesDao preferencesDAO;
     private CommandHandler commandHandler;
     private GameDataDao gameDataDao;
     private GameModel gameModel;
@@ -35,7 +35,7 @@ class DimensionChangeCommandTest {
         userPreferences = spy(
                 new UserPreferences(LocaleUtils.getDefaultLocale(),
                         ThemeUtils.getDefaultTheme(), fieldDimension));
-        preferencesDAO = spy(PreferencesDAO.class);
+        preferencesDAO = spy(PreferencesDao.class);
         commandHandler = spy(ThisThreadCommandHandler.class);
         gameDataDao = spy(new GameDataImpl());
         dimensionChangeCommand = new DimensionChangeCommand(userPreferences,

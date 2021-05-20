@@ -1,6 +1,6 @@
 package config;
 
-import dao.preferences.PreferencesDAO;
+import dao.preferences.PreferencesDao;
 import dao.theme.FileSystemThemeDao;
 import dao.theme.ThemeDao;
 import exception.FetchException;
@@ -27,7 +27,7 @@ public class ViewConfig {
 
     @Bean
     public UserPreferences userPreferences() {
-        PreferencesDAO preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDAO.class);
+        PreferencesDao preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDao.class);
         return preferencesDAO.getUserPreferences();
     }
 
