@@ -1,6 +1,6 @@
 package command.settings;
 
-import dao.preferences.PreferencesDAO;
+import dao.preferences.PreferencesDao;
 import handler.CommandHandler;
 import mock.ThisThreadCommandHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,14 +17,14 @@ class LocaleChangeCommandTest {
 
     private CommandHandler commandHandler;
     private UserPreferences userPreferences;
-    private PreferencesDAO preferencesDAO;
+    private PreferencesDao preferencesDAO;
     private LocaleChangeCommand localeChangeCommand;
 
     @BeforeEach
     void init() {
         userPreferences = spy(UserPreferencesUtils.getDefaultUserPreferences());
         commandHandler = spy(new ThisThreadCommandHandler());
-        preferencesDAO = mock(PreferencesDAO.class);
+        preferencesDAO = mock(PreferencesDao.class);
         localeChangeCommand = new LocaleChangeCommand(commandHandler, userPreferences, preferencesDAO);
     }
 

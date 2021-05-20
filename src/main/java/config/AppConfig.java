@@ -11,7 +11,7 @@ import command.settings.LocaleChangeCommand;
 import command.settings.ThemeChangeCommand;
 import command.transition.TransitionCommand;
 import dao.game.GameDataDao;
-import dao.preferences.PreferencesDAO;
+import dao.preferences.PreferencesDao;
 import enums.FieldDimension;
 import exception.FetchException;
 import handler.CommandHandler;
@@ -145,7 +145,7 @@ public class AppConfig implements ApplicationContextAware {
     public VolatileCommand<FieldDimension> dimensionChangeCommand() {
         UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
         GameDataDao gameDataDao = applicationContext.getBean("gameDataDao", GameDataDao.class);
-        PreferencesDAO preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDAO.class);
+        PreferencesDao preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDao.class);
         return new DimensionChangeCommand(userPreferences, preferencesDAO, uiCommandHandler(), gameModel(), gameDataDao);
     }
 
@@ -153,7 +153,7 @@ public class AppConfig implements ApplicationContextAware {
     public VolatileCommand<Locale> languageChangeCommand() {
         UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
         CommandHandler commandHandler = applicationContext.getBean("uiCommandHandler", CommandHandler.class);
-        PreferencesDAO preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDAO.class);
+        PreferencesDao preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDao.class);
         return new LocaleChangeCommand(commandHandler, userPreferences, preferencesDAO);
     }
 
@@ -161,7 +161,7 @@ public class AppConfig implements ApplicationContextAware {
     public VolatileCommand<Theme> themeChangeCommand() {
         UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
         CommandHandler commandHandler = applicationContext.getBean("uiCommandHandler", CommandHandler.class);
-        PreferencesDAO preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDAO.class);
+        PreferencesDao preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDao.class);
         return new ThemeChangeCommand(commandHandler, userPreferences, preferencesDAO);
     }
 

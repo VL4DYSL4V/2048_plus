@@ -1,7 +1,7 @@
 package command.menu;
 
 import command.VolatileCommand;
-import dao.preferences.PreferencesDAO;
+import dao.preferences.PreferencesDao;
 import preferences.UserPreferences;
 import dao.game.GameDataDao;
 import enums.FieldDimension;
@@ -15,14 +15,14 @@ import java.util.Objects;
 public final class DimensionChangeCommand implements VolatileCommand<FieldDimension> {
 
     private final UserPreferences userPreferences;
-    private final PreferencesDAO preferencesDAO;
+    private final PreferencesDao preferencesDAO;
     private final CommandHandler commandHandler;
     private final GameModel gameModel;
     private final GameDataDao gameDataDao;
     private volatile FieldDimension fieldDimension;
 
     public DimensionChangeCommand(UserPreferences userPreferences,
-                                  PreferencesDAO preferencesDAO,
+                                  PreferencesDao preferencesDAO,
                                   CommandHandler commandHandler,
                                   GameModel gameModel,
                                   GameDataDao gameDataDao) {

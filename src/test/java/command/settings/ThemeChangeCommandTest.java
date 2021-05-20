@@ -1,6 +1,6 @@
 package command.settings;
 
-import dao.preferences.PreferencesDAO;
+import dao.preferences.PreferencesDao;
 import handler.CommandHandler;
 import mock.ThisThreadCommandHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,14 +18,14 @@ class ThemeChangeCommandTest {
 
     private CommandHandler commandHandler;
     private UserPreferences userPreferences;
-    private PreferencesDAO preferencesDAO;
+    private PreferencesDao preferencesDAO;
     private ThemeChangeCommand themeChangeCommand;
 
     @BeforeEach
     void init() {
         userPreferences = spy(UserPreferencesUtils.getDefaultUserPreferences());
         commandHandler = spy(new ThisThreadCommandHandler());
-        preferencesDAO = mock(PreferencesDAO.class);
+        preferencesDAO = mock(PreferencesDao.class);
         themeChangeCommand = new ThemeChangeCommand(commandHandler, userPreferences, preferencesDAO);
     }
 

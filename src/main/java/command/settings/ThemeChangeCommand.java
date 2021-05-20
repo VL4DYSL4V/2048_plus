@@ -1,7 +1,7 @@
 package command.settings;
 
 import command.VolatileCommand;
-import dao.preferences.PreferencesDAO;
+import dao.preferences.PreferencesDao;
 import handler.CommandHandler;
 import preferences.UserPreferences;
 import view.theme.Theme;
@@ -12,10 +12,10 @@ public final class ThemeChangeCommand implements VolatileCommand<Theme> {
 
     private final CommandHandler commandHandler;
     private final UserPreferences userPreferences;
-    private final PreferencesDAO preferencesDAO;
+    private final PreferencesDao preferencesDAO;
     private Theme neuTheme;
 
-    public ThemeChangeCommand(CommandHandler commandHandler, UserPreferences userPreferences, PreferencesDAO preferencesDAO) {
+    public ThemeChangeCommand(CommandHandler commandHandler, UserPreferences userPreferences, PreferencesDao preferencesDAO) {
         Objects.requireNonNull(commandHandler);
         Objects.requireNonNull(userPreferences);
         Objects.requireNonNull(preferencesDAO);

@@ -15,14 +15,14 @@ import java.util.Locale;
 import java.util.Properties;
 
 @Repository("preferencesDao")
-public final class FileSystemPreferencesDAO implements PreferencesDAO {
+public final class FileSystemPreferencesDao implements PreferencesDao {
 
     private final ThemeDao themeDao;
     private final Properties preferencesProperties;
     private final RepositoryDirectoryManager repositoryDirectoryManager;
 
     @Autowired
-    public FileSystemPreferencesDAO(ThemeDao themeDao,
+    public FileSystemPreferencesDao(ThemeDao themeDao,
                                     @Qualifier("preferencesProperties") Properties preferencesProperties,
                                     RepositoryDirectoryManager repositoryDirectoryManager) {
         this.themeDao = themeDao;
