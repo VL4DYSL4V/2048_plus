@@ -1,16 +1,15 @@
 package dao.theme;
 
-import exception.FetchException;
 import org.springframework.stereotype.Repository;
+import util.PropertyUtils;
 import view.theme.Theme;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -21,22 +20,19 @@ public final class FileSystemThemeDao implements ThemeDao {
     private final Properties themeNameToFileNameProperties;
 
     public FileSystemThemeDao(Properties themeNameToFileNameProperties) {
+        Objects.requireNonNull(themeNameToFileNameProperties);
         this.themeNameToFileNameProperties = themeNameToFileNameProperties;
     }
 
     @Override
-    public Theme loadTheme(String location) throws FetchException {
-        Properties properties = new Properties();
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(location)) {
-            properties.load(inputStream);
-        } catch (IOException e) {
-            throw new FetchException(e);
-        }
+    public Theme loadTheme(String location) {
+        Properties properties = PropertyUtils.loadByLocation(location);
         return decodeTheme(properties);
     }
 
     @Override
-    public Theme loadByName(String name) throws FetchException {
+    public Theme loadByName(String name) {
+        Objects.requireNonNull(name);
         return loadTheme(themeNameToFileNameProperties.getProperty(name));
     }
 
