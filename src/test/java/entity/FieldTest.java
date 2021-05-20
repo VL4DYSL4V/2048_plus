@@ -79,15 +79,6 @@ class FieldTest {
         }
 
         @Test
-        void setOutOfBounds() {
-            Field field = FieldUtils.getEmptyField();
-            Coordinates2D coordinates2D = new Coordinates2D(-1, 3);
-            assertThrows(IllegalArgumentException.class,
-                    () -> field.setElement(new FieldElement(coordinates2D, 1)),
-                    "Shouldn't be able to insert element out of bounds");
-        }
-
-        @Test
         void setToUnavailableSlot() {
             Field field = FieldUtils.getFieldWithData();
             Coordinates2D coordinates2D = new Coordinates2D(2, 3);

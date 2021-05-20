@@ -8,7 +8,7 @@ public final class PropertyUtils {
 
     private PropertyUtils(){}
 
-    private static Properties loadByLocation(String location) {
+    public static Properties loadByLocation(String location) {
         Properties properties = new Properties();
         try (InputStream inputStream = PropertyUtils.class.getClassLoader().getResourceAsStream(location)) {
             properties.load(inputStream);
@@ -20,6 +20,10 @@ public final class PropertyUtils {
 
     public static Properties getRepositoryDirectoryProperties(){
         return PropertyUtils.loadByLocation("repository/repository_directory.properties");
+    }
+
+    public static Properties getThemeNameToFileProperties(){
+        return PropertyUtils.loadByLocation("theme_name_to_file_name.properties");
     }
 
     public static Properties getTestPreferencesProperties(){
