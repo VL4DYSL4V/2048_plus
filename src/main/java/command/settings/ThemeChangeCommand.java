@@ -15,7 +15,7 @@ public final class ThemeChangeCommand implements VolatileCommand<Theme> {
     private final PreferencesDao preferencesDAO;
     private Theme neuTheme;
 
-    public ThemeChangeCommand(CommandHandler commandHandler, UserPreferences userPreferences, PreferencesDao preferencesDAO) {
+    public ThemeChangeCommand(UserPreferences userPreferences, PreferencesDao preferencesDAO, CommandHandler commandHandler) {
         Objects.requireNonNull(commandHandler);
         Objects.requireNonNull(userPreferences);
         Objects.requireNonNull(preferencesDAO);

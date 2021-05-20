@@ -31,7 +31,7 @@ class TransitionCommandTest {
                 () -> new TransitionCommand(from, null, commandHandler));
         assertThrows(NullPointerException.class,
                 () -> new TransitionCommand(from, to, null));
-        assertDoesNotThrow(() -> new TransitionCommand(from, to, commandHandler, null));
+        assertDoesNotThrow(() -> new TransitionCommand(from, to, null, commandHandler));
     }
 
     @Test
@@ -64,7 +64,7 @@ class TransitionCommandTest {
     @Test
     void testRunningRunnable() throws InterruptedException {
         Runnable runnable = mock(Runnable.class);
-        TransitionCommand transitionCommand = new TransitionCommand(from, to, commandHandler, runnable);
+        TransitionCommand transitionCommand = new TransitionCommand(from, to, runnable, commandHandler);
         verifyChangingVisibility(transitionCommand);
         verify(runnable).run();
     }

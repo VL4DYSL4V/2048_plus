@@ -26,7 +26,7 @@ class ThemeChangeCommandTest {
         userPreferences = spy(UserPreferencesUtils.getDefaultUserPreferences());
         commandHandler = spy(new ThisThreadCommandHandler());
         preferencesDAO = mock(PreferencesDao.class);
-        themeChangeCommand = new ThemeChangeCommand(commandHandler, userPreferences, preferencesDAO);
+        themeChangeCommand = new ThemeChangeCommand(userPreferences, preferencesDAO, commandHandler);
     }
 
     @Test
@@ -37,11 +37,11 @@ class ThemeChangeCommandTest {
     @Test
     void nullConstructorArgTest() {
         assertThrows(NullPointerException.class,
-                () -> new ThemeChangeCommand(null, userPreferences, preferencesDAO));
+                () -> new ThemeChangeCommand(userPreferences, preferencesDAO, null));
         assertThrows(NullPointerException.class,
-                () -> new ThemeChangeCommand(commandHandler, null, preferencesDAO));
+                () -> new ThemeChangeCommand(null, preferencesDAO, commandHandler));
         assertThrows(NullPointerException.class,
-                () -> new ThemeChangeCommand(commandHandler, userPreferences, null));
+                () -> new ThemeChangeCommand(userPreferences, null, commandHandler));
     }
 
     @Test

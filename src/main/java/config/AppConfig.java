@@ -79,7 +79,7 @@ public class AppConfig implements ApplicationContextAware {
     @Bean
     public ShiftFieldCommand shiftFieldCommand() {
         GameModel gameModel = applicationContext.getBean("gameModel", GameModel.class);
-        return new ShiftFieldCommand(uiCommandHandler(), gameModel);
+        return new ShiftFieldCommand(gameModel, uiCommandHandler());
     }
 
     @Bean
@@ -100,13 +100,13 @@ public class AppConfig implements ApplicationContextAware {
         PeriodicalSavingService gameSaver = applicationContext.getBean("gameSaver", GameSaver.class);
         Runnable savingTask = applicationContext.getBean("savingTask", Runnable.class);
         GameModel gameModel = gameModel();
-        return new TransitionCommand(gameFrame, mainFrame, uiCommandHandler(), () -> {
+        return new TransitionCommand(gameFrame, mainFrame, () -> {
             savingTask.run();
             gameSaver.stop();
             if (gameModel.gameIsOver()) {
                 gameModel.setGameData(new GameData(gameModel.getFieldDimension()));
             }
-        });
+        }, uiCommandHandler());
     }
 
     @Bean
@@ -114,7 +114,7 @@ public class AppConfig implements ApplicationContextAware {
         MainFrame mainFrame = applicationContext.getBean("mainFrame", MainFrame.class);
         GameFrame gameFrame = applicationContext.getBean("gameFrame", GameFrame.class);
         PeriodicalSavingService gameSaver = applicationContext.getBean("gameSaver", GameSaver.class);
-        return new TransitionCommand(mainFrame, gameFrame, uiCommandHandler(), gameSaver::start);
+        return new TransitionCommand(mainFrame, gameFrame, gameSaver::start, uiCommandHandler());
     }
 
     @Bean
@@ -146,7 +146,7 @@ public class AppConfig implements ApplicationContextAware {
         UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
         GameDataDao gameDataDao = applicationContext.getBean("gameDataDao", GameDataDao.class);
         PreferencesDao preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDao.class);
-        return new DimensionChangeCommand(userPreferences, preferencesDAO, uiCommandHandler(), gameModel(), gameDataDao);
+        return new DimensionChangeCommand(userPreferences, preferencesDAO, gameModel(), gameDataDao, uiCommandHandler());
     }
 
     @Bean
@@ -154,7 +154,7 @@ public class AppConfig implements ApplicationContextAware {
         UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
         CommandHandler commandHandler = applicationContext.getBean("uiCommandHandler", CommandHandler.class);
         PreferencesDao preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDao.class);
-        return new LocaleChangeCommand(commandHandler, userPreferences, preferencesDAO);
+        return new LocaleChangeCommand(userPreferences, preferencesDAO, commandHandler);
     }
 
     @Bean
@@ -162,7 +162,7 @@ public class AppConfig implements ApplicationContextAware {
         UserPreferences userPreferences = applicationContext.getBean("userPreferences", UserPreferences.class);
         CommandHandler commandHandler = applicationContext.getBean("uiCommandHandler", CommandHandler.class);
         PreferencesDao preferencesDAO = applicationContext.getBean("preferencesDao", PreferencesDao.class);
-        return new ThemeChangeCommand(commandHandler, userPreferences, preferencesDAO);
+        return new ThemeChangeCommand(userPreferences, preferencesDAO, commandHandler);
     }
 
     @Bean

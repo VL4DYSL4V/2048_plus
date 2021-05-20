@@ -14,10 +14,10 @@ public final class TransitionCommand implements Command {
     private final Runnable afterTransition;
 
     public TransitionCommand(JFrame from, JFrame to, CommandHandler commandHandler) {
-        this(from, to, commandHandler, null);
+        this(from, to, null, commandHandler);
     }
 
-    public TransitionCommand(JFrame from, JFrame to, CommandHandler commandHandler, Runnable afterTransition) {
+    public TransitionCommand(JFrame from, JFrame to, Runnable afterTransition, CommandHandler commandHandler) {
         Objects.requireNonNull(from);
         Objects.requireNonNull(to);
         Objects.requireNonNull(commandHandler);

@@ -39,7 +39,7 @@ class DimensionChangeCommandTest {
         commandHandler = spy(ThisThreadCommandHandler.class);
         gameDataDao = spy(new GameDataImpl());
         dimensionChangeCommand = new DimensionChangeCommand(userPreferences,
-                preferencesDAO, commandHandler, gameModel, gameDataDao);
+                preferencesDAO, gameModel, gameDataDao, commandHandler);
     }
 
     @Test
@@ -80,15 +80,15 @@ class DimensionChangeCommandTest {
     @Test
     void nullConstructorArgTest() {
         assertThrows(NullPointerException.class, () -> new DimensionChangeCommand(null,
-                preferencesDAO, commandHandler, gameModel, gameDataDao));
+                preferencesDAO, gameModel, gameDataDao, commandHandler));
         assertThrows(NullPointerException.class, () -> new DimensionChangeCommand(userPreferences,
-                null, commandHandler, gameModel, gameDataDao));
+                null, gameModel, gameDataDao, commandHandler));
         assertThrows(NullPointerException.class, () -> new DimensionChangeCommand(userPreferences,
-                preferencesDAO, null, gameModel, gameDataDao));
+                preferencesDAO, gameModel, gameDataDao, null));
         assertThrows(NullPointerException.class, () -> new DimensionChangeCommand(userPreferences,
-                preferencesDAO, commandHandler, null, gameDataDao));
+                preferencesDAO, null, gameDataDao, commandHandler));
         assertThrows(NullPointerException.class, () -> new DimensionChangeCommand(userPreferences,
-                preferencesDAO, commandHandler, gameModel, null));
+                preferencesDAO, gameModel, null, commandHandler));
     }
 
     private static class GameDataImpl implements GameDataDao {

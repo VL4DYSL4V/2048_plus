@@ -32,7 +32,7 @@ class MoveBackCommandTest {
     void setup() {
         commandHandler = spy(new ThisThreadCommandHandler());
         gameModel = new GameModel();
-        shiftFieldCommand = new ShiftFieldCommand(commandHandler, gameModel);
+        shiftFieldCommand = new ShiftFieldCommand(gameModel, commandHandler);
         moveBackCommand = new MoveBackCommand(gameModel, commandHandler);
     }
 

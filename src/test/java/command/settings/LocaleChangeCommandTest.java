@@ -25,17 +25,17 @@ class LocaleChangeCommandTest {
         userPreferences = spy(UserPreferencesUtils.getDefaultUserPreferences());
         commandHandler = spy(new ThisThreadCommandHandler());
         preferencesDAO = mock(PreferencesDao.class);
-        localeChangeCommand = new LocaleChangeCommand(commandHandler, userPreferences, preferencesDAO);
+        localeChangeCommand = new LocaleChangeCommand(userPreferences, preferencesDAO, commandHandler);
     }
 
     @Test
     void nullConstructorArgTest() {
         assertThrows(NullPointerException.class,
-                () -> new LocaleChangeCommand(null, userPreferences, preferencesDAO));
+                () -> new LocaleChangeCommand(userPreferences, preferencesDAO, null));
         assertThrows(NullPointerException.class,
-                () -> new LocaleChangeCommand(commandHandler, null, preferencesDAO));
+                () -> new LocaleChangeCommand(null, preferencesDAO, commandHandler));
         assertThrows(NullPointerException.class,
-                () -> new LocaleChangeCommand(commandHandler, userPreferences, null));
+                () -> new LocaleChangeCommand(userPreferences, null, commandHandler));
     }
 
     @Test
