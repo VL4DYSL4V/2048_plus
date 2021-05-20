@@ -13,6 +13,9 @@ public final class Coordinates2D implements Serializable {
     private static final long serialVersionUID = -8851169347316440995L;
 
     public Coordinates2D(int x, int y) {
+        if(x < 0 || y < 0){
+            throw new IllegalArgumentException("Both coordinates must be greater than 0");
+        }
         this.x = x;
         this.y = y;
     }
