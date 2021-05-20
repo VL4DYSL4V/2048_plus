@@ -68,16 +68,21 @@ public final class Theme {
         return Objects.equals(name, theme.name) &&
                 Objects.equals(background, theme.background) &&
                 Objects.equals(foreground, theme.foreground) &&
-                Objects.equals(font, theme.font) &&
-                Objects.equals(fieldBackgroundImage, theme.fieldBackgroundImage) &&
-                Objects.equals(welcomeImage, theme.welcomeImage) &&
-                Objects.equals(powToImageMap, theme.powToImageMap) &&
-                Objects.equals(gameOverImage, theme.gameOverImage);
+                Objects.equals(font, theme.font);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, background, foreground, font, fieldBackgroundImage, welcomeImage, powToImageMap, gameOverImage);
+        return Objects.hash(name, background, foreground, font);
     }
 
+    @Override
+    public String toString() {
+        return "Theme{" +
+                "name='" + name + '\'' +
+                ", background=" + background +
+                ", foreground=" + foreground +
+                ", font=" + font +
+                '}';
+    }
 }

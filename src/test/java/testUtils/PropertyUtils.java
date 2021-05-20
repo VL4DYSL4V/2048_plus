@@ -22,6 +22,13 @@ public final class PropertyUtils {
         return PropertyUtils.loadByLocation("repository/repository_directory.properties");
     }
 
+    public static Properties getTestPreferencesProperties(){
+        Properties out = new Properties();
+        out.setProperty("preferences-directory-name", "preferencesTest");
+        out.setProperty("preferences-file-name", "preferences.txt");
+        return out;
+    }
+
     public static Properties getTestSavedGamesProperties(){
         Properties out = new Properties();
         out.setProperty("saved-games-directory-name", "savedGamesTest");
