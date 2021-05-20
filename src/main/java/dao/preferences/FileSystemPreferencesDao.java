@@ -12,6 +12,7 @@ import preferences.UserPreferences;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Properties;
 
 @Repository("preferencesDao")
@@ -25,6 +26,9 @@ public final class FileSystemPreferencesDao implements PreferencesDao {
     public FileSystemPreferencesDao(ThemeDao themeDao,
                                     @Qualifier("preferencesProperties") Properties preferencesProperties,
                                     RepositoryDirectoryManager repositoryDirectoryManager) {
+        Objects.requireNonNull(themeDao);
+        Objects.requireNonNull(preferencesProperties);
+        Objects.requireNonNull(repositoryDirectoryManager);
         this.themeDao = themeDao;
         this.preferencesProperties = preferencesProperties;
         this.repositoryDirectoryManager = repositoryDirectoryManager;
@@ -33,6 +37,7 @@ public final class FileSystemPreferencesDao implements PreferencesDao {
 
     @Override
     public void saveOrUpdate(UserPreferences userPreferences) {
+        Objects.requireNonNull(userPreferences);
         String preferencesPath = getPreferencesPath().toString();
         try (FileOutputStream fileOutputStream = new FileOutputStream(preferencesPath);
              BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
