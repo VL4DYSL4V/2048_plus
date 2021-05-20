@@ -10,20 +10,20 @@ public final class RestartCommand implements Command {
 
     private final GameModel gameModel;
     private final Runnable savingTask;
-    private final CommandHandler controller;
+    private final CommandHandler commandHandler;
 
-    public RestartCommand(GameModel gameModel, Runnable savingTask, CommandHandler controller) {
+    public RestartCommand(GameModel gameModel, Runnable savingTask, CommandHandler commandHandler) {
         Objects.requireNonNull(gameModel);
         Objects.requireNonNull(savingTask);
-        Objects.requireNonNull(controller);
+        Objects.requireNonNull(commandHandler);
         this.gameModel = gameModel;
         this.savingTask = savingTask;
-        this.controller = controller;
+        this.commandHandler = commandHandler;
     }
 
     @Override
     public void execute() {
-        controller.execute(() -> {
+        commandHandler.execute(() -> {
             synchronized (gameModel) {
                 gameModel.reset();
                 savingTask.run();

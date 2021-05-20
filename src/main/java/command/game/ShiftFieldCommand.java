@@ -20,7 +20,7 @@ public final class ShiftFieldCommand implements VolatileCommand<Direction> {
     private final GameModel gameModel;
     private volatile Direction direction;
 
-    public ShiftFieldCommand(CommandHandler commandHandler, GameModel gameModel) {
+    public ShiftFieldCommand(GameModel gameModel, CommandHandler commandHandler) {
         Objects.requireNonNull(commandHandler);
         Objects.requireNonNull(gameModel);
         this.commandHandler = commandHandler;

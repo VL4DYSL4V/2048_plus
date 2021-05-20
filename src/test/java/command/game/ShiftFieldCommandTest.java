@@ -35,7 +35,7 @@ class ShiftFieldCommandTest {
     void setup() {
         commandHandler = spy(new ThisThreadCommandHandler());
         gameModel = new GameModel();
-        shiftFieldCommand = new ShiftFieldCommand(commandHandler, gameModel);
+        shiftFieldCommand = new ShiftFieldCommand(gameModel, commandHandler);
     }
 
     @Test
@@ -62,8 +62,8 @@ class ShiftFieldCommandTest {
 
     @Test
     void nullConstructorArgTest() {
-        assertThrows(NullPointerException.class, () -> new ShiftFieldCommand(null, gameModel));
-        assertThrows(NullPointerException.class, () -> new ShiftFieldCommand(commandHandler, null));
+        assertThrows(NullPointerException.class, () -> new ShiftFieldCommand(gameModel, null));
+        assertThrows(NullPointerException.class, () -> new ShiftFieldCommand(null, commandHandler));
     }
 
     private void conductTest(Field expected, Field field, BigInteger expectedScores) {
