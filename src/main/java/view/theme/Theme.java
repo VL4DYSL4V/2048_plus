@@ -44,19 +44,19 @@ public final class Theme {
         return font;
     }
 
-    public Image fieldBackgroundImage() {
+    public Image getFieldBackgroundImage() {
         return fieldBackgroundImage;
     }
 
-    public Image welcomeImage() {
+    public Image getWelcomeImage() {
         return welcomeImage;
     }
 
-    public Map<Integer, Image> powerToImageMap() {
+    public Map<Integer, Image> getPowerToImageMap() {
         return powToImageMap;
     }
 
-    public Image gameOverImage() {
+    public Image getGameOverImage() {
         return gameOverImage;
     }
 

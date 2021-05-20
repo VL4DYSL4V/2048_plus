@@ -62,7 +62,7 @@ public final class FieldCanvas extends Canvas implements ThemeVaryingComponent {
 
         private void setupPowerToScaledImage(Theme theme) {
             powerToScaledImage.clear();
-            Map<Integer, Image> powerToImageMap = theme.powerToImageMap();
+            Map<Integer, Image> powerToImageMap = theme.getPowerToImageMap();
             for (Integer power : powerToImageMap.keySet()) {
                 Image unscaled = powerToImageMap.get(power);
                 powerToScaledImage.put(power, unscaled.getScaledInstance(cellWidth, cellHeight, Image.SCALE_SMOOTH));
@@ -128,7 +128,7 @@ public final class FieldCanvas extends Canvas implements ThemeVaryingComponent {
         setSize(dimension);
         setPreferredSize(dimension);
         setupRenderingContext();
-        scaledFieldBcgImage = scaledFieldBcgImage(userPreferences.getTheme().fieldBackgroundImage());
+        scaledFieldBcgImage = scaledFieldBcgImage(userPreferences.getTheme().getFieldBackgroundImage());
     }
 
     private void setupRenderingContext() {
@@ -158,7 +158,7 @@ public final class FieldCanvas extends Canvas implements ThemeVaryingComponent {
     private void updateTheme() {
         Theme theme = userPreferences.getTheme();
         fieldRenderingContext.updateTheme(theme);
-        scaledFieldBcgImage = scaledFieldBcgImage(theme.fieldBackgroundImage());
+        scaledFieldBcgImage = scaledFieldBcgImage(theme.getFieldBackgroundImage());
     }
 
     private void drawFieldBackground(Graphics g) {

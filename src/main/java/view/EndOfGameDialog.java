@@ -60,7 +60,7 @@ public final class EndOfGameDialog extends JDialog {
     }
 
     private ImageIcon getScaledImageIcon() {
-        Image gameOverImage = userPreferences.getTheme().gameOverImage();
+        Image gameOverImage = userPreferences.getTheme().getGameOverImage();
         int width = dimension.width;
         int height = dimension.height;
         return new ImageIcon(gameOverImage.getScaledInstance(width, height, Image.SCALE_SMOOTH));

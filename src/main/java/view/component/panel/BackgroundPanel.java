@@ -31,7 +31,7 @@ public final class BackgroundPanel extends JPanel implements ThemeVaryingCompone
         int width = dimension.width;
         int height = (int) (dimension.height * 0.95);
         Theme theme = userPreferences.getTheme();
-        return theme.welcomeImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return theme.getWelcomeImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
     }
 
     @Override
